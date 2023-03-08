@@ -1,2 +1,2 @@
 # RestAPE
-RESTful API for the APE librry
+RESTful API for the APE library, based on Spring Boot.
