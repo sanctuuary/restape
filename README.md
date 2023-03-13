@@ -1,4 +1,7 @@
 # RestAPE
+
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
 RESTful API for the APE library, based on Spring Boot.
 
 
