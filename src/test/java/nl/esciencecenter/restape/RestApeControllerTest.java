@@ -15,15 +15,26 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class HelloControllerTest {
+public class RestApeControllerTest {
 
     @Autowired
     private MockMvc mvc;
 
     @Test
-    public void getHello() throws Exception {
+    public void getGreetings() throws Exception {
         mvc.perform(MockMvcRequestBuilders.get("/").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().string(equalTo("Greetings from Spring Boot!")));
+                .andExpect(content().string(equalTo("You are using RestAPE RESTful API!")));
     }
+
+    @Test
+    public void getDomainAnnotations() throws Exception {
+        String onto = "http://onto.owl";
+        String tools = "http://onto.ow";
+        mvc.perform(MockMvcRequestBuilders.get("/parse_domain?ontologyPath=" + onto + "&toolAnnotationsPath=" + tools)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string(equalTo(onto + "\n" + tools)));
+    }
+
 }

@@ -10,14 +10,14 @@ import org.springframework.http.ResponseEntity;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class HelloControllerIT {
+public class RestApeControllerIT {
 
     @Autowired
     private TestRestTemplate template;
 
     @Test
-    public void getHello() throws Exception {
+    public void getGreetings() throws Exception {
         ResponseEntity<String> response = template.getForEntity("/", String.class);
-        assertThat(response.getBody()).isEqualTo("Greetings from Spring Boot!");
+        assertThat(response.getBody()).isEqualTo("You are using RestAPE RESTful API!");
     }
 }
