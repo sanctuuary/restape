@@ -31,7 +31,7 @@ public class RestApeControllerTest {
     public void getDomainAnnotations() throws Exception {
         String onto = "http://onto.owl";
         String tools = "http://onto.ow";
-        mvc.perform(MockMvcRequestBuilders.get("/parse_domain?ontologyPath=" + onto + "&toolAnnotationsPath=" + tools)
+        mvc.perform(MockMvcRequestBuilders.get("/parse_domain?ontologyURL=" + onto + "&toolAnnotationsURL=" + tools)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string(equalTo(onto + "\n" + tools)));

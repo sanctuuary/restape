@@ -12,16 +12,16 @@ public class RestApeController {
         return "You are using RestAPE RESTful API!";
     }
 
-    @GetMapping("/test")
+    @GetMapping("/github")
     public String hello() {
-        return String.format("Hello!");
+        return "https://github.com/sanctuuary/restape";
     }
 
     @GetMapping("/parse_domain")
     public String parseDomain(
-            @RequestParam(value = "ontologyPath", defaultValue = "Path not provided") String ontologyPath,
-            @RequestParam(value = "toolAnnotationsPath", defaultValue = "Path not provided again") String toolAnnotationsPath) {
+            @RequestParam(value = "ontologyURL", defaultValue = "Path not provided") String ontologyURL,
+            @RequestParam(value = "toolAnnotationsURL", defaultValue = "Path not provided again") String toolAnnotationsURL) {
 
-        return ontologyPath + "\n" + toolAnnotationsPath;
+        return ontologyURL + "\n" + toolAnnotationsURL;
     }
 }
