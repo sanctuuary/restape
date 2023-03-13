@@ -28,6 +28,11 @@
 			<scope>test</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/io.github.sanctuuary/APE -->
 		<dependency>
 			<groupId>io.github.sanctuuary</groupId>
