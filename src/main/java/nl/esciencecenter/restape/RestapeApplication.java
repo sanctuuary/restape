@@ -9,10 +9,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
-public class RestApeApplication {
+public class RestapeApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(RestApeApplication.class, args);
+		SpringApplication.run(RestapeApplication.class, args);
 	}
 
 	@Bean
