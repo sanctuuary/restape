@@ -17,3 +17,21 @@ Alternatively, you can build the jar package
 and then run the jar package
 
 `java -jar target/restape-[version].jar`
+
+
+
+#### Use local APE version
+
+If the APE version you wish to use is not available on the [Mvn repository](https://mvnrepository.com/artifact/io.github.sanctuuary/APE)
+you can install APE in your local repository and use it to build the back-end.
+To do so, [download](https://github.com/sanctuuary/APE#releases)
+or [compile](https://github.com/sanctuuary/APE#build-ape-from-source-using-maven) the APE version you wish to use.
+In the location where you have the resulting APE.jar file, run the following command:
+````shell
+$ mvn install:install-file -Dfile=APE-<version>.jar
+````
+This adds the specified APE file to your local Maven repository.
+You can now build the back-end using:
+````shell
+$ mvn package -DskipTests=true
+````

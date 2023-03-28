@@ -4,6 +4,8 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import javax.print.attribute.standard.Media;
+
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,13 +30,28 @@ public class RestApeControllerTest {
     }
 
     @Test
-    public void getDomainAnnotations() throws Exception {
-        String onto = "http://onto.owl";
-        String tools = "http://onto.ow";
-        mvc.perform(MockMvcRequestBuilders.get("/parse_domain?ontologyURL=" + onto + "&toolAnnotationsURL=" + tools)
-                .accept(MediaType.APPLICATION_JSON))
+    public void getDataFail() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.get("/get_data").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().string(equalTo(onto + "\n" + tools)));
+                .andExpect(content().string(equalTo("Path not provided (No such file or directory)")));
+    }
+
+    @Test
+    public void getDataTest() throws Exception {
+        String path = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/MassSpectometry/config.json";
+
+        mvc.perform(MockMvcRequestBuilders.get("/get_data?config_path=" + path).accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+    }
+
+    @Test
+    public void getToolsTest() throws Exception {
+        String path = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/MassSpectometry/config.json";
+
+        mvc.perform(MockMvcRequestBuilders.get("/get_tools?config_path=" + path).accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
 
 }
