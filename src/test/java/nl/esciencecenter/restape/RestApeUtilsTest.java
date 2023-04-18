@@ -2,14 +2,8 @@ package nl.esciencecenter.restape;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-import java.io.IOException;
-
-import org.json.JSONException;
 import org.junit.jupiter.api.Test;
-import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import nl.uu.cs.ape.configuration.APEConfigException;
 
 @SpringBootTest
 public class RestApeUtilsTest {

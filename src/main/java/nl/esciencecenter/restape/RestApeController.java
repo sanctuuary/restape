@@ -2,6 +2,8 @@ package nl.esciencecenter.restape;
 
 import java.io.IOException;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,6 +39,19 @@ public class RestApeController {
         try {
             return RestApeUtils.getTools(configPath).toString();
         } catch (IOException | OWLOntologyCreationException e) {
+            // TODO Auto-generated catch block
+            return e.getMessage();
+        }
+    }
+
+    @GetMapping("/run_synthesis")
+    public String runSynthesis(
+            @RequestParam(value = "configJson", defaultValue = "Path not provided") String configJson,
+            @RequestParam(value = "user_id", defaultValue = "User not identified") String userId) {
+        try {
+            JSONObject config = new JSONObject(configJson);
+            return RestApeUtils.runSynthesis(config, userId).toString();
+        } catch (JSONException e) {
             // TODO Auto-generated catch block
             return e.getMessage();
         }
