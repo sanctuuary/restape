@@ -35,14 +35,14 @@ public class RestApeController {
         return "You are using RestAPE RESTful API!";
     }
 
-    @GetMapping("/get_data") //
-    @Operation(//
-            summary = "Retrieve data taxonomy", //
-            description = "Retrieve data (taxonomy) within the domain.", //
-            tags = { "Domain" }, //
+    @GetMapping("/get_data")
+    @Operation(
+            summary = "Retrieve data taxonomy",
+            description = "Retrieve data (taxonomy) within the domain.",
+            tags = { "Domain" },
             parameters = {
-                    @Parameter(name = "config_path", description = "URL to the APE configuration file.", example = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/MassSpectometry/config.json") }, //
-            externalDocs = @ExternalDocumentation(description = "More information about the APE configuration file can be found here.", url = "https://ape-framework.readthedocs.io/en/latest/docs/specifications/setup.html#configuration-file"), //
+                    @Parameter(name = "config_path", description = "URL to the APE configuration file.", example = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/MassSpectometry/config.json") },
+            externalDocs = @ExternalDocumentation(description = "More information about the APE configuration file can be found here.", url = "https://ape-framework.readthedocs.io/en/latest/docs/specifications/setup.html#configuration-file"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Successful operation. Taxonomy of data terms is provided.", content = @Content(schema = @Schema(implementation = TaxonomyElem.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
                     @ApiResponse(responseCode = "400", description = "Invalid input"),
@@ -59,14 +59,14 @@ public class RestApeController {
         }
     }
 
-    @GetMapping("/get_tools") //
-    @Operation(//
-            summary = "Retrieve tool taxonomy", //
-            description = "Retrieve tools (taxonomy) within the domain.", //
-            tags = { "Domain" }, //
+    @GetMapping("/get_tools")
+    @Operation(
+            summary = "Retrieve tool taxonomy",
+            description = "Retrieve tools (taxonomy) within the domain.",
+            tags = { "Domain" },
             parameters = {
-                    @Parameter(name = "config_path", description = "URL to the APE configuration file.", example = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/MassSpectometry/config.json") }, //
-            externalDocs = @ExternalDocumentation(description = "More information about the APE configuration file can be found here.", url = "https://ape-framework.readthedocs.io/en/latest/docs/specifications/setup.html#configuration-file"), //
+                    @Parameter(name = "config_path", description = "URL to the APE configuration file.", example = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/MassSpectometry/config.json") },
+            externalDocs = @ExternalDocumentation(description = "More information about the APE configuration file can be found here.", url = "https://ape-framework.readthedocs.io/en/latest/docs/specifications/setup.html#configuration-file"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Successful operation. Taxonomy of data terms is provided.", content = @Content(schema = @Schema(implementation = TaxonomyElem.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
                     @ApiResponse(responseCode = "400", description = "Invalid input"),
@@ -84,17 +84,17 @@ public class RestApeController {
     }
 
     @GetMapping("/run_synthesis")
-    //
-    @Operation(//
-            summary = "Run workflow synthesis", //
-            description = "Run workflow synthesis using the APE library.", //
+   
+    @Operation(
+            summary = "Run workflow synthesis",
+            description = "Run workflow synthesis using the APE library.",
             tags = {
-                    "APE" }, //
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "JSON object containing the configuration for the synthesis.", //
-                    content = @Content(schema = @Schema(implementation = CoreConfig.class))), //
+                    "APE" },
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "JSON object containing the configuration for the synthesis.",
+                    content = @Content(schema = @Schema(implementation = CoreConfig.class))),
             parameters = {
-                    @Parameter(name = "config_path", description = "URL to the APE configuration file.", example = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/MassSpectometry/config.json") }, //
-            externalDocs = @ExternalDocumentation(description = "More information about the APE configuration file can be found here.", url = "https://ape-framework.readthedocs.io/en/latest/docs/specifications/setup.html#configuration-file"), //
+                    @Parameter(name = "config_path", description = "URL to the APE configuration file.", example = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/MassSpectometry/config.json") },
+            externalDocs = @ExternalDocumentation(description = "More information about the APE configuration file can be found here.", url = "https://ape-framework.readthedocs.io/en/latest/docs/specifications/setup.html#configuration-file"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Successful operation. Synthesis solutions are returned."),
                     @ApiResponse(responseCode = "400", description = "Invalid input"),
