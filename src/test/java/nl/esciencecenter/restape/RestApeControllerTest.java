@@ -32,8 +32,7 @@ public class RestApeControllerTest {
     @Test
     public void getDataFail() throws Exception {
         mvc.perform(MockMvcRequestBuilders.get("/get_data").accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().string(equalTo("Path not provided (No such file or directory)")));
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -46,12 +45,24 @@ public class RestApeControllerTest {
     }
 
     @Test
+    public void getToolsFail() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.get("/get_tools").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     public void getToolsTest() throws Exception {
         String path = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/MassSpectometry/config.json";
 
         mvc.perform(MockMvcRequestBuilders.get("/get_tools?config_path=" + path).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+    }
+
+    @Test
+    public void runSynthesisFail() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.get("/run_synthesis").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 
 }
