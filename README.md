@@ -23,6 +23,11 @@ and then run the jar package
 
 
 
+OpenAPI documentation is available at
+````
+[host]:[port]]/swagger-ui/index.html
+````
+
 #### Use local APE version
 
 If the APE version you wish to use is not available on the [Mvn repository](https://mvnrepository.com/artifact/io.github.sanctuuary/APE)
