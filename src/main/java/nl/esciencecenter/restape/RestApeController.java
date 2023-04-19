@@ -17,7 +17,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.Parameter;
-import nl.esciencecenter.models.CoreConfig;
+import nl.esciencecenter.models.APEConfig;
 import nl.esciencecenter.models.TaxonomyElem;
 
 /**
@@ -91,7 +91,7 @@ public class RestApeController {
             tags = {
                     "APE" },
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "JSON object containing the configuration for the synthesis.",
-                    content = @Content(schema = @Schema(implementation = CoreConfig.class))),
+                    content = @Content(schema = @Schema(implementation = APEConfig.class))),
             parameters = {
                     @Parameter(name = "config_path", description = "URL to the APE configuration file.", example = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/MassSpectometry/config.json") },
             externalDocs = @ExternalDocumentation(description = "More information about the APE configuration file can be found here.", url = "https://ape-framework.readthedocs.io/en/latest/docs/specifications/setup.html#configuration-file"),
