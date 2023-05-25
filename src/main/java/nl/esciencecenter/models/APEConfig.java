@@ -18,10 +18,10 @@ public class APEConfig {
     public int solutions; 
     public int number_of_execution_scripts; 
     public int number_of_generated_graphs; 
-    public int number_of_cwl_files; 
+    public int number_of_cwl_files;  
     public boolean tool_seq_repeat;
-    public APETaxType[] inputs;
-    public APETaxType[] outputs;
+    public APEDataInstance[] inputs;
+    public APEDataInstance[] outputs;
     public boolean debug_mode;
     public ConfigEnum use_workflow_input = ConfigEnum.ALL;
     public ConfigEnum use_all_generated_data = ConfigEnum.ONE;
@@ -38,9 +38,10 @@ public class APEConfig {
     /**
      * This class represents the APE taxonomy type.
      */
-    public class APETaxType {
+    public class APEDataInstance {
         public String[] data_0006;
         public String[] format_1915;
+        public String[] APE_label;
     }  
 
 

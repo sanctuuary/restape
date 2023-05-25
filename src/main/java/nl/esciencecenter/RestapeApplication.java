@@ -1,4 +1,4 @@
-package nl.esciencecenter.restape;
+package nl.esciencecenter;
 
 import java.util.Arrays;
 
