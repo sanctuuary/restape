@@ -1,4 +1,6 @@
-package nl.esciencecenter.models;
+package nl.esciencecenter.models.documentation;
+
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -8,15 +10,12 @@ import org.json.JSONObject;
  * TODO: This class is not used at the moment, but it is a good idea to use it
  * in the future.
  * 
- * @author Vedran
- *
  */
 public class TaxonomyElem {
-    public String id;
-    public String label;
-    public TaxonomyElem[] subsets;
+    public String constraintID;
+    public String description;
+    public Map[] parameters;
 
     public TaxonomyElem() {
     }
-
 }

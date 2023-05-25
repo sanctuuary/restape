@@ -13,7 +13,6 @@ import nl.esciencecenter.models.SynthesisRun;
 import nl.esciencecenter.service.SynthesisRunService;
 
 //creating RestController 
-@RestController
 public class SynthesisRunController {
 
     // autowired the SynthesisRunService class

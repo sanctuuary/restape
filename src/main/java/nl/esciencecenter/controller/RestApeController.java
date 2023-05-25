@@ -17,8 +17,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.Parameter;
-import nl.esciencecenter.models.APEConfig;
-import nl.esciencecenter.models.TaxonomyElem;
+import nl.esciencecenter.models.documentation.APEConfig;
+import nl.esciencecenter.models.documentation.TaxonomyElem;
 import nl.esciencecenter.restape.ApeAPI;
 import nl.esciencecenter.restape.RestApeUtils;
 

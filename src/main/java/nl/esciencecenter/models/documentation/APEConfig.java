@@ -1,4 +1,4 @@
-package nl.esciencecenter.models;
+package nl.esciencecenter.models.documentation;
 
 import nl.uu.cs.ape.APE;
 import nl.uu.cs.ape.configuration.APECoreConfig;
@@ -14,11 +14,11 @@ public class APEConfig {
     public String cwl_annotations_path;
     // public String solutions_dir_path; <- this is locally specified
     public SolutionLength solution_length;
-    public int timeout_sec; 
-    public int solutions; 
-    public int number_of_execution_scripts; 
-    public int number_of_generated_graphs; 
-    public int number_of_cwl_files;  
+    public int timeout_sec;
+    public int solutions;
+    public int number_of_execution_scripts;
+    public int number_of_generated_graphs;
+    public int number_of_cwl_files;
     public boolean tool_seq_repeat;
     public APEDataInstance[] inputs;
     public APEDataInstance[] outputs;
@@ -26,14 +26,13 @@ public class APEConfig {
     public ConfigEnum use_workflow_input = ConfigEnum.ALL;
     public ConfigEnum use_all_generated_data = ConfigEnum.ONE;
 
-
     /**
      * This class represents the solution length configuration.
      */
     public class SolutionLength {
         public int min;
         public int max;
-    }   
+    }
 
     /**
      * This class represents the APE taxonomy type.
@@ -42,9 +41,8 @@ public class APEConfig {
         public String[] data_0006;
         public String[] format_1915;
         public String[] APE_label;
-    }  
+    }
 
-
-  //"constraints_path": "./GeoGMT/E0/constraints_e0.json",
+    // "constraints_path": "./GeoGMT/E0/constraints_e0.json",
 
 }
