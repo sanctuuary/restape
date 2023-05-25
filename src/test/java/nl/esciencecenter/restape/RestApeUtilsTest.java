@@ -17,7 +17,7 @@ public class RestApeUtilsTest {
     public void loadURLPath() {
         String urlPath = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/MassSpectometry/config.json";
 
-        assertDoesNotThrow(() -> RestApeUtils.setupApe(urlPath));
+        assertDoesNotThrow(() -> ApeAPI.setupApe(urlPath));
 
     }
 
@@ -27,7 +27,7 @@ public class RestApeUtilsTest {
         assertDoesNotThrow(() -> {
             File config = APEFiles.readPathToFile(
                     "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/MassSpectometry/config.json");
-            RestApeUtils.setupApe(config.getAbsolutePath());
+            ApeAPI.setupApe(config.getAbsolutePath());
         });
 
     }
@@ -36,7 +36,7 @@ public class RestApeUtilsTest {
     public void getTypesFromURLPath() {
         String urlPath = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/MassSpectometry/config.json";
 
-        assertDoesNotThrow(() -> RestApeUtils.getData(urlPath));
+        assertDoesNotThrow(() -> ApeAPI.getData(urlPath));
 
     }
 
@@ -44,7 +44,7 @@ public class RestApeUtilsTest {
     public void getToolsFromURLPath() {
         String urlPath = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/MassSpectometry/config.json";
 
-        assertDoesNotThrow(() -> RestApeUtils.getTools(urlPath));
+        assertDoesNotThrow(() -> ApeAPI.getTools(urlPath));
 
     }
 

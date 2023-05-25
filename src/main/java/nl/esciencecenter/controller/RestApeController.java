@@ -19,6 +19,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.Parameter;
 import nl.esciencecenter.models.APEConfig;
 import nl.esciencecenter.models.TaxonomyElem;
+import nl.esciencecenter.restape.ApeAPI;
 import nl.esciencecenter.restape.RestApeUtils;
 
 /**
@@ -48,7 +49,7 @@ public class RestApeController {
         public String getData(
                         @RequestParam("config_path") String configPath) {
                 try {
-                        return RestApeUtils.getData(configPath).toString();
+                        return ApeAPI.getData(configPath).toString();
                 } catch (IOException | OWLOntologyCreationException e) {
                         // TODO Auto-generated catch block
                         return e.getMessage();
@@ -67,7 +68,25 @@ public class RestApeController {
         public String getTools(
                         @RequestParam("config_path") String configPath) {
                 try {
-                        return RestApeUtils.getTools(configPath).toString();
+                        return ApeAPI.getTools(configPath).toString();
+                } catch (IOException | OWLOntologyCreationException e) {
+                        // TODO Auto-generated catch block
+                        return e.getMessage();
+                }
+        }
+
+        @GetMapping("/get_constraints")
+        @Operation(summary = "Retrieve constraint templates", description = "Retrieve constraint templates used to specify synthesis problem.", tags = {
+                        "Domain" }, parameters = {
+                                        @Parameter(name = "config_path", description = "URL to the APE configuration file.", example = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/MassSpectometry/config.json") }, externalDocs = @ExternalDocumentation(description = "More information about the APE configuration file can be found here.", url = "https://ape-framework.readthedocs.io/en/latest/docs/specifications/setup.html#configuration-file"), responses = {
+                                                        @ApiResponse(responseCode = "200", description = "Successful operation. Taxonomy of data terms is provided.", content = @Content(schema = @Schema(implementation = TaxonomyElem.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
+                                                        @ApiResponse(responseCode = "400", description = "Invalid input"),
+                                                        @ApiResponse(responseCode = "404", description = "Not found")
+
+        })
+        public String getConstraints(@RequestParam("config_path") String configPath) {
+                try {
+                        return ApeAPI.getConstraints(configPath).toString();
                 } catch (IOException | OWLOntologyCreationException e) {
                         // TODO Auto-generated catch block
                         return e.getMessage();
@@ -88,7 +107,7 @@ public class RestApeController {
                         @RequestParam(defaultValue = "User not identified") String userId) {
                 try {
                         JSONObject config = new JSONObject(configJson);
-                        return RestApeUtils.runSynthesis(config, userId).toString();
+                        return ApeAPI.runSynthesis(config, userId).toString();
                 } catch (JSONException e) {
                         // TODO Auto-generated catch block
                         return e.getMessage();
