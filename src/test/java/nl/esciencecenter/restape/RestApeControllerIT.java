@@ -18,6 +18,6 @@ public class RestApeControllerIT {
     @Test
     public void getGreetings() throws Exception {
         ResponseEntity<String> response = template.getForEntity("/", String.class);
-        assertThat(response.getBody()).isEqualTo("You are using RestAPE RESTful API!");
+        assertThat(response.getBody()).isEqualTo("Welcome to the RestApe API!");
     }
 }

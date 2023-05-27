@@ -26,7 +26,7 @@ public class RestApeControllerTest {
     public void getGreetings() throws Exception {
         mvc.perform(MockMvcRequestBuilders.get("/").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().string(equalTo("You are using RestAPE RESTful API!")));
+                .andExpect(content().string(equalTo("Welcome to the RestApe API!")));
     }
 
     @Test

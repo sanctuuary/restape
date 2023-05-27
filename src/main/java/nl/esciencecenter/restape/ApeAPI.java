@@ -1,8 +1,6 @@
 package nl.esciencecenter.restape;
 
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collection;
 
 import nl.uu.cs.ape.APE;
@@ -10,6 +8,7 @@ import nl.uu.cs.ape.configuration.APEConfigException;
 import nl.uu.cs.ape.configuration.APECoreConfig;
 import nl.uu.cs.ape.configuration.APERunConfig;
 import nl.uu.cs.ape.constraints.ConstraintTemplate;
+import nl.uu.cs.ape.core.solutionStructure.SolutionWorkflow;
 import nl.uu.cs.ape.core.solutionStructure.SolutionsList;
 import nl.uu.cs.ape.models.AllModules;
 import nl.uu.cs.ape.models.AllPredicates;
@@ -144,23 +143,24 @@ public class ApeAPI {
      * Method to run the synthesis of workflows using the APE framework.
      * 
      * @param configJson - configuration of the synthesis run
-     * @param userId     - user id
-     * @return - JSON object with the results of the synthesis
+     * @return - JSONArray with the results of the synthesis, each element describes
+     *         a workflow
      */
-    public static String runSynthesis(JSONObject configJson, String userId) {
+    public static JSONArray runSynthesis(JSONObject configJson) {
+        JSONArray generatedSolutions = new JSONArray();
         APE apeFramework = null;
-        int solutionsNo = 10;
         try {
 
             // set up the APE framework
             apeFramework = new APE(configJson);
 
         } catch (APEConfigException | JSONException | IOException | OWLOntologyCreationException e) {
-            return new JSONObject().put("error", "Error in setting up the APE framework:" + e.getMessage()).toString();
+            return new JSONArray("[\"Error in setting up the APE framework:" +  e.getMessage().replace("\n", " ") + "\"]");
         }
 
-        String currTokenString = RestApeUtils.generateStringToken(userId);
-        String solutionPath = RestApeUtils.createDirectory(currTokenString);
+        String runID = RestApeUtils.generateUniqueString(configJson.toString());
+        String solutionPath = RestApeUtils.createDirectory(runID);
+        System.out.println("Solution path: " + solutionPath);
 
         SolutionsList solutions;
         try {
@@ -168,49 +168,46 @@ public class ApeAPI {
             APERunConfig runConfig = new APERunConfig(configJson, apeFramework.getDomainSetup());
 
             runConfig.setSolutionPath(solutionPath);
-
-            if (solutionsNo > 0) {
-                runConfig.setMaxNoSolutions(solutionsNo);
-                runConfig.setNoGraphs(solutionsNo);
-                runConfig.setNoCWL(solutionsNo);
-            }
+            int solutionsNo = 10;
+            runConfig.setMaxNoSolutions(solutionsNo);
+            runConfig.setNoGraphs(solutionsNo);
+            runConfig.setNoCWL(solutionsNo);
             // run the synthesis and retrieve the solutions
             solutions = apeFramework.runSynthesis(runConfig);
 
         } catch (APEConfigException e) {
-            return new JSONObject()
-                    .put("error", "Error in synthesis execution. APE configuration error:" + e.getMessage())
-                    .toString();
-        } catch (JSONException e) {
-            return new JSONObject()
-                    .put("error",
-                            "Error in synthesis execution. Bad JSON formatting (APE configuration or constriants JSON). "
-                                    + e.getMessage())
-                    .toString();
+            return new JSONArray("[\"Error in synthesis execution. APE configuration error:" +  e.getMessage().replace("\n", " ") + "\"]");
+                } catch (JSONException e) {
+            return new JSONArray("[\"Error in synthesis execution. Bad JSON formatting (APE configuration or constriants JSON). "
+                                    +  e.getMessage().replace("\n", " ") + "\"]");
         } catch (IOException e) {
-            return new JSONObject().put("error", "Error in synthesis execution." + e.getMessage()).toString();
+            return new JSONArray("[\"Error in synthesis execution." +  e.getMessage().replace("\n", " ") + "\"]");
         }
 
         /*
          * Writing solutions to the specified file in human readable format
          */
         if (solutions.isEmpty()) {
-            return new JSONObject().put("flag", "UNSAT").toString();
+            return new JSONArray("The given problem is UNSAT");
         } else {
-            try {
-                APE.writeSolutionToFile(solutions);
+                // Write solutions to the file system.
                 APE.writeDataFlowGraphs(solutions, RankDir.TOP_TO_BOTTOM);
-                // APE.writeControlFlowGraphs(solutions, RankDir.LEFT_TO_RIGHT);
-                APE.writeExecutableWorkflows(solutions);
                 APE.writeCWLWorkflows(solutions);
-                APE.writeExecutableCWLWorkflows(solutions, apeFramework.getConfig());
 
-                return new JSONObject().put("flag", "SAT").toString();
-            } catch (IOException e) {
-                return new JSONObject()
-                        .put("error", "Error in writing the solutions. to the file system." + e.getMessage())
-                        .toString();
-            }
+                // Generate objects that return the solutions in JSON format
+                int noSolutions = solutions.getNumberOfSolutions();
+                for (int i = 0; i < noSolutions; i++) {
+                    SolutionWorkflow sol = solutions.get(i);
+                    JSONObject solJson = new JSONObject();
+                    solJson.put("name", sol.getFileName());
+                    solJson.put("workflow_length", sol.getSolutionLength());
+                    solJson.put("cwl_name", sol.getFileName() + ".cwl");
+                    solJson.put("figure_name", sol.getFileName() + ".png");
+                    solJson.put("run_id", runID);
+
+                    generatedSolutions.put(solJson);
+                }
+                return generatedSolutions;
         }
     }
 
