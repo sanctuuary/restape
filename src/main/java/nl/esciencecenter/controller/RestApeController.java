@@ -118,7 +118,7 @@ public class RestApeController {
                 try {
                         JSONObject config = new JSONObject(configJson);
 
-                        return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG)
+                        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
                                         .body(ApeAPI.runSynthesis(config).toString());
                 } catch (APEConfigException | JSONException | OWLOntologyCreationException | IOException e) {
                         // TODO Auto-generated catch block
