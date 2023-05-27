@@ -57,7 +57,8 @@ public class RestApeController {
         public ResponseEntity<String> getData(
                         @RequestParam("config_path") String configPath) {
                 try {
-                        return ResponseEntity.ok().body(ApeAPI.getData(configPath).toString());
+                        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
+                                .body(ApeAPI.getData(configPath).toString());
                 } catch (IOException | OWLOntologyCreationException e) {
                         // TODO Auto-generated catch block
                         return ResponseEntity.badRequest().body(e.getMessage());
@@ -76,7 +77,7 @@ public class RestApeController {
         public ResponseEntity<String> getTools(
                         @RequestParam("config_path") String configPath) {
                 try {
-                        return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG)
+                        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
                                         .body(ApeAPI.getTools(configPath).toString());
                 } catch (IOException | OWLOntologyCreationException e) {
                         // TODO Auto-generated catch block
@@ -95,7 +96,7 @@ public class RestApeController {
         })
         public ResponseEntity<String> getConstraints(@RequestParam("config_path") String configPath) {
                 try {
-                        return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG)
+                        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
                                         .body(ApeAPI.getConstraints(configPath).toString());
                 } catch (IOException | OWLOntologyCreationException e) {
                         // TODO Auto-generated catch block
