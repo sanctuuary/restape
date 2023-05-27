@@ -158,16 +158,17 @@ public class ApeAPI {
 
         String runID = RestApeUtils.generateUniqueString(configJson.toString());
         String solutionPath = RestApeUtils.createDirectory(runID);
-        System.out.println("Solution path: " + solutionPath);
 
         SolutionsList solutions;
 
         APERunConfig runConfig = new APERunConfig(configJson, apeFramework.getDomainSetup());
 
         runConfig.setSolutionPath(solutionPath);
+        int maxSol = runConfig.getMaxNoSolutions();
+        runConfig.setNoCWL(maxSol);
+        runConfig.setNoGraphs(maxSol);
         // run the synthesis and retrieve the solutions
         solutions = apeFramework.runSynthesis(runConfig);
-
 
         /*
          * Writing solutions to the specified file in human readable format
