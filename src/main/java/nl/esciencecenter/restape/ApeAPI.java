@@ -145,44 +145,29 @@ public class ApeAPI {
      * @param configJson - configuration of the synthesis run
      * @return - JSONArray with the results of the synthesis, each element describes
      *         a workflow
+     * @throws IOException
+     * @throws OWLOntologyCreationException
      */
-    public static JSONArray runSynthesis(JSONObject configJson) {
+    public static JSONArray runSynthesis(JSONObject configJson) throws OWLOntologyCreationException, IOException {
         JSONArray generatedSolutions = new JSONArray();
         APE apeFramework = null;
-        try {
 
-            // set up the APE framework
-            apeFramework = new APE(configJson);
+        // set up the APE framework
+        apeFramework = new APE(configJson);
 
-        } catch (APEConfigException | JSONException | IOException | OWLOntologyCreationException e) {
-            return new JSONArray("[\"Error in setting up the APE framework:" +  e.getMessage().replace("\n", " ") + "\"]");
-        }
 
         String runID = RestApeUtils.generateUniqueString(configJson.toString());
         String solutionPath = RestApeUtils.createDirectory(runID);
         System.out.println("Solution path: " + solutionPath);
 
         SolutionsList solutions;
-        try {
 
-            APERunConfig runConfig = new APERunConfig(configJson, apeFramework.getDomainSetup());
+        APERunConfig runConfig = new APERunConfig(configJson, apeFramework.getDomainSetup());
 
-            runConfig.setSolutionPath(solutionPath);
-            int solutionsNo = 10;
-            runConfig.setMaxNoSolutions(solutionsNo);
-            runConfig.setNoGraphs(solutionsNo);
-            runConfig.setNoCWL(solutionsNo);
-            // run the synthesis and retrieve the solutions
-            solutions = apeFramework.runSynthesis(runConfig);
+        runConfig.setSolutionPath(solutionPath);
+        // run the synthesis and retrieve the solutions
+        solutions = apeFramework.runSynthesis(runConfig);
 
-        } catch (APEConfigException e) {
-            return new JSONArray("[\"Error in synthesis execution. APE configuration error:" +  e.getMessage().replace("\n", " ") + "\"]");
-                } catch (JSONException e) {
-            return new JSONArray("[\"Error in synthesis execution. Bad JSON formatting (APE configuration or constriants JSON). "
-                                    +  e.getMessage().replace("\n", " ") + "\"]");
-        } catch (IOException e) {
-            return new JSONArray("[\"Error in synthesis execution." +  e.getMessage().replace("\n", " ") + "\"]");
-        }
 
         /*
          * Writing solutions to the specified file in human readable format

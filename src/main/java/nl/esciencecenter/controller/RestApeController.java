@@ -27,6 +27,7 @@ import nl.esciencecenter.models.documentation.TaxonomyElem;
 import nl.esciencecenter.restape.ApeAPI;
 import nl.esciencecenter.restape.IOUtils;
 import nl.esciencecenter.restape.RestApeUtils;
+import nl.uu.cs.ape.configuration.APEConfigException;
 
 /**
  * This class represents the RestApe controller.
@@ -105,7 +106,7 @@ public class RestApeController {
         @PostMapping("/run_synthesis")
         @Operation(summary = "Run workflow synthesis", description = "Run workflow synthesis using the APE library.", tags = {
                         "APE" }, requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "JSON object containing the configuration for the synthesis.", content = @Content(schema = @Schema(implementation = APEConfig.class))), parameters = {
-                                        @Parameter(name = "config_path", description = "URL to the APE configuration file.", example = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/MassSpectometry/config.json") }, externalDocs = @ExternalDocumentation(description = "More information about the APE configuration file can be found here.", url = "https://ape-framework.readthedocs.io/en/latest/docs/specifications/setup.html#configuration-file"), responses = {
+                                        @Parameter(name = "configJson", description = "APE configuration JSON file.", example = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/MassSpectometry/config.json") }, externalDocs = @ExternalDocumentation(description = "More information about the APE configuration file can be found here.", url = "https://ape-framework.readthedocs.io/en/latest/docs/specifications/setup.html#configuration-file"), responses = {
                                                         @ApiResponse(responseCode = "200", description = "Successful operation. Synthesis solutions are returned."),
                                                         @ApiResponse(responseCode = "400", description = "Invalid input"),
                                                         @ApiResponse(responseCode = "404", description = "Not found")
@@ -118,7 +119,7 @@ public class RestApeController {
 
                         return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG)
                                         .body(ApeAPI.runSynthesis(config).toString());
-                } catch (JSONException e) {
+                } catch (APEConfigException | JSONException | OWLOntologyCreationException | IOException e) {
                         // TODO Auto-generated catch block
                         return ResponseEntity.badRequest().body(e.getMessage());
                 }
@@ -126,9 +127,13 @@ public class RestApeController {
         
         @GetMapping("/get_image")
         @Operation(summary = "Retrieve an image representing the workflow.", description = "Retrieve a image from the file system representing the workflow previously generated.", tags = {
-                        "Domain" }, parameters = {
-                                        @Parameter(name = "file_name", description = "Name of the image file.", example = "workflowSolution_0.png"),
-                                        @Parameter(name="run_id",description="ID of the corresponding synthesis run.",example="04ce2ef00c1685150252568")
+                        "Dowload" }, parameters = {
+                                        @Parameter(name = "file_name", 
+                                                description = "Name of the image file (provided under 'figure_name' after the synthesis run).", 
+                                                example = "workflowSolution_0.png"),
+                                        @Parameter(name = "run_id",
+                                                description = "ID of the corresponding synthesis run (provided under 'run_id' after the synthesis run).",
+                                                example="04ce2ef00c1685150252568")
                                                                                                         
                                         }, responses = {
                                                 @ApiResponse(responseCode = "200", description = "Successful operation. Taxonomy of data terms is provided.", content = @Content(mediaType = MediaType.IMAGE_PNG_VALUE)),
@@ -143,19 +148,19 @@ public class RestApeController {
                                 return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG)
                                         .body(IOUtils.getImageFromFileSystem(path));
                         } catch (IOException e) {
-                                return ResponseEntity.badRequest().body(e.getMessage());
+                                return ResponseEntity.badRequest().body("The file could not be found.");
                 }
         }
 
         @GetMapping("/get_cwl")
         @Operation(summary = "Retrieve a file", description = "Retrieve a file from the workflow system.", tags = {
-                        "Domain" },
+                        "Dowload" },
                         parameters = {
                                         @Parameter(name = "file_name", 
-                                                description = "Name of the CWL file.", 
+                                                description = "Name of the CWL file (provided under 'figure_name' after the synthesis run).", 
                                                 example = "workflowSolution_0.cwl"),
                                         @Parameter(name = "run_id",
-                                                description = "ID of the corresponding synthesis run.",
+                                                description = "ID of the corresponding synthesis run (provided under 'run_id' after the synthesis run).",
                                                 example="04ce2ef00c1685150252568")
                                 
                         }, responses = {
@@ -173,7 +178,7 @@ public class RestApeController {
                                                                 .body(IOUtils.getLocalCwlFile(path));
                 } catch (IOException e) {
                         // TODO Auto-generated catch block
-                        return ResponseEntity.badRequest().body(e.getMessage());
+                        return ResponseEntity.badRequest().body("The file could not be found.");
                 }
         }
 }
