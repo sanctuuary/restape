@@ -144,7 +144,7 @@ public class ApeAPI {
      * 
      * @param configJson - configuration of the synthesis run
      * @return - JSONArray with the results of the synthesis, each element describes
-     *         a workflow
+     *         a workflow solution (name,length, runID, etc.).
      * @throws IOException
      * @throws OWLOntologyCreationException
      */
@@ -154,7 +154,6 @@ public class ApeAPI {
 
         // set up the APE framework
         apeFramework = new APE(configJson);
-
 
         String runID = RestApeUtils.generateUniqueString(configJson.toString());
         String solutionPath = RestApeUtils.createDirectory(runID);
@@ -176,24 +175,24 @@ public class ApeAPI {
         if (solutions.isEmpty()) {
             return new JSONArray("The given problem is UNSAT");
         } else {
-                // Write solutions to the file system.
-                APE.writeDataFlowGraphs(solutions, RankDir.TOP_TO_BOTTOM);
-                APE.writeCWLWorkflows(solutions);
+            // Write solutions to the file system.
+            APE.writeDataFlowGraphs(solutions, RankDir.TOP_TO_BOTTOM);
+            APE.writeCWLWorkflows(solutions);
 
-                // Generate objects that return the solutions in JSON format
-                int noSolutions = solutions.getNumberOfSolutions();
-                for (int i = 0; i < noSolutions; i++) {
-                    SolutionWorkflow sol = solutions.get(i);
-                    JSONObject solJson = new JSONObject();
-                    solJson.put("name", sol.getFileName());
-                    solJson.put("workflow_length", sol.getSolutionLength());
-                    solJson.put("cwl_name", sol.getFileName() + ".cwl");
-                    solJson.put("figure_name", sol.getFileName() + ".png");
-                    solJson.put("run_id", runID);
+            // Generate objects that return the solutions in JSON format
+            int noSolutions = solutions.getNumberOfSolutions();
+            for (int i = 0; i < noSolutions; i++) {
+                SolutionWorkflow sol = solutions.get(i);
+                JSONObject solJson = new JSONObject();
+                solJson.put("name", sol.getFileName());
+                solJson.put("workflow_length", sol.getSolutionLength());
+                solJson.put("cwl_name", sol.getFileName() + ".cwl");
+                solJson.put("figure_name", sol.getFileName() + ".png");
+                solJson.put("run_id", runID);
 
-                    generatedSolutions.put(solJson);
-                }
-                return generatedSolutions;
+                generatedSolutions.put(solJson);
+            }
+            return generatedSolutions;
         }
     }
 

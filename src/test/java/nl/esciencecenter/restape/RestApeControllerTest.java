@@ -4,8 +4,6 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import javax.print.attribute.standard.Media;
-
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,7 +95,7 @@ public class RestApeControllerTest {
     }
 
     /**
-     * Test the runSynthesis method with POST, but without a confuguartion file.
+     * Test the runSynthesis method with POST, but without a configuration file.
      * 
      * @throws Exception if the call does not detect the missing file.
      */
