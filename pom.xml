@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>nl.esciencecenter</groupId>
 	<artifactId>restape</artifactId>
-	<version>0.2.2</version>
+	<version>0.2.3</version>
 	<name>restape</name>
 	<description>RESTful API for the APE library</description>
 	<licenses>
@@ -95,7 +95,7 @@
 		<dependency>
 			<groupId>io.github.sanctuuary</groupId>
 			<artifactId>APE</artifactId>
-			<version>2.1.5</version>
+			<version>2.1.7</version>
 		</dependency>
 		
 		<dependency>

@@ -152,13 +152,12 @@ public class ApeAPI {
         JSONArray generatedSolutions = new JSONArray();
         APE apeFramework = null;
 
-        // set up the APE framework
-        apeFramework = new APE(configJson);
-
         String runID = RestApeUtils.generateUniqueString(configJson.toString());
         String solutionPath = RestApeUtils.createDirectory(runID);
 
-        SolutionsList solutions;
+        // configJson = IOUtils.extractConstraintsFromApeConfig(configJson);
+        // set up the APE framework
+        apeFramework = new APE(configJson);
 
         APERunConfig runConfig = new APERunConfig(configJson, apeFramework.getDomainSetup());
 
@@ -166,14 +165,15 @@ public class ApeAPI {
         int maxSol = runConfig.getMaxNoSolutions();
         runConfig.setNoCWL(maxSol);
         runConfig.setNoGraphs(maxSol);
+        runConfig.setDebugMode(true);
         // run the synthesis and retrieve the solutions
-        solutions = apeFramework.runSynthesis(runConfig);
+        SolutionsList solutions = apeFramework.runSynthesis(runConfig);
 
         /*
          * Writing solutions to the specified file in human readable format
          */
         if (solutions.isEmpty()) {
-            return new JSONArray("The given problem is UNSAT");
+            return new JSONArray();
         } else {
             // Write solutions to the file system.
             APE.writeDataFlowGraphs(solutions, RankDir.TOP_TO_BOTTOM);
