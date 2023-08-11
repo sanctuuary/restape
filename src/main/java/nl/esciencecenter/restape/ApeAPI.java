@@ -112,6 +112,7 @@ public class ApeAPI {
         }
         objType.put("id", currType.getPredicateID());
         objType.put("label", currType.getPredicateLabel());
+        objType.put("root", currType.getRootNodeID());
         if (arrayTypes.length() > 0) {
             objType.put("subsets", arrayTypes);
         }

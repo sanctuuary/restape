@@ -22,6 +22,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.Parameter;
 import nl.esciencecenter.models.documentation.APEConfig;
+import nl.esciencecenter.models.documentation.ConstraintElem;
 import nl.esciencecenter.models.documentation.TaxonomyElem;
 import nl.esciencecenter.restape.ApeAPI;
 import nl.esciencecenter.restape.IOUtils;
@@ -111,7 +112,7 @@ public class RestApeController {
         @Operation(summary = "Retrieve constraint templates", description = "Retrieve constraint templates used to specify synthesis problem.", tags = {
                         "Domain" }, parameters = {
                                         @Parameter(name = "config_path", description = "URL to the APE configuration file.", example = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/MassSpectometry/config.json") }, externalDocs = @ExternalDocumentation(description = "More information about the APE configuration file can be found here.", url = "https://ape-framework.readthedocs.io/en/latest/docs/specifications/setup.html#configuration-file"), responses = {
-                                                        @ApiResponse(responseCode = "200", description = "Successful operation. Taxonomy of data terms is provided.", content = @Content(schema = @Schema(implementation = TaxonomyElem.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
+                                                        @ApiResponse(responseCode = "200", description = "Successful operation. Taxonomy of data terms is provided.", content = @Content(schema = @Schema(implementation = ConstraintElem.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
                                                         @ApiResponse(responseCode = "400", description = "Invalid input"),
                                                         @ApiResponse(responseCode = "404", description = "Not found")
 

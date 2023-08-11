@@ -1,9 +1,7 @@
 package nl.esciencecenter.models.documentation;
 
-import java.util.Map;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 /**
  * This class represents a single element of the taxonomy.
@@ -11,11 +9,11 @@ import org.json.JSONObject;
  * in the future.
  * 
  */
+@NoArgsConstructor
+@AllArgsConstructor
 public class TaxonomyElem {
-    public String constraintID;
-    public String description;
-    public Map[] parameters;
-
-    public TaxonomyElem() {
-    }
+    public String id;
+    public String label;
+    public String root;
+    public TaxonomyElem[] subsets;
 }
