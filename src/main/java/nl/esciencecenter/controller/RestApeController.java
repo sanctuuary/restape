@@ -139,18 +139,19 @@ public class RestApeController {
                                         @Parameter(name = "configJson", description = "APE configuration JSON file.", example = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/MassSpectometry/config.json") }, externalDocs = @ExternalDocumentation(description = "More information about the APE configuration file can be found here.", url = "https://ape-framework.readthedocs.io/en/latest/docs/specifications/setup.html#configuration-file"), responses = {
                                                         @ApiResponse(responseCode = "200", description = "Successful operation. Synthesis solutions are returned."),
                                                         @ApiResponse(responseCode = "400", description = "Invalid input"),
-                                                        @ApiResponse(responseCode = "404", description = "Not found")
+                                                        @ApiResponse(responseCode = "404", description = "Not found"),
+                                                        @ApiResponse(responseCode = "500", description = "Internal server error"),
 
         })
         public ResponseEntity<String> runSynthesis(
-                        @RequestBody(required = true) Map configJson) {
+                        @RequestBody(required = true) Map<String, Object> configJson) {
                 try {
                         JSONObject config = new JSONObject(configJson);
 
                         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
                                         .body(ApeAPI.runSynthesis(config).toString());
                 } catch (APEConfigException | JSONException | OWLOntologyCreationException | IOException e) {
-                        return ResponseEntity.badRequest().body(e.getMessage());
+                        return ResponseEntity.internalServerError().body(e.getMessage());
                 }
         }
 
@@ -166,7 +167,7 @@ public class RestApeController {
          */
         @GetMapping("/get_image")
         @Operation(summary = "Retrieve an image representing the workflow.", description = "Retrieve a image from the file system representing the workflow previously generated.", tags = {
-                        "Dowload" }, parameters = {
+                        "Download" }, parameters = {
                                         @Parameter(name = "file_name", description = "Name of the image file (provided under 'name' after the synthesis run).", example = "workflowSolution_0.png"),
                                         @Parameter(name = "run_id", description = "ID of the corresponding synthesis run (provided under 'run_id' after the synthesis run).", example = "04ce2ef00c1685150252568")
 
@@ -183,7 +184,7 @@ public class RestApeController {
                         return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG)
                                         .body(IOUtils.getImageFromFileSystem(path));
                 } catch (IOException e) {
-                        return ResponseEntity.badRequest().body("The file could not be found.");
+                        return ResponseEntity.badRequest().body("The image file could not be found.");
                 }
         }
 
@@ -217,7 +218,7 @@ public class RestApeController {
                         return ResponseEntity.ok().contentType(MediaType.parseMediaType("application/x-yaml"))
                                         .body(IOUtils.getLocalCwlFile(path));
                 } catch (IOException e) {
-                        return ResponseEntity.badRequest().body("The file could not be found.");
+                        return ResponseEntity.badRequest().body("The CWL file could not be found.");
                 }
         }
 
@@ -246,7 +247,7 @@ public class RestApeController {
                         return ResponseEntity.ok().contentType(MediaType.parseMediaType("application/x-yaml"))
                                         .body(IOUtils.getLocalCwlFile(path));
                 } catch (IOException e) {
-                        return ResponseEntity.badRequest().body("The file could not be found.");
+                        return ResponseEntity.badRequest().body("The CWL input file could not be found.");
                 }
         }
 }
