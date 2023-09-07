@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>nl.esciencecenter</groupId>
 	<artifactId>restape</artifactId>
-	<version>0.2.2</version>
+	<version>0.2.4</version>
 	<name>restape</name>
 	<description>RESTful API for the APE library</description>
 	<licenses>
@@ -41,6 +41,7 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+			<version>3.1.2</version>
 		</dependency>
 
 		<dependency>
@@ -58,25 +59,43 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
+			<version>3.1.2</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-jpa -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
-			<version>3.1.0</version>
+			<version>3.1.2</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-validation -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+			<version>3.1.2</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-devtools -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<version>3.1.2</version>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/com.h2database/h2 -->
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
+			<version>2.2.220</version>
 			<scope>runtime</scope>
 		</dependency>
+
 
 		<dependency>
 			<groupId>io.github.sanctuuary</groupId>
 			<artifactId>APE</artifactId>
-			<version>2.1.5</version>
+			<version>2.1.8</version>
 		</dependency>
 		
 		<dependency>
@@ -92,17 +111,6 @@
 			<version>22.3.2</version>
 		</dependency>
 
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-validation</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-devtools</artifactId>
-		</dependency>
-
 		<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -110,8 +118,6 @@
 			<version>1.18.26</version>
 			<scope>provided</scope>
 		</dependency>
-
-
 	</dependencies>
 
 	<build>

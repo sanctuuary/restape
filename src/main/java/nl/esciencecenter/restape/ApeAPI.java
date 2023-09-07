@@ -112,6 +112,7 @@ public class ApeAPI {
         }
         objType.put("id", currType.getPredicateID());
         objType.put("label", currType.getPredicateLabel());
+        objType.put("root", currType.getRootNodeID());
         if (arrayTypes.length() > 0) {
             objType.put("subsets", arrayTypes);
         }
@@ -144,7 +145,7 @@ public class ApeAPI {
      * 
      * @param configJson - configuration of the synthesis run
      * @return - JSONArray with the results of the synthesis, each element describes
-     *         a workflow
+     *         a workflow solution (name,length, runID, etc.).
      * @throws IOException
      * @throws OWLOntologyCreationException
      */
@@ -152,14 +153,12 @@ public class ApeAPI {
         JSONArray generatedSolutions = new JSONArray();
         APE apeFramework = null;
 
-        // set up the APE framework
-        apeFramework = new APE(configJson);
-
-
         String runID = RestApeUtils.generateUniqueString(configJson.toString());
         String solutionPath = RestApeUtils.createDirectory(runID);
 
-        SolutionsList solutions;
+        // configJson = IOUtils.extractConstraintsFromApeConfig(configJson);
+        // set up the APE framework
+        apeFramework = new APE(configJson);
 
         APERunConfig runConfig = new APERunConfig(configJson, apeFramework.getDomainSetup());
 
@@ -167,33 +166,34 @@ public class ApeAPI {
         int maxSol = runConfig.getMaxNoSolutions();
         runConfig.setNoCWL(maxSol);
         runConfig.setNoGraphs(maxSol);
+        runConfig.setDebugMode(true);
         // run the synthesis and retrieve the solutions
-        solutions = apeFramework.runSynthesis(runConfig);
+        SolutionsList solutions = apeFramework.runSynthesis(runConfig);
 
         /*
          * Writing solutions to the specified file in human readable format
          */
         if (solutions.isEmpty()) {
-            return new JSONArray("The given problem is UNSAT");
+            return new JSONArray();
         } else {
-                // Write solutions to the file system.
-                APE.writeDataFlowGraphs(solutions, RankDir.TOP_TO_BOTTOM);
-                APE.writeCWLWorkflows(solutions);
+            // Write solutions to the file system.
+            APE.writeDataFlowGraphs(solutions, RankDir.TOP_TO_BOTTOM);
+            APE.writeCWLWorkflows(solutions);
 
-                // Generate objects that return the solutions in JSON format
-                int noSolutions = solutions.getNumberOfSolutions();
-                for (int i = 0; i < noSolutions; i++) {
-                    SolutionWorkflow sol = solutions.get(i);
-                    JSONObject solJson = new JSONObject();
-                    solJson.put("name", sol.getFileName());
-                    solJson.put("workflow_length", sol.getSolutionLength());
-                    solJson.put("cwl_name", sol.getFileName() + ".cwl");
-                    solJson.put("figure_name", sol.getFileName() + ".png");
-                    solJson.put("run_id", runID);
+            // Generate objects that return the solutions in JSON format
+            int noSolutions = solutions.getNumberOfSolutions();
+            for (int i = 0; i < noSolutions; i++) {
+                SolutionWorkflow sol = solutions.get(i);
+                JSONObject solJson = new JSONObject();
+                solJson.put("name", sol.getFileName());
+                solJson.put("workflow_length", sol.getSolutionLength());
+                solJson.put("cwl_name", sol.getFileName() + ".cwl");
+                solJson.put("figure_name", sol.getFileName() + ".png");
+                solJson.put("run_id", runID);
 
-                    generatedSolutions.put(solJson);
-                }
-                return generatedSolutions;
+                generatedSolutions.put(solJson);
+            }
+            return generatedSolutions;
         }
     }
 

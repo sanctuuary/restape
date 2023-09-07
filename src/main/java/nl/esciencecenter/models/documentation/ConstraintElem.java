@@ -1,7 +1,12 @@
 package nl.esciencecenter.models.documentation;
 
+import java.util.Map;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 /**
  * This class represents a single constraint template.
@@ -9,12 +14,16 @@ import org.json.JSONObject;
  * in the future.
  * 
  */
+@NoArgsConstructor
+@AllArgsConstructor
 public class ConstraintElem {
     public String id;
     public String label;
-    public TaxonomyElem[] subsets;
+    public ConstraintParam[] parameters;
 
-    public ConstraintElem() {
-    }
+}
 
+class ConstraintParam {
+    public String dimension1Root;
+    public String dimension2Root;
 }
