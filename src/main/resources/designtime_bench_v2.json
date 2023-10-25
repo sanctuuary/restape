@@ -1,0 +1,49 @@
+{
+    "run_ID": "ABCD1234",
+    "workflow_ID": "1234",
+    "domain_ID" : "1",
+    "benchmarks": [
+        {
+            "benchmark_title": "Tool No.",
+            "benchmark_long_title": "Number of tools",
+            "benchmark_description": "Number of tools in the workflow.",
+            "value": "4",
+            "desirability_value": "-1"
+        },
+        {
+            "benchmark_title": "Linux",
+            "benchmark_long_title": "Linux (OS) supported tools",
+            "benchmark_description": "Number of tools which support Linux OS.",
+            "value": "4/5",
+            "desirability_value": "0.8"
+        },
+        {
+            "benchmark_title": "Mac OS",
+            "benchmark_long_title": "Mac OS supported tools",
+            "benchmark_description": "Number of tools which support Mac OS.",
+            "value": "3/5",
+            "desirability_value": "0.6"
+        },
+        {
+            "benchmark_title": "Windows",
+            "benchmark_long_title": "Windows (OS) supported tools",
+            "benchmark_description": "Number of tools which support Windows OS.",
+            "value": "5/5",
+            "desirability_value": "1"
+        },
+        {
+            "benchmark_title": "Licensed",
+            "benchmark_long_title": "Tools with a license",
+            "benchmark_description": "Number of tools which have a license specified.",
+            "value": "4/5",
+            "desirability_value": "0,08"
+        },
+        {
+            "benchmark_title": "Shims",
+            "benchmark_long_title": "Number of shims",
+            "benchmark_description": "Number of shims, i.e., scripts that only change data format.",
+            "value": "1/5",
+            "desirability_value": "0.8"
+        }
+    ]
+}

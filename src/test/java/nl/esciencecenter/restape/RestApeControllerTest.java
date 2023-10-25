@@ -40,7 +40,7 @@ public class RestApeControllerTest {
     public void getGreetings() throws Exception {
         mvc.perform(MockMvcRequestBuilders.get("/").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().string(equalTo("Welcome to the RestApe API!")));
+                .andExpect(content().string(equalTo("Welcome to the RESTful APE API!")));
     }
 
     /**
@@ -128,7 +128,7 @@ public class RestApeControllerTest {
         String content = FileUtils.readFileToString(APEFiles.readPathToFile(configPath),
                 StandardCharsets.UTF_8);
         JSONObject jsonObject = new JSONObject(content);
-        JSONArray result = ApeAPI.runSynthesis(jsonObject);
+        JSONArray result = ApeAPI.runSynthesis(jsonObject, false);
         assertTrue(result.isEmpty(), "The encoding should be UNSAT.");
     }
 
@@ -145,7 +145,24 @@ public class RestApeControllerTest {
         String content = FileUtils.readFileToString(APEFiles.readPathToFile(configPath),
                 StandardCharsets.UTF_8);
         JSONObject jsonObject = new JSONObject(content);
-        JSONArray result = ApeAPI.runSynthesis(jsonObject);
+        JSONArray result = ApeAPI.runSynthesis(jsonObject, false);
+        assertFalse(result.isEmpty(), "The encoding should be SAT.");
+    }
+
+    /**
+     * Test the runSynthesis method with POST, with a SAT configuration file.
+     * Workflow solutions should be returned.
+     * 
+     * @throws IOException                  if the file cannot be read.
+     * @throws OWLOntologyCreationException if the ontology cannot be created.
+     */
+    @Test
+    public void runSynthesisAndBenchmarkPass() throws IOException, OWLOntologyCreationException {
+        String configPath = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/WombatP_tools/config.json";
+        String content = FileUtils.readFileToString(APEFiles.readPathToFile(configPath),
+                StandardCharsets.UTF_8);
+        JSONObject jsonObject = new JSONObject(content);
+        JSONArray result = ApeAPI.runSynthesis(jsonObject, true);
         assertFalse(result.isEmpty(), "The encoding should be SAT.");
     }
 

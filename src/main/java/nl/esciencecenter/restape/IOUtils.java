@@ -54,4 +54,17 @@ public class IOUtils {
         return FileUtils.readFileToString(filePath.toFile(), StandardCharsets.UTF_8);
     }
 
+    /**
+     * Get the CWL content of the file at the given path.
+     * 
+     * @param filePath - path to the CWL file
+     * @return CWL content of the file representing a workflow
+     * @throws IOException - if the file cannot be read
+     */
+    public static JSONObject getLocalBenchmarkFile(Path filePath) throws IOException {
+        return ApeAPI.getDummyBenchmark();
+    }
+
+
+    
 }
