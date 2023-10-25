@@ -7,13 +7,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
 
 import nl.esciencecenter.models.SynthesisRun;
 import nl.esciencecenter.service.SynthesisRunService;
 
-//creating RestController 
-public class NotAController {
+/**
+ * RestController to retch the SynthesisRun data from the database.
+ * Not yet implemented.
+ */
+public class NotYetAController {
 
     // autowired the SynthesisRunService class
     @Autowired
