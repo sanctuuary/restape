@@ -44,6 +44,13 @@
             "benchmark_description": "Number of shims, i.e., scripts that only change data format.",
             "value": "1/5",
             "desirability_value": "0.8"
+        },
+        {
+            "benchmark_title": "In bio.tool",
+            "benchmark_long_title": "Available in bio.tools",
+            "benchmark_description": "Number of tools annotated in bio.tools.",
+            "value": "5/5",
+            "desirability_value": "1"
         }
     ]
 }

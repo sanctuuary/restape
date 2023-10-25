@@ -196,7 +196,7 @@ public class ApeAPI {
     public static JSONObject getDummyBenchmark() {
         String content;
         try {
-            content = FileUtils.readFileToString(APEFiles.readPathToFile("src/main/resources/designtime_bench_v2.json"),
+            content = FileUtils.readFileToString(APEFiles.readPathToFile("https://raw.githubusercontent.com/sanctuuary/restape/designtime_bench/src/main/resources/designtime_bench_v2.json"),
                     StandardCharsets.UTF_8);
                     return new JSONObject(content);
                 } catch (IOException e) {
