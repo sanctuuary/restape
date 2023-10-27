@@ -1,0 +1,66 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+cff-version: 1.2.0
+title: RESTful APE
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Vedran
+    family-names: Kasalica
+    email: v.kasalica@esciencecenter.nl
+    affiliation: Netherlands eScience Center
+    orcid: 'https://orcid.org/0000-0002-0097-1056'
+  - family-names: Peter
+    given-names: Kok
+    email: p.kok@esciencecenter.nl
+    affiliation: Netherlands eScience Center
+    orcid: https://orcid.org/0000-0002-6630-7326
+  - family-names: Nauman
+    given-names: Ahmed
+    email: n.ahmed@esciencecenter.nl
+    affiliation: Netherlands eScience Center
+    orcid: https://orcid.org/0000-0003-3559-9941
+  - family-names: Anna-Lena
+    given-names: Lamprecht
+    email: vanna-lena.lamprecht@uni-potsdam.de
+    affiliation: University of Potsdam
+    orcid: https://orcid.org/0000-0003-1953-5606
+  - family-names: Magnus
+    given-names: Palmblad
+    email: n.m.palmblad@lumc.nl
+    affiliation: Leiden University Medical Center
+    orcid: https://orcid.org/0000-0002-5865-8994
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.10048235
+repository-code: 'https://github.com/sanctuuary/restape'
+url: 'https://github.com/sanctuuary/restape#readme'
+abstract: >-
+  A RESTful API for the APE library (RESTful APE) provides a
+  way for users to interact with APE's automated pipeline
+  exploration capabilities through HTTP requests. APE is a
+  command line tool and Java API that automates the
+  exploration of possible computational pipelines from large
+  collections of computational tools.
+
+
+  The RESTful API allows users to submit requests to the APE
+  server for pipeline exploration, which returns results in
+  a standard format such as JSON or XML. Users can interact
+  with APE through a web browser or any other HTTP client,
+  and the API can be integrated into other applications for
+  seamless pipeline exploration.
+
+
+  Overall, the RESTful API for APE provides a powerful and
+  flexible way for users to leverage APE's capabilities in
+  their scientific workflows.
+keywords:
+  - automated workflow composition
+  - RESTful API
+license: Apache-2.0
+commit: 2567159c68716c08e30f466a7079299e76216108
+version: 0.3.0
+date-released: '2023-10-28'
