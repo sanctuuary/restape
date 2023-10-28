@@ -18,18 +18,14 @@ import nl.uu.cs.ape.models.AllPredicates;
 import nl.uu.cs.ape.models.AllTypes;
 import nl.uu.cs.ape.models.logic.constructs.TaxonomyPredicate;
 import nl.uu.cs.ape.utils.APEUtils;
-import nl.uu.cs.ape.utils.BioToolsAPI;
 
 import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 
-import com.oracle.truffle.js.runtime.builtins.JSON;
-import com.oracle.truffle.regex.tregex.util.json.JsonObject;
-
 import guru.nidi.graphviz.attribute.Rank.RankDir;
-
 import lombok.NoArgsConstructor;
 import lombok.AccessLevel;
 
@@ -181,7 +177,7 @@ public class ApeAPI {
      */
     private static boolean computeBenchmarks(SolutionsList candidateSolutions) {
         candidateSolutions.getParallelStream().forEach(workflow -> {
-            // computeBiotoolsBenchmark(workflow);
+            computeBiotoolsBenchmark(workflow);
             JSONObject workflowBenchmarks = getDummyBenchmark();
         });
 
@@ -220,7 +216,12 @@ public class ApeAPI {
 
         workflow.getModuleNodes().forEach(toolNode -> {
             String toolID = toolNode.getUsedModule().getPredicateID();
-            // biotoolJsonObjects.put(toolID, BioToolsAPI.getTool(toolID);
+            try {
+                biotoolJsonObjects.put(toolID, BioTools.fetchToolBioTools(toolID));
+            } catch (JSONException | IOException e) {
+                biotoolJsonObjects.put(toolID, new JSONObject());
+                e.printStackTrace();
+            }
         });
 
 

@@ -5,23 +5,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.attribute.PosixFileAttributes;
-import java.nio.file.attribute.PosixFilePermission;
-import java.nio.file.attribute.PosixFilePermissions;
-import java.util.Set;
-
 import javax.imageio.ImageIO;
 
 import org.apache.commons.io.FileUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import nl.uu.cs.ape.io.APEFiles;
-
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class IOUtils {
 
     /**
