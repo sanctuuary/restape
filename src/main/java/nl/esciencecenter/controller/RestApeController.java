@@ -183,7 +183,8 @@ public class RestApeController {
         }
 
         /**
-         * Retrieve the solution workflow based on the provided run ID and a candidate solution.
+         * Retrieve the solution workflow based on the provided run ID and a candidate
+         * solution.
          * 
          * @param fileName Name of the workflow file (provided under 'name' after
          *                 the synthesis run).
@@ -226,7 +227,7 @@ public class RestApeController {
          */
         @GetMapping("/get_cwl")
         @Operation(summary = "Retrieve a cwl file", description = "Retrieve a cwl file from the file system, describing the workflow.", tags = {
-                        "Dowload" }, parameters = {
+                        "Download" }, parameters = {
                                         @Parameter(name = "file_name", description = "Name of the CWL file (provided under 'figure_name' after the synthesis run).", example = "workflowSolution_0.cwl"),
                                         @Parameter(name = "run_id", description = "ID of the corresponding synthesis run (provided under 'run_id' after the synthesis run).", example = "04ce2ef00c1685150252568")
 
@@ -257,7 +258,7 @@ public class RestApeController {
          */
         @GetMapping("/get_cwl_input")
         @Operation(summary = "Retrieve a cwl input file", description = "Retrieve a cwl input file from the file system, allowing to execute the workflows in the run.", tags = {
-                        "Dowload" }, parameters = {
+                        "Download" }, parameters = {
                                         @Parameter(name = "run_id", description = "ID of the corresponding synthesis run (provided under 'run_id' after the synthesis run).", example = "04ce2ef00c1685150252568")
 
         }, responses = {
@@ -276,10 +277,10 @@ public class RestApeController {
                         return ResponseEntity.badRequest().body("The CWL input file could not be found.");
                 }
         }
-        
 
         /**
-         * Retrieve the design-time benchmark information based on the provided run ID and a
+         * Retrieve the design-time benchmark information based on the provided run ID
+         * and a
          * candidate solution.
          * 
          * @param fileName Name of the CWL file (provided under 'name' after the
@@ -290,7 +291,7 @@ public class RestApeController {
          */
         @GetMapping("/get_bench")
         @Operation(summary = "Retrieve a design-time benchmark file", description = "Retrieve a design-time benchmark file from the file system, describing the workflow.", tags = {
-                        "Dowload" }, parameters = {
+                        "Download" }, parameters = {
                                         @Parameter(name = "file_name", description = "Name of the benchmark file (provided under 'bench_name' after the synthesis run).", example = "workflowSolution_0.json"),
                                         @Parameter(name = "run_id", description = "ID of the corresponding synthesis run (provided under 'run_id' after the synthesis run).", example = "04ce2ef00c1685150252568")
 
@@ -304,9 +305,9 @@ public class RestApeController {
                         @RequestParam("file_name") String fileName,
                         @RequestParam("run_id") String runID) {
                 try {
-                        Path path = RestApeUtils.calculatePath(runID, "Benchmarks", fileName);
+                        Path path = RestApeUtils.calculatePath(runID, "CWL", fileName);
                         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
-                                        .body(IOUtils.getLocalBenchmarkFile(path).toString());
+                                        .body(IOUtils.getLocalBenchmarkFile(path));
                 } catch (IOException e) {
                         return ResponseEntity.badRequest().body("The CWL file could not be found.");
                 }

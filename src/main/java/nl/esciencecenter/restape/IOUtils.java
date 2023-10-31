@@ -13,6 +13,7 @@ import org.json.JSONObject;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class IOUtils {
 
@@ -47,16 +48,14 @@ public class IOUtils {
     }
 
     /**
-     * Get the CWL content of the file at the given path.
+     * Get the JSON content of the file at the given path.
      * 
-     * @param filePath - path to the CWL file
+     * @param filePath - path to the benchmarking JSON file
      * @return CWL content of the file representing a workflow
      * @throws IOException - if the file cannot be read
      */
-    public static JSONObject getLocalBenchmarkFile(Path filePath) throws IOException {
-        return ApeAPI.getDummyBenchmark();
+    public static String getLocalBenchmarkFile(Path filePath) throws IOException {
+        return FileUtils.readFileToString(filePath.toFile(), StandardCharsets.UTF_8);
     }
 
-
-    
 }

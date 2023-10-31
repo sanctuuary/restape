@@ -1,9 +1,13 @@
 package nl.esciencecenter.restape;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import nl.uu.cs.ape.APE;
@@ -135,26 +139,29 @@ public class ApeAPI {
         APE apeFramework = setupApe(configFileURL);
         Collection<ConstraintTemplate> constraints = apeFramework.getConstraintTemplates();
         JSONArray arrayConstraints = new JSONArray();
-        constraints.forEach(constraint -> {
-            arrayConstraints.put(constraint.toJSON());
-        });
+        constraints.forEach(constraint -> arrayConstraints.put(constraint.toJSON()));
 
         return arrayConstraints;
     }
 
     /**
      * Execute the synthesis of workflows using the APE framework.
+     * 
      * @param configJson - configuration of the synthesis run
-     * @param benchmark - boolean to indicate if the workflows should be benchmarked
-     * @return - JSONArray with the metadata results of the synthesis, each element describes a workflow solution (name, length, runID, path to a CWL file, etc.).
+     * @param benchmark  - boolean to indicate if the workflows should be
+     *                   benchmarked
+     * @return - JSONArray with the metadata results of the synthesis, each element
+     *         describes a workflow solution (name, length, runID, path to a CWL
+     *         file, etc.).
      * @throws OWLOntologyCreationException
      * @throws IOException
      */
-    public static JSONArray runSynthesis(JSONObject configJson, boolean benchmark) throws OWLOntologyCreationException, IOException {
+    public static JSONArray runSynthesis(JSONObject configJson, boolean benchmark)
+            throws OWLOntologyCreationException, IOException {
 
         // Define the synthesis run ID
         String runID = RestApeUtils.generateUniqueString(configJson.toString());
-        
+
         SolutionsList candidateSolutions = executeSynthesis(configJson, runID);
 
         // Write solutions (as CWL files and figures) to the file system.
@@ -163,22 +170,33 @@ public class ApeAPI {
 
         // benchmark workflows if required
         if (benchmark) {
-            computeBenchmarks(candidateSolutions);
+            computeBenchmarks(candidateSolutions, runID);
         }
 
         return workflowMetadataToJson(candidateSolutions, runID, benchmark);
     }
 
-
     /**
      * Compute the benchmarks for the workflows.
-     * @param candidateSolutions - SolutionsList object, which contains the results of the synthesis as well as information about the synthesis run.
+     * 
+     * @param candidateSolutions - SolutionsList object, which contains the results
+     *                           of the synthesis as well as information about the
+     *                           synthesis run.
      * @return - boolean to indicate if the benchmarks were computed successfully
      */
-    private static boolean computeBenchmarks(SolutionsList candidateSolutions) {
+    private static boolean computeBenchmarks(SolutionsList candidateSolutions, String runID) {
         candidateSolutions.getParallelStream().forEach(workflow -> {
-            computeBiotoolsBenchmark(workflow);
-            JSONObject workflowBenchmarks = getDummyBenchmark();
+            JSONObject workflowBenchmarks = computeBiotoolsBenchmark(workflow, runID);
+            String titleBenchmark = workflow.getFileName() + ".json";
+            Path solFolder = candidateSolutions.getRunConfiguration().getSolutionDirPath2CWL();
+            File script = solFolder.resolve(titleBenchmark).toFile();
+            try {
+                APEFiles.write2file(workflowBenchmarks.toString(2), script, false);
+            } catch (JSONException | IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
         });
 
         return true;
@@ -186,44 +204,60 @@ public class ApeAPI {
 
     /**
      * Method reads the benchmark file and returns the JSON object.
+     * 
      * @param relativePath - relative path to the benchmark file
      * @return - JSON object with the benchmark
      */
     public static JSONObject getDummyBenchmark() {
         String content;
         try {
-            content = FileUtils.readFileToString(APEFiles.readPathToFile("https://raw.githubusercontent.com/sanctuuary/restape/d11a5f6f0f6de48361f383ba956040fbb5e90e54/src/main/resources/designtime_bench_v2.json"),
+            content = FileUtils.readFileToString(APEFiles.readPathToFile(
+                    "https://raw.githubusercontent.com/sanctuuary/restape/d11a5f6f0f6de48361f383ba956040fbb5e90e54/src/main/resources/designtime_bench_v2.json"),
                     StandardCharsets.UTF_8);
-                    return new JSONObject(content);
-                } catch (IOException e) {
-            // TODO Auto-generated catch block
+            return new JSONObject(content);
+        } catch (IOException e) {
             e.printStackTrace();
             return new JSONObject();
         }
-        
+
     }
 
     /**
      * TODO: implement this method
+     * 
      * @param workflow
      * @return
      */
-    private static JSONObject computeBiotoolsBenchmark(SolutionWorkflow workflow) {
+    private static JSONObject computeBiotoolsBenchmark(SolutionWorkflow workflow, String runID) {
         JSONObject benchmarkResult = new JSONObject();
 
-        // for each tool in the workflow, get the biotools metadata from bio.tool API
-        Map<String, JSONObject> biotoolJsonObjects = new HashMap<String, JSONObject>();
+        // for each tool in the workflow, get the biotools annotations from bio.tool API
+        List<JSONObject> biotoolsAnnotations = new ArrayList<>();
 
         workflow.getModuleNodes().forEach(toolNode -> {
-            String toolID = toolNode.getUsedModule().getPredicateID();
+            String toolID = toolNode.getUsedModule().getPredicateLabel();
             try {
-                biotoolJsonObjects.put(toolID, BioTools.fetchToolBioTools(toolID));
+                biotoolsAnnotations.add(BioTools.fetchToolFromBioTools(toolID));
             } catch (JSONException | IOException e) {
-                biotoolJsonObjects.put(toolID, new JSONObject());
                 e.printStackTrace();
             }
         });
 
+        // Set workflow specific fields
+        benchmarkResult.put("runID", runID);
+        benchmarkResult.put("domainID", "1");
+        benchmarkResult.put("workflowName", workflow.getFileName());
+
+        JSONArray benchmarks = new JSONArray();
+
+        // Compute technical benchmarks from bio.tools
+        benchmarks.put(BioTools.countEntries(biotoolsAnnotations, workflow.getSolutionLength()));
+        benchmarks.put(BioTools.countLicencedEntries(biotoolsAnnotations, workflow.getSolutionLength()));
+        benchmarks.put(BioTools.countMacOSEntries(biotoolsAnnotations, workflow.getSolutionLength()));
+        benchmarks.put(BioTools.countWindowsEntries(biotoolsAnnotations, workflow.getSolutionLength()));
+        benchmarks.put(BioTools.countLicencedEntries(biotoolsAnnotations, workflow.getSolutionLength()));
+
+        benchmarkResult.put("benchmarks", benchmarks);
 
         return benchmarkResult;
 
@@ -235,11 +269,13 @@ public class ApeAPI {
      * 
      * @param configJson - configuration of the synthesis run
      * @runID - ID of the synthesis run
-     * @return - SolutionsList object, which contains the results of the synthesis as well as information about the synthesis run.
+     * @return - SolutionsList object, which contains the results of the synthesis
+     *         as well as information about the synthesis run.
      * @throws IOException
      * @throws OWLOntologyCreationException
      */
-    private static SolutionsList executeSynthesis(JSONObject configJson, String runID) throws OWLOntologyCreationException, IOException {
+    private static SolutionsList executeSynthesis(JSONObject configJson, String runID)
+            throws OWLOntologyCreationException, IOException {
 
         String solutionPath = RestApeUtils.createDirectory(runID);
 
@@ -259,10 +295,12 @@ public class ApeAPI {
         return apeFramework.runSynthesis(runConfig);
     }
 
-
     /**
      * Generate metadata in JSON format that describes the candidate workflows.
-     * @param candidateSolutions - SolutionsList object, which contains the results of the synthesis as well as information about the synthesis run.
+     * 
+     * @param candidateSolutions - SolutionsList object, which contains the results
+     *                           of the synthesis as well as information about the
+     *                           synthesis run.
      * @runID - ID of the synthesis run
      * @return - JSONArray with the results of the synthesis, each element describes
      *         a workflow solution (name, length, runID, path to a CWL file, etc.).
@@ -285,14 +323,12 @@ public class ApeAPI {
                 solutionJson.put("cwl_name", sol.getFileName() + ".cwl");
                 solutionJson.put("figure_name", sol.getFileName() + ".png");
                 if (benchmark) {
-                   solutionJson.put("benchmark_file", sol.getFileName() + ".json"); 
+                    solutionJson.put("benchmark_file", sol.getFileName() + ".json");
                 }
                 generatedSolutionsJson.put(solutionJson);
             }
             return generatedSolutionsJson;
         }
     }
-    
-
 
 }
