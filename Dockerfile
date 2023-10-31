@@ -1,4 +1,21 @@
-FROM eclipse-temurin:17-jdk-jammy
+FROM maven:3-eclipse-temurin-17 AS builder
+
 WORKDIR /app
-COPY restape-0.2.4.jar /app
-ENTRYPOINT ["java", "-jar", "restape-0.2.4.jar"]
+
+COPY pom.xml pom.xml
+
+RUN --mount=type=cache,target=/root/.m2 \
+    mvn -f pom.xml dependency:resolve
+
+COPY . .
+
+RUN --mount=type=cache,target=/root/.m2 \
+    mvn -f pom.xml clean package
+
+
+FROM eclipse-temurin:17-jre-jammy 
+
+WORKDIR /app
+COPY --from=builder /app/target/*.jar /app/runner.jar
+
+ENTRYPOINT ["java", "-jar", "/app/runner.jar"]
