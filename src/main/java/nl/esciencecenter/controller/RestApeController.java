@@ -30,7 +30,7 @@ import nl.esciencecenter.restape.RestApeUtils;
 import nl.uu.cs.ape.configuration.APEConfigException;
 
 /**
- * This class represents the RestApe controller.
+ * This class represents the RESTful APE controller.
  * TODO: Setup response code 400 and 404 when needed.
  * 
  * @author Vedran
@@ -39,14 +39,14 @@ import nl.uu.cs.ape.configuration.APEConfigException;
 public class RestApeController {
 
         /**
-         * Index of the RestApe API. Welcome message.
+         * Index of the RESTful APE API. Welcome message.
          * 
          * @return Welcome message.
          */
         @GetMapping("/")
-        @Operation(summary = "Index", description = "Index of the RestApe API", tags = { "Index" })
+        @Operation(summary = "Index", description = "Index of the RESTful APE API", tags = { "Index" })
         public String index() {
-                return "Welcome to the RestApe API!";
+                return "Welcome to the RESTful APE API!";
         }
 
         /**
@@ -70,7 +70,6 @@ public class RestApeController {
                         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
                                         .body(ApeAPI.getData(configPath).toString());
                 } catch (IOException | OWLOntologyCreationException e) {
-                        // TODO Auto-generated catch block
                         return ResponseEntity.badRequest().body(e.getMessage());
                 }
         }
@@ -96,7 +95,6 @@ public class RestApeController {
                         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
                                         .body(ApeAPI.getTools(configPath).toString());
                 } catch (IOException | OWLOntologyCreationException e) {
-                        // TODO Auto-generated catch block
                         return ResponseEntity.badRequest().body(e.getMessage());
                 }
         }
@@ -149,15 +147,44 @@ public class RestApeController {
                         JSONObject config = new JSONObject(configJson);
 
                         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
-                                        .body(ApeAPI.runSynthesis(config).toString());
+                                        .body(ApeAPI.runSynthesis(config, false).toString());
                 } catch (APEConfigException | JSONException | OWLOntologyCreationException | IOException e) {
                         return ResponseEntity.internalServerError().body(e.getMessage());
                 }
         }
 
         /**
-         * Retrieve the solution workflow based on the provided run ID and a solution
-         * name.
+         * Synthesize workflow based on the provided run configuration file.
+         * 
+         * @param configJson JSON object containing the configuration for the synthesis.
+         * @return List of resulting solutions, where each element describes a workflow
+         *         (name,length, runID, etc.)
+         */
+        @PostMapping("/run_synthesis_and_bench")
+        @Operation(summary = "Run workflow synthesis and provide design-time benchmarks", description = "Run workflow synthesis using the APE library. In addition, evaluate design time benchmarks of the generated workflows. Returns the list of resulting solutions, where each element describes a workflow (name,length, runID, etc.).", tags = {
+                        "APE" }, requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "JSON object containing the configuration for the synthesis.", content = @Content(schema = @Schema(implementation = APEConfig.class))), parameters = {
+                                        @Parameter(name = "configJson", description = "APE configuration JSON file.", example = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/MassSpectometry/config.json") }, externalDocs = @ExternalDocumentation(description = "More information about the APE configuration file can be found here.", url = "https://ape-framework.readthedocs.io/en/latest/docs/specifications/setup.html#configuration-file"), responses = {
+                                                        @ApiResponse(responseCode = "200", description = "Successful operation. Synthesis solutions are returned."),
+                                                        @ApiResponse(responseCode = "400", description = "Invalid input"),
+                                                        @ApiResponse(responseCode = "404", description = "Not found"),
+                                                        @ApiResponse(responseCode = "500", description = "Internal server error"),
+
+        })
+        public ResponseEntity<String> runSynthesisAndBench(
+                        @RequestBody(required = true) Map<String, Object> configJson) {
+                try {
+                        JSONObject config = new JSONObject(configJson);
+
+                        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
+                                        .body(ApeAPI.runSynthesis(config, true).toString());
+                } catch (APEConfigException | JSONException | OWLOntologyCreationException | IOException e) {
+                        return ResponseEntity.internalServerError().body(e.getMessage());
+                }
+        }
+
+        /**
+         * Retrieve the solution workflow based on the provided run ID and a candidate
+         * solution.
          * 
          * @param fileName Name of the workflow file (provided under 'name' after
          *                 the synthesis run).
@@ -166,7 +193,7 @@ public class RestApeController {
          * @return Image in PNG format representing the workflow.
          */
         @GetMapping("/get_image")
-        @Operation(summary = "Retrieve an image representing the workflow.", description = "Retrieve a image from the file system representing the workflow previously generated.", tags = {
+        @Operation(summary = "Retrieve an image representing the workflow.", description = "Retrieve a image from the file system representing the workflow generated.", tags = {
                         "Download" }, parameters = {
                                         @Parameter(name = "file_name", description = "Name of the image file (provided under 'name' after the synthesis run).", example = "workflowSolution_0.png"),
                                         @Parameter(name = "run_id", description = "ID of the corresponding synthesis run (provided under 'run_id' after the synthesis run).", example = "04ce2ef00c1685150252568")
@@ -190,7 +217,7 @@ public class RestApeController {
 
         /**
          * Retrieve the solution CWL workflow based on the provided run ID and a
-         * solution
+         * candidate solution.
          * 
          * @param fileName Name of the CWL file (provided under 'name' after the
          *                 synthesis run).
@@ -199,8 +226,8 @@ public class RestApeController {
          * @return CWL file representing the workflow.
          */
         @GetMapping("/get_cwl")
-        @Operation(summary = "Retrieve a cwl file", description = "Retrieve a cwl file from the workflow system.", tags = {
-                        "Dowload" }, parameters = {
+        @Operation(summary = "Retrieve a cwl file", description = "Retrieve a cwl file from the file system, describing the workflow.", tags = {
+                        "Download" }, parameters = {
                                         @Parameter(name = "file_name", description = "Name of the CWL file (provided under 'figure_name' after the synthesis run).", example = "workflowSolution_0.cwl"),
                                         @Parameter(name = "run_id", description = "ID of the corresponding synthesis run (provided under 'run_id' after the synthesis run).", example = "04ce2ef00c1685150252568")
 
@@ -230,8 +257,8 @@ public class RestApeController {
          * @return CWL input file (.yml) representing the workflow inputs.
          */
         @GetMapping("/get_cwl_input")
-        @Operation(summary = "Retrieve a cwl input file", description = "Retrieve a cwl input file from the workflow system.", tags = {
-                        "Dowload" }, parameters = {
+        @Operation(summary = "Retrieve a cwl input file", description = "Retrieve a cwl input file from the file system, allowing to execute the workflows in the run.", tags = {
+                        "Download" }, parameters = {
                                         @Parameter(name = "run_id", description = "ID of the corresponding synthesis run (provided under 'run_id' after the synthesis run).", example = "04ce2ef00c1685150252568")
 
         }, responses = {
@@ -248,6 +275,41 @@ public class RestApeController {
                                         .body(IOUtils.getLocalCwlFile(path));
                 } catch (IOException e) {
                         return ResponseEntity.badRequest().body("The CWL input file could not be found.");
+                }
+        }
+
+        /**
+         * Retrieve the design-time benchmark information based on the provided run ID
+         * and a
+         * candidate solution.
+         * 
+         * @param fileName Name of the CWL file (provided under 'name' after the
+         *                 synthesis run).
+         * @param runID    ID of the corresponding synthesis run (provided under
+         *                 'run_id' after the synthesis run).
+         * @return CWL file representing the workflow.
+         */
+        @GetMapping("/get_bench")
+        @Operation(summary = "Retrieve a design-time benchmark file", description = "Retrieve a design-time benchmark file from the file system, describing the workflow.", tags = {
+                        "Download" }, parameters = {
+                                        @Parameter(name = "file_name", description = "Name of the benchmark file (provided under 'bench_name' after the synthesis run).", example = "workflowSolution_0.json"),
+                                        @Parameter(name = "run_id", description = "ID of the corresponding synthesis run (provided under 'run_id' after the synthesis run).", example = "04ce2ef00c1685150252568")
+
+        }, responses = {
+                        @ApiResponse(responseCode = "200", description = "Successful operation. Taxonomy of data terms is provided.", content = @Content(mediaType = "application/x-yaml")),
+                        @ApiResponse(responseCode = "400", description = "Invalid input"),
+                        @ApiResponse(responseCode = "404", description = "Not found")
+
+        })
+        public ResponseEntity<String> getBenchmarks(
+                        @RequestParam("file_name") String fileName,
+                        @RequestParam("run_id") String runID) {
+                try {
+                        Path path = RestApeUtils.calculatePath(runID, "CWL", fileName);
+                        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
+                                        .body(IOUtils.getLocalBenchmarkFile(path));
+                } catch (IOException e) {
+                        return ResponseEntity.badRequest().body("The CWL file could not be found.");
                 }
         }
 }

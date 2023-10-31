@@ -14,7 +14,7 @@ import lombok.Getter;
 public class RestApeUtils {
 
     @Getter(lazy = true)
-    private final static String solutionPath = getSolutionsDir();
+    private static final String solutionPath = getSolutionsDir();
     private static String allSolutionsDirName = "apeOutputs";
 
     /**

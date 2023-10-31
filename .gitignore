@@ -86,3 +86,6 @@ nb-configuration.xml
 /lib/
 /apeOutputs/
 /https:/
+src/main/resources/comet.json
+src/main/resources/peptideprophet.json
+src/main/resources/proteinprophet.json

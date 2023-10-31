@@ -1,13 +1,21 @@
 ![RestAPE Logo](https://user-images.githubusercontent.com/11068408/225042915-416975d6-56c9-40d3-97b9-e2854cc19a1c.png#gh-dark-mode-only)
 ![RestAPE Logo](https://user-images.githubusercontent.com/11068408/225042428-824741e2-9618-413c-9546-bc352b3bb23b.png#gh-light-mode-only)
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10048236.svg)](https://doi.org/10.5281/zenodo.10048236)
 ![build](https://github.com/sanctuuary/RestAPE/actions/workflows/maven.yml/badge.svg)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 
+
+A RESTful API for the APE library (RESTful APE) provides a way for users to interact with APE's automated pipeline exploration capabilities through HTTP requests. APE is a command line tool and Java API that automates the exploration of possible computational pipelines from large collections of computational tools.
+
+The RESTful API allows users to submit requests to the APE server for pipeline exploration, which returns results in a standard format such as JSON or XML. Users can interact with APE through a web browser or any other HTTP client, and the API can be integrated into other applications for seamless pipeline exploration.
+
+Overall, the RESTful API for APE provides a powerful and flexible way for users to leverage APE's capabilities in their scientific workflows.
+
+## Development
+
 RESTful API for the APE library, based on Spring Boot.
-
-
 
 To run the Spring Boot directly, you can run the following cmd:
 
