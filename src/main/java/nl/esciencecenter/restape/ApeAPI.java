@@ -253,9 +253,9 @@ public class ApeAPI {
         // Compute technical benchmarks from bio.tools
         benchmarks.put(BioTools.countEntries(biotoolsAnnotations, workflow.getSolutionLength()));
         benchmarks.put(BioTools.countLicencedEntries(biotoolsAnnotations, workflow.getSolutionLength()));
+        benchmarks.put(BioTools.countLinuxEntries(biotoolsAnnotations, workflow.getSolutionLength()));
         benchmarks.put(BioTools.countMacOSEntries(biotoolsAnnotations, workflow.getSolutionLength()));
         benchmarks.put(BioTools.countWindowsEntries(biotoolsAnnotations, workflow.getSolutionLength()));
-        benchmarks.put(BioTools.countLicencedEntries(biotoolsAnnotations, workflow.getSolutionLength()));
 
         benchmarkResult.put("benchmarks", benchmarks);
 

@@ -26,10 +26,12 @@ public class BioTools {
    public static JSONObject fetchToolFromBioTools(String toolID) throws JSONException, IOException {
       JSONObject bioToolAnnotation;
       toolID = toolID.toLowerCase();
-      // String urlToJson = "https://130.226.25.21/api/" + toolID + "?format=json";
-      String urlToJson = "https://raw.githubusercontent.com/bio-tools/content-sandbox/master/data/" +
-            toolID + "/"
-            + toolID + ".biotools.json";
+      String urlToJson = "https://bio.tools/api/" + toolID +
+            "?format=json";
+      // String urlToJson =
+      // "https://raw.githubusercontent.com/bio-tools/content-sandbox/master/data/" +
+      // toolID + "/"
+      // + toolID + ".biotools.json";
       Request request = new Request.Builder().url(urlToJson).build();
       Response response = client.newCall(request).execute();
 
@@ -149,24 +151,34 @@ public class BioTools {
       return benchmarkJson;
    }
 
+   /**
+    * Count the number of tools which have the given field value in the array for
+    * the given field name.
+    * 
+    * @param biotoolsAnnotations
+    * @param fieldName
+    * @param fieldValue
+    * @return
+    */
    private static int countArrayFields(List<JSONObject> biotoolsAnnotations, String fieldName, String fieldValue) {
-      int count = 0;
 
       // for each tool in the workflow, get the biotools metadata from bio.tool API
-      biotoolsAnnotations.stream().filter(tool -> inStringArray(tool, fieldName, fieldValue)).forEach(biotoolJson -> {
-
-      });
-      return count;
+      long count = biotoolsAnnotations.stream().filter(tool -> inStringArray(tool, fieldName, fieldValue)).count();
+      return (int) count;
    }
 
+   /**
+    * Count the number of tools which have the given field name in the biotools
+    * annotation JSON.
+    * 
+    * @param biotoolsAnnotations
+    * @param fieldName
+    * @return
+    */
    private static int countExistanceOfFields(List<JSONObject> biotoolsAnnotations, String fieldName) {
-      int count = 0;
-
       // for each tool in the workflow, get the biotools metadata from bio.tool API
-      biotoolsAnnotations.stream().filter(tool -> inAvailable(tool, fieldName)).forEach(biotoolJson -> {
-
-      });
-      return count;
+      long count = biotoolsAnnotations.stream().filter(tool -> inAvailable(tool, fieldName)).count();
+      return (int) count;
    }
 
    /**
