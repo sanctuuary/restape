@@ -2,6 +2,7 @@ package nl.esciencecenter.restape;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -13,6 +14,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.oracle.truffle.regex.tregex.util.json.JsonObject;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -56,26 +59,55 @@ public class BioTools {
       return bioToolAnnotation;
    }
 
-   public static JSONObject countEntries(List<JSONObject> biotoolsAnnotations, int workflowLength) {
+   public static JSONObject countEntries(List<JSONObject> biotoolsAnnotations) {
+      int workflowLength = biotoolsAnnotations.size();
 
       JSONObject benchmarkJson = new JSONObject();
       benchmarkJson.put("benchmark_title", "bio.tool");
       benchmarkJson.put("benchmark_long_title", "Available in bio.tools");
       benchmarkJson.put("benchmark_description", "Number of tools annotated in bio.tools.");
 
-      int count = biotoolsAnnotations.size();
+      List<JSONObject> biotoolsEntries = computeEntries(biotoolsAnnotations);
+      int count = (int) biotoolsEntries.stream().filter(tool -> tool.getLong("desirability_value") > 0).count();
+
       double desirability = strictDistribution(count, workflowLength);
 
       benchmarkJson.put("value", ratioString(count, workflowLength));
       benchmarkJson.put("desirability_value", Double.toString(desirability));
+      benchmarkJson.put("workflow", new JSONArray(biotoolsEntries));
       return benchmarkJson;
+   }
+
+   private static List<JSONObject> computeEntries(List<JSONObject> biotoolsAnnotations) {
+      List<JSONObject> biotoolsEntries = new ArrayList<>();
+
+      biotoolsAnnotations.stream().forEach(toolAnnot -> {
+         JSONObject biotoolsEntry = new JSONObject();
+         biotoolsEntry.put("description", toolAnnot.getString("toolID"));
+         if (emptyToolAnnotation(toolAnnot)) {
+            biotoolsEntry.put("desirability_value", 0);
+            biotoolsEntry.put("value", "unavailable");
+         } else {
+            biotoolsEntry.put("desirability_value", 1);
+            biotoolsEntry.put("value", "available");
+         }
+
+         biotoolsEntries.add(biotoolsEntry);
+      });
+
+      return biotoolsEntries;
+   }
+
+   private static boolean emptyToolAnnotation(JSONObject toolAnnot) {
+      return !toolAnnot.has("biotoolsID");
    }
 
    private static String ratioString(int count, int length) {
       return count + "/" + length;
    }
 
-   public static JSONObject countLinuxEntries(List<JSONObject> biotoolsAnnotations, int workflowLength) {
+   public static JSONObject countLinuxEntries(List<JSONObject> biotoolsAnnotations) {
+      int workflowLength = biotoolsAnnotations.size();
 
       JSONObject benchmarkJson = new JSONObject();
       benchmarkJson.put("benchmark_title", "Linux");
@@ -103,7 +135,8 @@ public class BioTools {
       }
    }
 
-   public static JSONObject countMacOSEntries(List<JSONObject> biotoolsAnnotations, int workflowLength) {
+   public static JSONObject countMacOSEntries(List<JSONObject> biotoolsAnnotations) {
+      int workflowLength = biotoolsAnnotations.size();
 
       JSONObject benchmarkJson = new JSONObject();
       benchmarkJson.put("benchmark_title", "Mac OS");
@@ -119,7 +152,8 @@ public class BioTools {
       return benchmarkJson;
    }
 
-   public static JSONObject countWindowsEntries(List<JSONObject> biotoolsAnnotations, int workflowLength) {
+   public static JSONObject countWindowsEntries(List<JSONObject> biotoolsAnnotations) {
+      int workflowLength = biotoolsAnnotations.size();
 
       JSONObject benchmarkJson = new JSONObject();
       benchmarkJson.put("benchmark_title", "Windows");
@@ -135,7 +169,8 @@ public class BioTools {
       return benchmarkJson;
    }
 
-   public static JSONObject countLicencedEntries(List<JSONObject> biotoolsAnnotations, int workflowLength) {
+   public static JSONObject countLicencedEntries(List<JSONObject> biotoolsAnnotations) {
+      int workflowLength = biotoolsAnnotations.size();
 
       JSONObject benchmarkJson = new JSONObject();
       benchmarkJson.put("benchmark_title", "Licensed");

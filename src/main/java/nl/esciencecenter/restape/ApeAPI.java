@@ -29,6 +29,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 
+import com.oracle.truffle.regex.tregex.util.json.JsonObject;
+
 import guru.nidi.graphviz.attribute.Rank.RankDir;
 import lombok.NoArgsConstructor;
 import lombok.AccessLevel;
@@ -237,8 +239,14 @@ public class ApeAPI {
         workflow.getModuleNodes().forEach(toolNode -> {
             String toolID = toolNode.getUsedModule().getPredicateLabel();
             try {
-                biotoolsAnnotations.add(BioTools.fetchToolFromBioTools(toolID));
+
+                JSONObject biotoolsEntry = BioTools.fetchToolFromBioTools(toolID);
+                biotoolsEntry.put("toolID", toolNode.getUsedModule().getPredicateLabel());
+                biotoolsAnnotations.add(biotoolsEntry);
             } catch (JSONException | IOException e) {
+                JSONObject biotoolsEntry = new JSONObject();
+                biotoolsEntry.put("toolID", toolNode.getUsedModule().getPredicateLabel());
+                biotoolsAnnotations.add(biotoolsEntry);
                 e.printStackTrace();
             }
         });
@@ -251,11 +259,11 @@ public class ApeAPI {
         JSONArray benchmarks = new JSONArray();
 
         // Compute technical benchmarks from bio.tools
-        benchmarks.put(BioTools.countEntries(biotoolsAnnotations, workflow.getSolutionLength()));
-        benchmarks.put(BioTools.countLicencedEntries(biotoolsAnnotations, workflow.getSolutionLength()));
-        benchmarks.put(BioTools.countLinuxEntries(biotoolsAnnotations, workflow.getSolutionLength()));
-        benchmarks.put(BioTools.countMacOSEntries(biotoolsAnnotations, workflow.getSolutionLength()));
-        benchmarks.put(BioTools.countWindowsEntries(biotoolsAnnotations, workflow.getSolutionLength()));
+        benchmarks.put(BioTools.countEntries(biotoolsAnnotations));
+        benchmarks.put(BioTools.countLicencedEntries(biotoolsAnnotations));
+        benchmarks.put(BioTools.countLinuxEntries(biotoolsAnnotations));
+        benchmarks.put(BioTools.countMacOSEntries(biotoolsAnnotations));
+        benchmarks.put(BioTools.countWindowsEntries(biotoolsAnnotations));
 
         benchmarkResult.put("benchmarks", benchmarks);
 

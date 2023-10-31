@@ -58,7 +58,30 @@
             "benchmark_long_title": "Tools with a license",
             "benchmark_description": "Number of tools which have a license specified.",
             "value": "4/5",
-            "desirability_value": "0,08"
+            "desirability_value": "0,08",
+            "steps": [
+                {
+                    "description": "tool1",
+                    "desirability_value": 1,
+                    "value": "GPL"
+                },
+                {
+                    "description": "tool2",
+                    "desirability_value": 1
+                },
+                {
+                    "description": "tool3",
+                    "desirability_value": 1
+                },
+                {
+                    "description": "tool4",
+                    "desirability_value": 0
+                },
+                {
+                    "description": "tool5",
+                    "desirability_value": 1
+                }
+            ]
         },
         {
             "benchmark_title": "Shims",
