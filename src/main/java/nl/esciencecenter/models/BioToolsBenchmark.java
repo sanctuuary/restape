@@ -23,58 +23,12 @@ public class BioToolsBenchmark {
     private double desirabilityValue;
     private List<WorkflowStepBench> workflow;
 
-    public static BioToolsBenchmark countEntries(List<JSONObject> biotoolsAnnotations, BenchmarkBase benchmarkTitle) {
-        BioToolsBenchmark benchmark = new BioToolsBenchmark(benchmarkTitle);
-        int workflowLength = biotoolsAnnotations.size();
-
-        benchmark.workflow = computeEntries(biotoolsAnnotations);
-        int count = (int) benchmark.workflow.stream().filter(tool -> tool.getDesirabilityValue() > 0).count();
-
-        benchmark.desirabilityValue = strictDistribution(count, workflowLength);
-        benchmark.value = ratioString(count, workflowLength);
-
-        return benchmark;
-    }
-
-    private static List<WorkflowStepBench> computeEntries(List<JSONObject> biotoolsAnnotations) {
-        List<WorkflowStepBench> biotoolsEntries = new ArrayList<>();
-
-        biotoolsAnnotations.stream().forEach(toolAnnot -> {
-            WorkflowStepBench biotoolsEntryBenchmark = new WorkflowStepBench();
-            biotoolsEntryBenchmark.setBenchmarkDescription(toolAnnot.getString("toolID"));
-            if (emptyToolAnnotation(toolAnnot)) {
-                biotoolsEntryBenchmark.setDesirabilityValue(0);
-                biotoolsEntryBenchmark.setValue("unavailable");
-            } else {
-                biotoolsEntryBenchmark.setDesirabilityValue(1);
-                biotoolsEntryBenchmark.setValue("available");
-            }
-
-            biotoolsEntries.add(biotoolsEntryBenchmark);
-        });
-
-        return biotoolsEntries;
-    }
-
     private static boolean emptyToolAnnotation(JSONObject toolAnnot) {
         return !toolAnnot.has("biotoolsID");
     }
 
     private static String ratioString(int count, int length) {
         return count + "/" + length;
-    }
-
-    public static BioToolsBenchmark countLinuxEntries(List<JSONObject> biotoolsAnnotations,
-            BenchmarkBase benchmarkTitle) {
-        BioToolsBenchmark benchmark = new BioToolsBenchmark(benchmarkTitle);
-        int workflowLength = biotoolsAnnotations.size();
-
-        int count = countArrayFields(biotoolsAnnotations, "operatingSystem", "Linux");
-        benchmark.desirabilityValue = normalDistribution(count, workflowLength);
-
-        benchmark.value = ratioString(count, workflowLength);
-
-        return benchmark;
     }
 
     private static double normalDistribution(int count, int workflowLength) {
@@ -89,27 +43,14 @@ public class BioToolsBenchmark {
         }
     }
 
-    public static BioToolsBenchmark countMacOSEntries(List<JSONObject> biotoolsAnnotations,
-            BenchmarkBase benchmarkTitle) {
+    public static BioToolsBenchmark countEntries(List<JSONObject> biotoolsAnnotations, BenchmarkBase benchmarkTitle) {
         BioToolsBenchmark benchmark = new BioToolsBenchmark(benchmarkTitle);
         int workflowLength = biotoolsAnnotations.size();
 
-        int count = countArrayFields(biotoolsAnnotations, "operatingSystem", "Mac");
-        benchmark.desirabilityValue = normalDistribution(count, workflowLength);
+        benchmark.workflow = countEntries(biotoolsAnnotations);
+        int count = (int) benchmark.workflow.stream().filter(tool -> tool.getDesirabilityValue() > 0).count();
 
-        benchmark.value = ratioString(count, workflowLength);
-
-        return benchmark;
-    }
-
-    public static BioToolsBenchmark countWindowsEntries(List<JSONObject> biotoolsAnnotations,
-            BenchmarkBase benchmarkTitle) {
-        BioToolsBenchmark benchmark = new BioToolsBenchmark(benchmarkTitle);
-        int workflowLength = biotoolsAnnotations.size();
-
-        int count = countArrayFields(biotoolsAnnotations, "operatingSystem", "Windows");
-        benchmark.desirabilityValue = normalDistribution(count, workflowLength);
-
+        benchmark.desirabilityValue = strictDistribution(count, workflowLength);
         benchmark.value = ratioString(count, workflowLength);
 
         return benchmark;
@@ -120,12 +61,81 @@ public class BioToolsBenchmark {
         BioToolsBenchmark benchmark = new BioToolsBenchmark(benchmarkTitle);
         int workflowLength = biotoolsAnnotations.size();
 
-        int count = countExistanceOfFields(biotoolsAnnotations, "license");
+        benchmark.workflow = countField(biotoolsAnnotations, benchmarkTitle.getExpectedField());
+        int count = (int) benchmark.workflow.stream().filter(tool -> tool.getDesirabilityValue() > 0).count();
+
         benchmark.desirabilityValue = strictDistribution(count, workflowLength);
+        benchmark.value = ratioString(count, workflowLength);
+
+        return benchmark;
+    }
+
+    public static BioToolsBenchmark countOSEntries(List<JSONObject> biotoolsAnnotations,
+            BenchmarkBase benchmarkTitle) {
+        BioToolsBenchmark benchmark = new BioToolsBenchmark(benchmarkTitle);
+        int workflowLength = biotoolsAnnotations.size();
+
+        benchmark.workflow = countArrayFieldVal(biotoolsAnnotations, benchmarkTitle.getExpectedField(),
+                benchmarkTitle.getExpectedValue());
+        int count = (int) benchmark.workflow.stream().filter(tool -> tool.getDesirabilityValue() > 0).count();
+
+        benchmark.desirabilityValue = normalDistribution(count, workflowLength);
 
         benchmark.value = ratioString(count, workflowLength);
 
         return benchmark;
+    }
+
+    /**
+     * Count entries that exist in the bio.tools annotation JSON.
+     * 
+     * @param biotoolsAnnotations
+     * @return
+     */
+    private static List<WorkflowStepBench> countEntries(List<JSONObject> biotoolsAnnotations) {
+        List<WorkflowStepBench> biotoolsEntries = new ArrayList<>();
+
+        biotoolsAnnotations.stream().forEach(toolAnnot -> {
+            WorkflowStepBench biotoolsEntryBenchmark = new WorkflowStepBench();
+            biotoolsEntryBenchmark.setBenchmarkDescription(toolAnnot.getString("toolID"));
+            if (emptyToolAnnotation(toolAnnot)) {
+                biotoolsEntryBenchmark.setDesirabilityValue(0);
+                biotoolsEntryBenchmark.setValue("unavailable");
+            } else {
+                biotoolsEntryBenchmark.setDesirabilityValue(1);
+                biotoolsEntryBenchmark.setValue("available");
+            }
+            biotoolsEntries.add(biotoolsEntryBenchmark);
+        });
+
+        return biotoolsEntries;
+    }
+
+    /**
+     * Count the number of tools which have the given field name in the bio.tools
+     * annotation JSON.
+     * 
+     * @param biotoolsAnnotations
+     * @param fieldName
+     * @return
+     */
+    private static List<WorkflowStepBench> countField(List<JSONObject> biotoolsAnnotations, String fieldName) {
+        List<WorkflowStepBench> biotoolsEntries = new ArrayList<>();
+
+        biotoolsAnnotations.stream().forEach(toolAnnot -> {
+            WorkflowStepBench biotoolsEntryBenchmark = new WorkflowStepBench();
+            biotoolsEntryBenchmark.setBenchmarkDescription(toolAnnot.getString("toolID"));
+            if (!inAvailable(toolAnnot, fieldName)) {
+                biotoolsEntryBenchmark.setDesirabilityValue(0);
+                biotoolsEntryBenchmark.setValue("not available");
+            } else {
+                biotoolsEntryBenchmark.setDesirabilityValue(1);
+                biotoolsEntryBenchmark.setValue("available");
+            }
+            biotoolsEntries.add(biotoolsEntryBenchmark);
+        });
+
+        return biotoolsEntries;
     }
 
     /**
@@ -137,11 +147,24 @@ public class BioToolsBenchmark {
      * @param fieldValue
      * @return
      */
-    private static int countArrayFields(List<JSONObject> biotoolsAnnotations, String fieldName, String fieldValue) {
+    private static List<WorkflowStepBench> countArrayFieldVal(List<JSONObject> biotoolsAnnotations, String fieldName,
+            String fieldValue) {
+        List<WorkflowStepBench> biotoolsEntries = new ArrayList<>();
 
-        // for each tool in the workflow, get the biotools metadata from bio.tool API
-        long count = biotoolsAnnotations.stream().filter(tool -> inStringArray(tool, fieldName, fieldValue)).count();
-        return (int) count;
+        biotoolsAnnotations.stream().forEach(toolAnnot -> {
+            WorkflowStepBench biotoolsEntryBenchmark = new WorkflowStepBench();
+            biotoolsEntryBenchmark.setBenchmarkDescription(toolAnnot.getString("toolID"));
+            if (!inStringArray(toolAnnot, fieldName, fieldValue)) {
+                biotoolsEntryBenchmark.setDesirabilityValue(0);
+                biotoolsEntryBenchmark.setValue("not supported");
+            } else {
+                biotoolsEntryBenchmark.setDesirabilityValue(1);
+                biotoolsEntryBenchmark.setValue("supported");
+            }
+            biotoolsEntries.add(biotoolsEntryBenchmark);
+        });
+
+        return biotoolsEntries;
     }
 
     /**

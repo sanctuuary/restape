@@ -1,7 +1,5 @@
 package nl.esciencecenter.models;
 
-import org.json.JSONObject;
-
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;

@@ -259,22 +259,22 @@ public class ApeAPI {
         JSONArray benchmarks = new JSONArray();
 
         BenchmarkBase bioToolBenchmark = new BenchmarkBase("bio.tool", "Available in bio.tools",
-                "Number of tools annotated in bio.tools.");
+                "Number of tools annotated in bio.tools.", null, null);
         BenchmarkBase licensedBenchmark = new BenchmarkBase("Licensed", "Tools with a license",
-                "Number of tools which have a license specified.");
+                "Number of tools which have a license specified.", "license", null);
         BenchmarkBase linuxBenchmark = new BenchmarkBase("Linux", "Linux (OS) supported tools",
-                "Number of tools which support Linux OS.");
+                "Number of tools which support Linux OS.", "operatingSystem", "Linux");
         BenchmarkBase macOSBenchmark = new BenchmarkBase("Mac OS", "Mac OS supported tools",
-                "Number of tools which support Mac OS.");
+                "Number of tools which support Mac OS.", "operatingSystem", "Mac");
         BenchmarkBase windowsBenchmark = new BenchmarkBase("Windows", "Windows (OS) supported tools",
-                "Number of tools which support Windows OS.");
+                "Number of tools which support Windows OS.", "operatingSystem", "Windows");
 
         benchmarks.put(BioToolsBenchmark.countEntries(biotoolsAnnotations, bioToolBenchmark).getJson());
         benchmarks.put(BioToolsBenchmark.countLicencedEntries(biotoolsAnnotations, licensedBenchmark).getJson());
-        benchmarks.put(BioToolsBenchmark.countLinuxEntries(biotoolsAnnotations, linuxBenchmark).getJson());
+        benchmarks.put(BioToolsBenchmark.countOSEntries(biotoolsAnnotations, linuxBenchmark).getJson());
 
-        benchmarks.put(BioToolsBenchmark.countMacOSEntries(biotoolsAnnotations, macOSBenchmark).getJson());
-        benchmarks.put(BioToolsBenchmark.countWindowsEntries(biotoolsAnnotations, windowsBenchmark).getJson());
+        benchmarks.put(BioToolsBenchmark.countOSEntries(biotoolsAnnotations, macOSBenchmark).getJson());
+        benchmarks.put(BioToolsBenchmark.countOSEntries(biotoolsAnnotations, windowsBenchmark).getJson());
 
         benchmarkResult.put("benchmarks", benchmarks);
 

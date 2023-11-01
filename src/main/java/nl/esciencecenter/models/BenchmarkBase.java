@@ -1,6 +1,5 @@
 package nl.esciencecenter.models;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import lombok.AllArgsConstructor;
@@ -19,6 +18,8 @@ public class BenchmarkBase {
     private String benchmarkLongTitle;
     @NonNull
     private String benchmarkDescription;
+    private String expectedField;
+    private String expectedValue;
 
     public JSONObject getTitleJson() {
         JSONObject benchmarkJson = new JSONObject();
