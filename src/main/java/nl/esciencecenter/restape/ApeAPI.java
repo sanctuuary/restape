@@ -6,10 +6,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import nl.esciencecenter.models.BenchmarkBase;
+import nl.esciencecenter.models.BioToolsBenchmark;
 import nl.uu.cs.ape.APE;
 import nl.uu.cs.ape.configuration.APECoreConfig;
 import nl.uu.cs.ape.configuration.APERunConfig;
@@ -195,7 +195,6 @@ public class ApeAPI {
             try {
                 APEFiles.write2file(workflowBenchmarks.toString(2), script, false);
             } catch (JSONException | IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
 
@@ -205,6 +204,7 @@ public class ApeAPI {
     }
 
     /**
+     * TODO: Delete
      * Method reads the benchmark file and returns the JSON object.
      * 
      * @param relativePath - relative path to the benchmark file
@@ -225,7 +225,7 @@ public class ApeAPI {
     }
 
     /**
-     * TODO: implement this method
+     * Compute the benchmarks for the workflows and return it in JSON format.
      * 
      * @param workflow
      * @return
@@ -258,12 +258,23 @@ public class ApeAPI {
 
         JSONArray benchmarks = new JSONArray();
 
-        // Compute technical benchmarks from bio.tools
-        benchmarks.put(BioTools.countEntries(biotoolsAnnotations));
-        benchmarks.put(BioTools.countLicencedEntries(biotoolsAnnotations));
-        benchmarks.put(BioTools.countLinuxEntries(biotoolsAnnotations));
-        benchmarks.put(BioTools.countMacOSEntries(biotoolsAnnotations));
-        benchmarks.put(BioTools.countWindowsEntries(biotoolsAnnotations));
+        BenchmarkBase bioToolBenchmark = new BenchmarkBase("bio.tool", "Available in bio.tools",
+                "Number of tools annotated in bio.tools.", null, null);
+        BenchmarkBase licensedBenchmark = new BenchmarkBase("Licensed", "Tools with a license",
+                "Number of tools which have a license specified.", "license", null);
+        BenchmarkBase linuxBenchmark = new BenchmarkBase("Linux", "Linux (OS) supported tools",
+                "Number of tools which support Linux OS.", "operatingSystem", "Linux");
+        BenchmarkBase macOSBenchmark = new BenchmarkBase("Mac OS", "Mac OS supported tools",
+                "Number of tools which support Mac OS.", "operatingSystem", "Mac");
+        BenchmarkBase windowsBenchmark = new BenchmarkBase("Windows", "Windows (OS) supported tools",
+                "Number of tools which support Windows OS.", "operatingSystem", "Windows");
+
+        benchmarks.put(BioToolsBenchmark.countEntries(biotoolsAnnotations, bioToolBenchmark).getJson());
+        benchmarks.put(BioToolsBenchmark.countLicencedEntries(biotoolsAnnotations, licensedBenchmark).getJson());
+        benchmarks.put(BioToolsBenchmark.countOSEntries(biotoolsAnnotations, linuxBenchmark).getJson());
+
+        benchmarks.put(BioToolsBenchmark.countOSEntries(biotoolsAnnotations, macOSBenchmark).getJson());
+        benchmarks.put(BioToolsBenchmark.countOSEntries(biotoolsAnnotations, windowsBenchmark).getJson());
 
         benchmarkResult.put("benchmarks", benchmarks);
 
