@@ -11,10 +11,10 @@ import lombok.NonNull;
  */
 public class WorkflowStepBench {
     @NonNull
-    private String benchmarkDescription;
+    private String description;
     @NonNull
     private String value;
     @NonNull
-    private double desirabilityValue;
+    private double desirability_value;
 
 }
