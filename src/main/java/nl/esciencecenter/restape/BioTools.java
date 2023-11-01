@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import nl.esciencecenter.models.Benchmark;
+import nl.esciencecenter.models.BenchmarkBase;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class BioTools {
@@ -55,5 +55,5 @@ public class BioTools {
       log.debug("The list of tools successfully fetched from bio.tools.");
       return bioToolAnnotation;
    }
-   
+
 }
