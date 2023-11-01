@@ -9,7 +9,10 @@ import lombok.NonNull;
 
 @Data
 @AllArgsConstructor
-public class Benchmark {
+/**
+ * Base information for a benchmark.
+ */
+public class BenchmarkBase {
     @NonNull
     private String benchmarkTitle;
     @NonNull

@@ -7,49 +7,50 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class BenchmarkBioTools {
+/**
+ * Class representing the design-time benchmarks for a workflow obtained from
+ * bio.tools API.
+ */
+public class BioToolsBenchmark {
 
     @NonNull
-    private Benchmark benchmarkTitle;
+    private BenchmarkBase benchmarkTitle;
     private String value;
-    private String desirabilityValue;
-    private JSONArray workflow;
+    private double desirabilityValue;
+    private List<WorkflowStepBench> workflow;
 
-    public static BenchmarkBioTools countEntries(List<JSONObject> biotoolsAnnotations, Benchmark benchmarkTitle) {
-        BenchmarkBioTools benchmark = new BenchmarkBioTools(benchmarkTitle);
+    public static BioToolsBenchmark countEntries(List<JSONObject> biotoolsAnnotations, BenchmarkBase benchmarkTitle) {
+        BioToolsBenchmark benchmark = new BioToolsBenchmark(benchmarkTitle);
         int workflowLength = biotoolsAnnotations.size();
 
-        List<JSONObject> biotoolsEntries = computeEntries(biotoolsAnnotations);
-        int count = (int) biotoolsEntries.stream().filter(tool -> tool.getLong("desirability_value") > 0).count();
+        benchmark.workflow = computeEntries(biotoolsAnnotations);
+        int count = (int) benchmark.workflow.stream().filter(tool -> tool.getDesirabilityValue() > 0).count();
 
-        double desirability = strictDistribution(count, workflowLength);
-
+        benchmark.desirabilityValue = strictDistribution(count, workflowLength);
         benchmark.value = ratioString(count, workflowLength);
-        benchmark.desirabilityValue = Double.toString(desirability);
-        benchmark.workflow = new JSONArray(biotoolsEntries);
+
         return benchmark;
     }
 
-    private static List<JSONObject> computeEntries(List<JSONObject> biotoolsAnnotations) {
-        List<JSONObject> biotoolsEntries = new ArrayList<>();
+    private static List<WorkflowStepBench> computeEntries(List<JSONObject> biotoolsAnnotations) {
+        List<WorkflowStepBench> biotoolsEntries = new ArrayList<>();
 
         biotoolsAnnotations.stream().forEach(toolAnnot -> {
-            JSONObject biotoolsEntry = new JSONObject();
-            biotoolsEntry.put("description", toolAnnot.getString("toolID"));
+            WorkflowStepBench biotoolsEntryBenchmark = new WorkflowStepBench();
+            biotoolsEntryBenchmark.setBenchmarkDescription(toolAnnot.getString("toolID"));
             if (emptyToolAnnotation(toolAnnot)) {
-                biotoolsEntry.put("desirability_value", 0);
-                biotoolsEntry.put("value", "unavailable");
+                biotoolsEntryBenchmark.setDesirabilityValue(0);
+                biotoolsEntryBenchmark.setValue("unavailable");
             } else {
-                biotoolsEntry.put("desirability_value", 1);
-                biotoolsEntry.put("value", "available");
+                biotoolsEntryBenchmark.setDesirabilityValue(1);
+                biotoolsEntryBenchmark.setValue("available");
             }
 
-            biotoolsEntries.add(biotoolsEntry);
+            biotoolsEntries.add(biotoolsEntryBenchmark);
         });
 
         return biotoolsEntries;
@@ -63,15 +64,15 @@ public class BenchmarkBioTools {
         return count + "/" + length;
     }
 
-    public static BenchmarkBioTools countLinuxEntries(List<JSONObject> biotoolsAnnotations, Benchmark benchmarkTitle) {
-        BenchmarkBioTools benchmark = new BenchmarkBioTools(benchmarkTitle);
+    public static BioToolsBenchmark countLinuxEntries(List<JSONObject> biotoolsAnnotations,
+            BenchmarkBase benchmarkTitle) {
+        BioToolsBenchmark benchmark = new BioToolsBenchmark(benchmarkTitle);
         int workflowLength = biotoolsAnnotations.size();
 
         int count = countArrayFields(biotoolsAnnotations, "operatingSystem", "Linux");
-        double desirability = normalDistribution(count, workflowLength);
+        benchmark.desirabilityValue = normalDistribution(count, workflowLength);
 
         benchmark.value = ratioString(count, workflowLength);
-        benchmark.desirabilityValue = Double.toString(desirability);
 
         return benchmark;
     }
@@ -88,43 +89,41 @@ public class BenchmarkBioTools {
         }
     }
 
-    public static BenchmarkBioTools countMacOSEntries(List<JSONObject> biotoolsAnnotations, Benchmark benchmarkTitle) {
-        BenchmarkBioTools benchmark = new BenchmarkBioTools(benchmarkTitle);
+    public static BioToolsBenchmark countMacOSEntries(List<JSONObject> biotoolsAnnotations,
+            BenchmarkBase benchmarkTitle) {
+        BioToolsBenchmark benchmark = new BioToolsBenchmark(benchmarkTitle);
         int workflowLength = biotoolsAnnotations.size();
 
         int count = countArrayFields(biotoolsAnnotations, "operatingSystem", "Mac");
-        double desirability = normalDistribution(count, workflowLength);
+        benchmark.desirabilityValue = normalDistribution(count, workflowLength);
 
         benchmark.value = ratioString(count, workflowLength);
-        benchmark.desirabilityValue = Double.toString(desirability);
 
         return benchmark;
     }
 
-    public static BenchmarkBioTools countWindowsEntries(List<JSONObject> biotoolsAnnotations,
-            Benchmark benchmarkTitle) {
-        BenchmarkBioTools benchmark = new BenchmarkBioTools(benchmarkTitle);
+    public static BioToolsBenchmark countWindowsEntries(List<JSONObject> biotoolsAnnotations,
+            BenchmarkBase benchmarkTitle) {
+        BioToolsBenchmark benchmark = new BioToolsBenchmark(benchmarkTitle);
         int workflowLength = biotoolsAnnotations.size();
 
         int count = countArrayFields(biotoolsAnnotations, "operatingSystem", "Windows");
-        double desirability = normalDistribution(count, workflowLength);
+        benchmark.desirabilityValue = normalDistribution(count, workflowLength);
 
         benchmark.value = ratioString(count, workflowLength);
-        benchmark.desirabilityValue = Double.toString(desirability);
 
         return benchmark;
     }
 
-    public static BenchmarkBioTools countLicencedEntries(List<JSONObject> biotoolsAnnotations,
-            Benchmark benchmarkTitle) {
-        BenchmarkBioTools benchmark = new BenchmarkBioTools(benchmarkTitle);
+    public static BioToolsBenchmark countLicencedEntries(List<JSONObject> biotoolsAnnotations,
+            BenchmarkBase benchmarkTitle) {
+        BioToolsBenchmark benchmark = new BioToolsBenchmark(benchmarkTitle);
         int workflowLength = biotoolsAnnotations.size();
 
         int count = countExistanceOfFields(biotoolsAnnotations, "license");
-        double desirability = strictDistribution(count, workflowLength);
+        benchmark.desirabilityValue = strictDistribution(count, workflowLength);
 
         benchmark.value = ratioString(count, workflowLength);
-        benchmark.desirabilityValue = Double.toString(desirability);
 
         return benchmark;
     }
