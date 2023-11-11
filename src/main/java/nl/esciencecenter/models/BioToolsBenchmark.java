@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import nl.esciencecenter.restape.ToolBenchmarkingAPIs;
 
 @RequiredArgsConstructor
 /**
@@ -97,7 +98,7 @@ public class BioToolsBenchmark {
 
         biotoolsAnnotations.stream().forEach(toolAnnot -> {
             WorkflowStepBench biotoolsEntryBenchmark = new WorkflowStepBench();
-            biotoolsEntryBenchmark.setDescription(toolAnnot.getString("toolID"));
+            biotoolsEntryBenchmark.setDescription(toolAnnot.getString(ToolBenchmarkingAPIs.restAPEtoolID));
             if (emptyToolAnnotation(toolAnnot)) {
                 biotoolsEntryBenchmark.setDesirability_value(0);
                 biotoolsEntryBenchmark.setValue("unavailable");
@@ -124,7 +125,7 @@ public class BioToolsBenchmark {
 
         biotoolsAnnotations.stream().forEach(toolAnnot -> {
             WorkflowStepBench biotoolsEntryBenchmark = new WorkflowStepBench();
-            biotoolsEntryBenchmark.setDescription(toolAnnot.getString("toolID"));
+            biotoolsEntryBenchmark.setDescription(toolAnnot.getString(ToolBenchmarkingAPIs.restAPEtoolID));
             if (!inAvailable(toolAnnot, fieldName)) {
                 biotoolsEntryBenchmark.setDesirability_value(0);
                 biotoolsEntryBenchmark.setValue("not available");
@@ -153,7 +154,7 @@ public class BioToolsBenchmark {
 
         biotoolsAnnotations.stream().forEach(toolAnnot -> {
             WorkflowStepBench biotoolsEntryBenchmark = new WorkflowStepBench();
-            biotoolsEntryBenchmark.setDescription(toolAnnot.getString("toolID"));
+            biotoolsEntryBenchmark.setDescription(toolAnnot.getString(ToolBenchmarkingAPIs.restAPEtoolID));
             if (!inStringArray(toolAnnot, fieldName, fieldValue)) {
                 biotoolsEntryBenchmark.setDesirability_value(0);
                 biotoolsEntryBenchmark.setValue("not supported");

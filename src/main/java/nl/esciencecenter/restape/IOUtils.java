@@ -9,7 +9,6 @@ import java.nio.file.Path;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.io.FileUtils;
-import org.json.JSONObject;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
