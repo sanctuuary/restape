@@ -103,10 +103,6 @@ public class ToolBenchmarkingAPIs {
 
       JSONArray benchmarks = new JSONArray();
 
-      BenchmarkBase bioToolBenchmark = new BenchmarkBase("bio.tool", "Available in bio.tools",
-            "Number of tools annotated in bio.tools.", null, null);
-      benchmarks.put(BioToolsBenchmark.countEntries(biotoolsAnnotations, bioToolBenchmark).getJson());
-
       BenchmarkBase licensedBenchmark = new BenchmarkBase("Licensed", "Tools with a license",
             "Number of tools which have a license specified.", "license", null);
       benchmarks.put(BioToolsBenchmark.countLicencedEntries(biotoolsAnnotations, licensedBenchmark).getJson());
@@ -122,6 +118,16 @@ public class ToolBenchmarkingAPIs {
       BenchmarkBase windowsBenchmark = new BenchmarkBase("Windows", "Windows (OS) supported tools",
             "Number of tools which support Windows OS.", "operatingSystem", "Windows");
       benchmarks.put(BioToolsBenchmark.countOSEntries(biotoolsAnnotations, windowsBenchmark).getJson());
+
+      BenchmarkBase bioToolBenchmark = new BenchmarkBase("In bio.tools", "Available in bio.tools",
+            "Number of tools annotated in bio.tools.", null, null);
+      benchmarks.put(BioToolsBenchmark.countEntries(biotoolsAnnotations, bioToolBenchmark).getJson());
+
+      // BenchmarkBase openEBenchmark = new BenchmarkBase("In OpenEBench", "Available
+      // in OpenEBench",
+      // "Number of tools tracked in OpenEBench.", null, null);
+      // benchmarks.put(BioToolsBenchmark.countEntries(biotoolsAnnotations,
+      // bioToolBenchmark).getJson());
 
       benchmarkResult.put("benchmarks", benchmarks);
 

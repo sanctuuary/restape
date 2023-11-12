@@ -21,7 +21,7 @@ public class BioToolsBenchmark {
     @NonNull
     private BenchmarkBase benchmarkTitle;
     private String value;
-    private double Desirability_value;
+    private double desirabilityValue;
     private List<WorkflowStepBench> workflow;
 
     private static boolean emptyToolAnnotation(JSONObject toolAnnot) {
@@ -49,9 +49,9 @@ public class BioToolsBenchmark {
         int workflowLength = biotoolsAnnotations.size();
 
         benchmark.workflow = countEntries(biotoolsAnnotations);
-        int count = (int) benchmark.workflow.stream().filter(tool -> tool.getDesirability_value() > 0).count();
+        int count = (int) benchmark.workflow.stream().filter(tool -> tool.getDesirabilityValue() > 0).count();
 
-        benchmark.Desirability_value = strictDistribution(count, workflowLength);
+        benchmark.desirabilityValue = strictDistribution(count, workflowLength);
         benchmark.value = ratioString(count, workflowLength);
 
         return benchmark;
@@ -63,9 +63,9 @@ public class BioToolsBenchmark {
         int workflowLength = biotoolsAnnotations.size();
 
         benchmark.workflow = countField(biotoolsAnnotations, benchmarkTitle.getExpectedField());
-        int count = (int) benchmark.workflow.stream().filter(tool -> tool.getDesirability_value() > 0).count();
+        int count = (int) benchmark.workflow.stream().filter(tool -> tool.getDesirabilityValue() > 0).count();
 
-        benchmark.Desirability_value = strictDistribution(count, workflowLength);
+        benchmark.desirabilityValue = strictDistribution(count, workflowLength);
         benchmark.value = ratioString(count, workflowLength);
 
         return benchmark;
@@ -78,9 +78,9 @@ public class BioToolsBenchmark {
 
         benchmark.workflow = countArrayFieldVal(biotoolsAnnotations, benchmarkTitle.getExpectedField(),
                 benchmarkTitle.getExpectedValue());
-        int count = (int) benchmark.workflow.stream().filter(tool -> tool.getDesirability_value() > 0).count();
+        int count = (int) benchmark.workflow.stream().filter(tool -> tool.getDesirabilityValue() > 0).count();
 
-        benchmark.Desirability_value = normalDistribution(count, workflowLength);
+        benchmark.desirabilityValue = normalDistribution(count, workflowLength);
 
         benchmark.value = ratioString(count, workflowLength);
 
@@ -100,10 +100,10 @@ public class BioToolsBenchmark {
             WorkflowStepBench biotoolsEntryBenchmark = new WorkflowStepBench();
             biotoolsEntryBenchmark.setDescription(toolAnnot.getString(ToolBenchmarkingAPIs.restAPEtoolID));
             if (emptyToolAnnotation(toolAnnot)) {
-                biotoolsEntryBenchmark.setDesirability_value(0);
+                biotoolsEntryBenchmark.setDesirabilityValue(0);
                 biotoolsEntryBenchmark.setValue("unavailable");
             } else {
-                biotoolsEntryBenchmark.setDesirability_value(1);
+                biotoolsEntryBenchmark.setDesirabilityValue(1);
                 biotoolsEntryBenchmark.setValue("available");
             }
             biotoolsEntries.add(biotoolsEntryBenchmark);
@@ -127,10 +127,10 @@ public class BioToolsBenchmark {
             WorkflowStepBench biotoolsEntryBenchmark = new WorkflowStepBench();
             biotoolsEntryBenchmark.setDescription(toolAnnot.getString(ToolBenchmarkingAPIs.restAPEtoolID));
             if (!inAvailable(toolAnnot, fieldName)) {
-                biotoolsEntryBenchmark.setDesirability_value(0);
+                biotoolsEntryBenchmark.setDesirabilityValue(0);
                 biotoolsEntryBenchmark.setValue("not available");
             } else {
-                biotoolsEntryBenchmark.setDesirability_value(1);
+                biotoolsEntryBenchmark.setDesirabilityValue(1);
                 biotoolsEntryBenchmark.setValue("available");
             }
             biotoolsEntries.add(biotoolsEntryBenchmark);
@@ -156,10 +156,10 @@ public class BioToolsBenchmark {
             WorkflowStepBench biotoolsEntryBenchmark = new WorkflowStepBench();
             biotoolsEntryBenchmark.setDescription(toolAnnot.getString(ToolBenchmarkingAPIs.restAPEtoolID));
             if (!inStringArray(toolAnnot, fieldName, fieldValue)) {
-                biotoolsEntryBenchmark.setDesirability_value(0);
+                biotoolsEntryBenchmark.setDesirabilityValue(0);
                 biotoolsEntryBenchmark.setValue("not supported");
             } else {
-                biotoolsEntryBenchmark.setDesirability_value(1);
+                biotoolsEntryBenchmark.setDesirabilityValue(1);
                 biotoolsEntryBenchmark.setValue("supported");
             }
             biotoolsEntries.add(biotoolsEntryBenchmark);
@@ -217,7 +217,7 @@ public class BioToolsBenchmark {
         JSONObject benchmarkJson = this.benchmarkTitle.getTitleJson();
 
         benchmarkJson.put("value", value);
-        benchmarkJson.put("desirability_value", Desirability_value);
+        benchmarkJson.put("desirability_value", desirabilityValue);
         benchmarkJson.put("workflow", workflow);
         return benchmarkJson;
     }
