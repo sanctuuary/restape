@@ -7,14 +7,13 @@ import java.io.File;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import nl.uu.cs.ape.io.APEFiles;
-import nl.uu.cs.ape.utils.APEUtils;
+import nl.uu.cs.ape.utils.APEFiles;
 
 @SpringBootTest
-public class RestApeUtilsTest {
+class RestApeUtilsTest {
 
     @Test
-    public void loadURLPath() {
+    void loadURLPath() {
         String urlPath = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/MassSpectometry/config.json";
 
         assertDoesNotThrow(() -> ApeAPI.setupApe(urlPath));
@@ -22,7 +21,7 @@ public class RestApeUtilsTest {
     }
 
     @Test
-    public void loadLocalPath() {
+    void loadLocalPath() {
 
         assertDoesNotThrow(() -> {
             File config = APEFiles.readPathToFile(
@@ -33,7 +32,7 @@ public class RestApeUtilsTest {
     }
 
     @Test
-    public void getTypesFromURLPath() {
+    void getTypesFromURLPath() {
         String urlPath = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/MassSpectometry/config.json";
 
         assertDoesNotThrow(() -> ApeAPI.getData(urlPath));
@@ -41,7 +40,7 @@ public class RestApeUtilsTest {
     }
 
     @Test
-    public void getToolsFromURLPath() {
+    void getToolsFromURLPath() {
         String urlPath = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/MassSpectometry/config.json";
 
         assertDoesNotThrow(() -> ApeAPI.getTools(urlPath));

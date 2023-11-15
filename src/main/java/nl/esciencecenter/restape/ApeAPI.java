@@ -14,13 +14,12 @@ import nl.uu.cs.ape.APE;
 import nl.uu.cs.ape.configuration.APECoreConfig;
 import nl.uu.cs.ape.configuration.APERunConfig;
 import nl.uu.cs.ape.constraints.ConstraintTemplate;
-import nl.uu.cs.ape.core.solutionStructure.SolutionWorkflow;
-import nl.uu.cs.ape.core.solutionStructure.SolutionsList;
-import nl.uu.cs.ape.io.APEFiles;
 import nl.uu.cs.ape.models.AllModules;
 import nl.uu.cs.ape.models.AllPredicates;
 import nl.uu.cs.ape.models.AllTypes;
 import nl.uu.cs.ape.models.logic.constructs.TaxonomyPredicate;
+import nl.uu.cs.ape.solver.solutionStructure.SolutionWorkflow;
+import nl.uu.cs.ape.solver.solutionStructure.SolutionsList;
 import nl.uu.cs.ape.utils.APEUtils;
 
 import org.apache.commons.io.FileUtils;

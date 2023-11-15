@@ -24,9 +24,9 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import nl.esciencecenter.models.BenchmarkBase;
 import nl.esciencecenter.models.BioToolsBenchmark;
-import nl.uu.cs.ape.core.solutionStructure.SolutionWorkflow;
-import nl.uu.cs.ape.core.solutionStructure.SolutionsList;
-import nl.uu.cs.ape.io.APEFiles;
+import nl.uu.cs.ape.solver.solutionStructure.SolutionWorkflow;
+import nl.uu.cs.ape.solver.solutionStructure.SolutionsList;
+import nl.uu.cs.ape.utils.APEFiles;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ToolBenchmarkingAPIs {

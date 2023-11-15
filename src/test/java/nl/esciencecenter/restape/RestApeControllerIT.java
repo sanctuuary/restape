@@ -10,13 +10,13 @@ import org.springframework.http.ResponseEntity;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class RestApeControllerIT {
+class RestApeControllerIT {
 
     @Autowired
     private TestRestTemplate template;
 
     @Test
-    public void getGreetings() throws Exception {
+    void getGreetings() throws Exception {
         ResponseEntity<String> response = template.getForEntity("/", String.class);
         assertThat(response.getBody()).isEqualTo("Welcome to the RESTful APE API!");
     }
