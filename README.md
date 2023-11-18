@@ -1,9 +1,14 @@
 ![RestAPE Logo](https://user-images.githubusercontent.com/11068408/225042915-416975d6-56c9-40d3-97b9-e2854cc19a1c.png#gh-dark-mode-only)
 ![RestAPE Logo](https://user-images.githubusercontent.com/11068408/225042428-824741e2-9618-413c-9546-bc352b3bb23b.png#gh-light-mode-only)
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10048236.svg)](https://doi.org/10.5281/zenodo.10048236)
-![build](https://github.com/sanctuuary/RestAPE/actions/workflows/maven.yml/badge.svg)
-[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
+| Badges | |
+|:----:|----|
+| **Fairness** |  [![fair-software.eu](https://img.shields.io/badge/fair--software.eu-%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F-green)](https://fair-software.eu) [![OpenSSF Best Practices](https://bestpractices.coreinfrastructure.org/projects/8082/badge)](https://www.bestpractices.dev/projects/8082) |
+| **Packages and Releases** |  [![Latest release](https://img.shields.io/github/release/sanctuuary/RESTAPE.svg)](https://github.com/sanctuuary/APE/releases/latest) [![Static Badge](https://img.shields.io/badge/RSD-RESTfulAPE-ape)](https://research-software-directory.org/software/restape)
+| **Build Status** | ![build](https://github.com/sanctuuary/RestAPE/actions/workflows/maven.yml/badge.svg)
+| **DOI** | [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10048236.svg)](https://doi.org/10.5281/zenodo.10048236) |
+| **License** |  [![GitHub license](https://img.shields.io/github/license/sanctuuary/RESTAPE)](https://github.com/sanctuuary/RESTAPE/blob/master/LICENSE) |
 
 
 
