@@ -6,6 +6,8 @@ import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import org.json.JSONObject;
+
 import lombok.NoArgsConstructor;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -109,4 +111,19 @@ public class RestApeUtils {
         return Paths.get(getSolutionPath(), runID, fileSubDir, fileName);
     }
 
+    /**
+     * Combine multiple JSON objects into one.
+     * 
+     * @param jsonObjects - JSON objects to be combined
+     * @return Combined JSON object.
+     */
+    public static JSONObject combineJSONObjects(JSONObject... jsonObjects) {
+        JSONObject combinedJson = new JSONObject();
+        for (JSONObject jsonObject : jsonObjects) {
+            for (String key : jsonObject.keySet()) {
+                combinedJson.put(key, jsonObject.get(key));
+            }
+        }
+        return combinedJson;
+    }
 }

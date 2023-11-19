@@ -14,13 +14,12 @@ import nl.uu.cs.ape.APE;
 import nl.uu.cs.ape.configuration.APECoreConfig;
 import nl.uu.cs.ape.configuration.APERunConfig;
 import nl.uu.cs.ape.constraints.ConstraintTemplate;
-import nl.uu.cs.ape.core.solutionStructure.SolutionWorkflow;
-import nl.uu.cs.ape.core.solutionStructure.SolutionsList;
-import nl.uu.cs.ape.io.APEFiles;
 import nl.uu.cs.ape.models.AllModules;
 import nl.uu.cs.ape.models.AllPredicates;
 import nl.uu.cs.ape.models.AllTypes;
 import nl.uu.cs.ape.models.logic.constructs.TaxonomyPredicate;
+import nl.uu.cs.ape.solver.solutionStructure.SolutionWorkflow;
+import nl.uu.cs.ape.solver.solutionStructure.SolutionsList;
 import nl.uu.cs.ape.utils.APEUtils;
 
 import org.apache.commons.io.FileUtils;
@@ -32,6 +31,7 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import com.oracle.truffle.regex.tregex.util.json.JsonObject;
 
 import guru.nidi.graphviz.attribute.Rank.RankDir;
+import guru.nidi.graphviz.engine.Format;
 import lombok.NoArgsConstructor;
 import lombok.AccessLevel;
 
@@ -168,118 +168,14 @@ public class ApeAPI {
 
         // Write solutions (as CWL files and figures) to the file system.
         APE.writeCWLWorkflows(candidateSolutions);
-        APE.writeDataFlowGraphs(candidateSolutions, RankDir.TOP_TO_BOTTOM);
+        APE.writeTavernaDesignGraphs(candidateSolutions, Format.PNG);
 
         // benchmark workflows if required
         if (benchmark) {
-            computeBenchmarks(candidateSolutions, runID);
+            ToolBenchmarkingAPIs.computeBenchmarks(candidateSolutions, runID);
         }
 
         return workflowMetadataToJson(candidateSolutions, runID, benchmark);
-    }
-
-    /**
-     * Compute the benchmarks for the workflows.
-     * 
-     * @param candidateSolutions - SolutionsList object, which contains the results
-     *                           of the synthesis as well as information about the
-     *                           synthesis run.
-     * @return - boolean to indicate if the benchmarks were computed successfully
-     */
-    private static boolean computeBenchmarks(SolutionsList candidateSolutions, String runID) {
-        candidateSolutions.getParallelStream().forEach(workflow -> {
-            JSONObject workflowBenchmarks = computeBiotoolsBenchmark(workflow, runID);
-            String titleBenchmark = workflow.getFileName() + ".json";
-            Path solFolder = candidateSolutions.getRunConfiguration().getSolutionDirPath2CWL();
-            File script = solFolder.resolve(titleBenchmark).toFile();
-            try {
-                APEFiles.write2file(workflowBenchmarks.toString(2), script, false);
-            } catch (JSONException | IOException e) {
-                e.printStackTrace();
-            }
-
-        });
-
-        return true;
-    }
-
-    /**
-     * TODO: Delete
-     * Method reads the benchmark file and returns the JSON object.
-     * 
-     * @param relativePath - relative path to the benchmark file
-     * @return - JSON object with the benchmark
-     */
-    public static JSONObject getDummyBenchmark() {
-        String content;
-        try {
-            content = FileUtils.readFileToString(APEFiles.readPathToFile(
-                    "https://raw.githubusercontent.com/sanctuuary/restape/d11a5f6f0f6de48361f383ba956040fbb5e90e54/src/main/resources/designtime_bench_v2.json"),
-                    StandardCharsets.UTF_8);
-            return new JSONObject(content);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return new JSONObject();
-        }
-
-    }
-
-    /**
-     * Compute the benchmarks for the workflows and return it in JSON format.
-     * 
-     * @param workflow
-     * @return
-     */
-    private static JSONObject computeBiotoolsBenchmark(SolutionWorkflow workflow, String runID) {
-        JSONObject benchmarkResult = new JSONObject();
-
-        // for each tool in the workflow, get the biotools annotations from bio.tool API
-        List<JSONObject> biotoolsAnnotations = new ArrayList<>();
-
-        workflow.getModuleNodes().forEach(toolNode -> {
-            String toolID = toolNode.getUsedModule().getPredicateLabel();
-            try {
-
-                JSONObject biotoolsEntry = BioTools.fetchToolFromBioTools(toolID);
-                biotoolsEntry.put("toolID", toolNode.getUsedModule().getPredicateLabel());
-                biotoolsAnnotations.add(biotoolsEntry);
-            } catch (JSONException | IOException e) {
-                JSONObject biotoolsEntry = new JSONObject();
-                biotoolsEntry.put("toolID", toolNode.getUsedModule().getPredicateLabel());
-                biotoolsAnnotations.add(biotoolsEntry);
-                e.printStackTrace();
-            }
-        });
-
-        // Set workflow specific fields
-        benchmarkResult.put("runID", runID);
-        benchmarkResult.put("domainID", "1");
-        benchmarkResult.put("workflowName", workflow.getFileName());
-
-        JSONArray benchmarks = new JSONArray();
-
-        BenchmarkBase bioToolBenchmark = new BenchmarkBase("bio.tool", "Available in bio.tools",
-                "Number of tools annotated in bio.tools.", null, null);
-        BenchmarkBase licensedBenchmark = new BenchmarkBase("Licensed", "Tools with a license",
-                "Number of tools which have a license specified.", "license", null);
-        BenchmarkBase linuxBenchmark = new BenchmarkBase("Linux", "Linux (OS) supported tools",
-                "Number of tools which support Linux OS.", "operatingSystem", "Linux");
-        BenchmarkBase macOSBenchmark = new BenchmarkBase("Mac OS", "Mac OS supported tools",
-                "Number of tools which support Mac OS.", "operatingSystem", "Mac");
-        BenchmarkBase windowsBenchmark = new BenchmarkBase("Windows", "Windows (OS) supported tools",
-                "Number of tools which support Windows OS.", "operatingSystem", "Windows");
-
-        benchmarks.put(BioToolsBenchmark.countEntries(biotoolsAnnotations, bioToolBenchmark).getJson());
-        benchmarks.put(BioToolsBenchmark.countLicencedEntries(biotoolsAnnotations, licensedBenchmark).getJson());
-        benchmarks.put(BioToolsBenchmark.countOSEntries(biotoolsAnnotations, linuxBenchmark).getJson());
-
-        benchmarks.put(BioToolsBenchmark.countOSEntries(biotoolsAnnotations, macOSBenchmark).getJson());
-        benchmarks.put(BioToolsBenchmark.countOSEntries(biotoolsAnnotations, windowsBenchmark).getJson());
-
-        benchmarkResult.put("benchmarks", benchmarks);
-
-        return benchmarkResult;
-
     }
 
     /**

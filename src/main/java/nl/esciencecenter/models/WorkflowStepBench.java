@@ -15,6 +15,12 @@ public class WorkflowStepBench {
     @NonNull
     private String value;
     @NonNull
-    private double desirability_value;
+    private double desirabilityValue;
+
+    @Override
+    public String toString() {
+        return "{ description:" + description + ", value:" + value + ", desirability_value:"
+                + desirabilityValue + "]";
+    }
 
 }

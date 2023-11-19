@@ -6,7 +6,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
@@ -22,11 +21,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import nl.uu.cs.ape.io.APEFiles;
+import nl.uu.cs.ape.utils.APEFiles;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class RestApeControllerTest {
+class RestApeControllerTest {
 
     @Autowired
     private MockMvc mvc;
@@ -37,7 +36,7 @@ public class RestApeControllerTest {
      * @throws Exception
      */
     @Test
-    public void getGreetings() throws Exception {
+    void getGreetings() throws Exception {
         mvc.perform(MockMvcRequestBuilders.get("/").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string(equalTo("Welcome to the RESTful APE API!")));
@@ -49,7 +48,7 @@ public class RestApeControllerTest {
      * @throws Exception
      */
     @Test
-    public void getDataFail() throws Exception {
+    void getDataFail() throws Exception {
         mvc.perform(MockMvcRequestBuilders.get("/get_data").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
@@ -60,7 +59,7 @@ public class RestApeControllerTest {
      * @throws Exception
      */
     @Test
-    public void getDataTest() throws Exception {
+    void getDataTest() throws Exception {
         String path = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/MassSpectometry/config.json";
 
         mvc.perform(MockMvcRequestBuilders.get("/get_data?config_path=" + path).accept(MediaType.APPLICATION_JSON))
@@ -74,7 +73,7 @@ public class RestApeControllerTest {
      * @throws Exception
      */
     @Test
-    public void getToolsFail() throws Exception {
+    void getToolsFail() throws Exception {
         mvc.perform(MockMvcRequestBuilders.get("/get_tools").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
@@ -85,7 +84,7 @@ public class RestApeControllerTest {
      * @throws Exception
      */
     @Test
-    public void getToolsTest() throws Exception {
+    void getToolsTest() throws Exception {
         String path = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/MassSpectometry/config.json";
 
         mvc.perform(MockMvcRequestBuilders.get("/get_tools?config_path=" + path).accept(MediaType.APPLICATION_JSON))
@@ -99,7 +98,7 @@ public class RestApeControllerTest {
      * @throws Exception
      */
     @Test
-    public void runSynthesisGetFail() throws Exception {
+    void runSynthesisGetFail() throws Exception {
         mvc.perform(MockMvcRequestBuilders.get("/run_synthesis").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isMethodNotAllowed());
     }
@@ -110,7 +109,7 @@ public class RestApeControllerTest {
      * @throws Exception
      */
     @Test
-    public void runSynthesisPostFail() throws Exception {
+    void runSynthesisPostFail() throws Exception {
         mvc.perform(MockMvcRequestBuilders.post("/run_synthesis").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
@@ -123,7 +122,7 @@ public class RestApeControllerTest {
      * @throws OWLOntologyCreationException if the ontology cannot be created.
      */
     @Test
-    public void runSynthesisFail() throws IOException, OWLOntologyCreationException {
+    void runSynthesisFail() throws IOException, OWLOntologyCreationException {
         String configPath = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/WombatP_tools/config_unsat.json";
         String content = FileUtils.readFileToString(APEFiles.readPathToFile(configPath),
                 StandardCharsets.UTF_8);
@@ -140,7 +139,7 @@ public class RestApeControllerTest {
      * @throws OWLOntologyCreationException if the ontology cannot be created.
      */
     @Test
-    public void runSynthesisPass() throws IOException, OWLOntologyCreationException {
+    void runSynthesisPass() throws IOException, OWLOntologyCreationException {
         String configPath = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/WombatP_tools/config.json";
         String content = FileUtils.readFileToString(APEFiles.readPathToFile(configPath),
                 StandardCharsets.UTF_8);
@@ -157,7 +156,7 @@ public class RestApeControllerTest {
      * @throws OWLOntologyCreationException if the ontology cannot be created.
      */
     @Test
-    public void runSynthesisAndBenchmarkPass() throws IOException, OWLOntologyCreationException {
+    void runSynthesisAndBenchmarkPass() throws IOException, OWLOntologyCreationException {
         String configPath = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/WombatP_tools/config.json";
         String content = FileUtils.readFileToString(APEFiles.readPathToFile(configPath),
                 StandardCharsets.UTF_8);

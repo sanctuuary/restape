@@ -1,7 +1,7 @@
 # This CITATION.cff file was generated with cffinit.
 # Visit https://bit.ly/cffinit to generate yours today!
 cff-version: 1.2.0
-title: RESTful APE
+title: 'RESTful APE'
 message: >-
   If you use this software, please cite it using the
   metadata from this file.
@@ -16,22 +16,22 @@ authors:
     given-names: Kok
     email: p.kok@esciencecenter.nl
     affiliation: Netherlands eScience Center
-    orcid: https://orcid.org/0000-0002-6630-7326
+    orcid: 'https://orcid.org/0000-0002-6630-7326'
   - family-names: Nauman
     given-names: Ahmed
     email: n.ahmed@esciencecenter.nl
     affiliation: Netherlands eScience Center
-    orcid: https://orcid.org/0000-0003-3559-9941
+    orcid: 'https://orcid.org/0000-0003-3559-9941'
   - family-names: Anna-Lena
     given-names: Lamprecht
-    email: vanna-lena.lamprecht@uni-potsdam.de
+    email: anna-lena.lamprecht@uni-potsdam.de
     affiliation: University of Potsdam
-    orcid: https://orcid.org/0000-0003-1953-5606
+    orcid: 'https://orcid.org/0000-0003-1953-5606'
   - family-names: Magnus
     given-names: Palmblad
     email: n.m.palmblad@lumc.nl
     affiliation: Leiden University Medical Center
-    orcid: https://orcid.org/0000-0002-5865-8994
+    orcid: 'https://orcid.org/0000-0002-5865-8994'
 identifiers:
   - type: doi
     value: 10.5281/zenodo.10048235
@@ -61,6 +61,3 @@ keywords:
   - automated workflow composition
   - RESTful API
 license: Apache-2.0
-commit: 2567159c68716c08e30f466a7079299e76216108
-version: 0.3.0
-date-released: '2023-10-28'
