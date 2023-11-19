@@ -31,6 +31,7 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import com.oracle.truffle.regex.tregex.util.json.JsonObject;
 
 import guru.nidi.graphviz.attribute.Rank.RankDir;
+import guru.nidi.graphviz.engine.Format;
 import lombok.NoArgsConstructor;
 import lombok.AccessLevel;
 
@@ -167,7 +168,7 @@ public class ApeAPI {
 
         // Write solutions (as CWL files and figures) to the file system.
         APE.writeCWLWorkflows(candidateSolutions);
-        APE.writeDataFlowGraphs(candidateSolutions, RankDir.TOP_TO_BOTTOM);
+        APE.writeTavernaDesignGraphs(candidateSolutions, Format.PNG);
 
         // benchmark workflows if required
         if (benchmark) {

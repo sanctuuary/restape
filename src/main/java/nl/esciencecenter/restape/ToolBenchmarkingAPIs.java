@@ -189,7 +189,7 @@ public class ToolBenchmarkingAPIs {
       Response response = client.newCall(request).execute();
 
       if (!response.isSuccessful()) {
-         throw new IOException("Unexpected code when trying to fetch" + response);
+         throw new IOException("Tool " + toolID + " not found in bio.tools.");
       }
 
       bioToolAnnotation = new JSONObject(response.body().string());
