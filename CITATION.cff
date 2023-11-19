@@ -61,6 +61,3 @@ keywords:
   - automated workflow composition
   - RESTful API
 license: Apache-2.0
-commit: 2567159c68716c08e30f466a7079299e76216108
-version: 0.3.0
-date-released: '2023-11-13'

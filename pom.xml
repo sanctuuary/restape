@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>nl.esciencecenter</groupId>
 	<artifactId>restape</artifactId>
-	<version>0.3.0</version>
+	<version>0.2.5</version>
 	<name>restape</name>
 	<description>RESTful API for the APE library</description>
 	<licenses>
