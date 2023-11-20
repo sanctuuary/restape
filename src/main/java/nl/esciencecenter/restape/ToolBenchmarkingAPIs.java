@@ -47,8 +47,7 @@ public class ToolBenchmarkingAPIs {
       candidateSolutions.getParallelStream().forEach(workflow -> {
          JSONObject workflowBenchmarks = RestApeUtils.combineJSONObjects(
                computeWorkflowSpecificFields(workflow, runID),
-               computeBiotoolsBenchmark(workflow),
-               computeOpenEBenchmarks(workflow));
+               computeBiotoolsBenchmark(workflow));
          String titleBenchmark = workflow.getFileName() + ".json";
          Path solFolder = candidateSolutions.getRunConfiguration().getSolutionDirPath2CWL();
          File script = solFolder.resolve(titleBenchmark).toFile();
