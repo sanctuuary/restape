@@ -219,12 +219,11 @@ public class BioToolsBenchmark {
 
         benchmarkJson.put("value", value);
         benchmarkJson.put("desirability_value", desirabilityValue);
-        String workflowString = "[";
+        JSONArray workflowJson = new JSONArray();
         for (WorkflowStepBench step : workflow) {
-            workflowString += step.toString() + ",";
+            workflowJson.put(step.toJSON());
         }
-        workflowString = APEUtils.removeLastChar(workflowString) + "]";
-        benchmarkJson.put("workflow", workflowString);
+        benchmarkJson.put("workflow", workflowJson);
         return benchmarkJson;
     }
 }

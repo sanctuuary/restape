@@ -1,5 +1,11 @@
 package nl.esciencecenter.models;
 
+import java.util.Collection;
+
+import org.json.JSONObject;
+
+import com.oracle.truffle.regex.tregex.util.json.JsonObject;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -21,6 +27,14 @@ public class WorkflowStepBench {
     public String toString() {
         return "{ description:" + description + ", value:" + value + ", desirability_value:"
                 + desirabilityValue + "}";
+    }
+
+    public JSONObject toJSON() {
+        JSONObject json = new JSONObject();
+        json.put("description", description);
+        json.put("value", value);
+        json.put("desirability_value", desirabilityValue);
+        return json;
     }
 
 }
