@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import nl.esciencecenter.restape.ToolBenchmarkingAPIs;
+import nl.uu.cs.ape.utils.APEUtils;
 
 @RequiredArgsConstructor
 /**
@@ -218,7 +219,12 @@ public class BioToolsBenchmark {
 
         benchmarkJson.put("value", value);
         benchmarkJson.put("desirability_value", desirabilityValue);
-        benchmarkJson.put("workflow", workflow);
+        String workflowString = "[";
+        for (WorkflowStepBench step : workflow) {
+            workflowString += step.toString() + ",";
+        }
+        workflowString = APEUtils.removeLastChar(workflowString) + "]";
+        benchmarkJson.put("workflow", workflowString);
         return benchmarkJson;
     }
 }
