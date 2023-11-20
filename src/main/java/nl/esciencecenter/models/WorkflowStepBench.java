@@ -20,7 +20,7 @@ public class WorkflowStepBench {
     @Override
     public String toString() {
         return "{ description:" + description + ", value:" + value + ", desirability_value:"
-                + desirabilityValue + "]";
+                + desirabilityValue + "}";
     }
 
 }
