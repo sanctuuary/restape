@@ -223,7 +223,7 @@ public class BioToolsBenchmark {
         for (WorkflowStepBench step : workflow) {
             workflowJson.put(step.toJSON());
         }
-        benchmarkJson.put("workflow", workflowJson);
+        benchmarkJson.put("steps", workflowJson);
         return benchmarkJson;
     }
 }

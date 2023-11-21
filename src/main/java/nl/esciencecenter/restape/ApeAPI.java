@@ -22,15 +22,10 @@ import nl.uu.cs.ape.solver.solutionStructure.SolutionWorkflow;
 import nl.uu.cs.ape.solver.solutionStructure.SolutionsList;
 import nl.uu.cs.ape.utils.APEUtils;
 
-import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 
-import com.oracle.truffle.regex.tregex.util.json.JsonObject;
-
-import guru.nidi.graphviz.attribute.Rank.RankDir;
 import guru.nidi.graphviz.engine.Format;
 import lombok.NoArgsConstructor;
 import lombok.AccessLevel;
@@ -169,6 +164,7 @@ public class ApeAPI {
         // Write solutions (as CWL files and figures) to the file system.
         APE.writeCWLWorkflows(candidateSolutions);
         APE.writeTavernaDesignGraphs(candidateSolutions, Format.PNG);
+        APE.writeTavernaDesignGraphs(candidateSolutions, Format.SVG);
 
         // benchmark workflows if required
         if (benchmark) {
@@ -236,7 +232,7 @@ public class ApeAPI {
                 solutionJson.put("run_id", runID);
                 // Add reference to the generated cwl file and figure
                 solutionJson.put("cwl_name", sol.getFileName() + ".cwl");
-                solutionJson.put("figure_name", sol.getFileName() + ".png");
+                solutionJson.put("figure_name", sol.getFileName());
                 if (benchmark) {
                     solutionJson.put("benchmark_file", sol.getFileName() + ".json");
                 }
