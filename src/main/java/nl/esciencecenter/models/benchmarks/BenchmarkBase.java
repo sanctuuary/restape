@@ -1,4 +1,4 @@
-package nl.esciencecenter.models;
+package nl.esciencecenter.models.benchmarks;
 
 import org.json.JSONObject;
 

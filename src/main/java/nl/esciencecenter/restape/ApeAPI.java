@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import nl.esciencecenter.models.BenchmarkBase;
-import nl.esciencecenter.models.BioToolsBenchmark;
+import nl.esciencecenter.models.benchmarks.BenchmarkBase;
+import nl.esciencecenter.models.benchmarks.BioToolsBenchmark;
 import nl.uu.cs.ape.APE;
 import nl.uu.cs.ape.configuration.APECoreConfig;
 import nl.uu.cs.ape.configuration.APERunConfig;
@@ -163,8 +163,8 @@ public class ApeAPI {
 
         // Write solutions (as CWL files and figures) to the file system.
         APE.writeCWLWorkflows(candidateSolutions);
-        APE.writeTavernaDesignGraphs(candidateSolutions, Format.PNG);
         APE.writeTavernaDesignGraphs(candidateSolutions, Format.SVG);
+        APE.writeTavernaDesignGraphs(candidateSolutions, Format.PNG);
 
         // benchmark workflows if required
         if (benchmark) {

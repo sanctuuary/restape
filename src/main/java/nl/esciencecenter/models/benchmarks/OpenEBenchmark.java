@@ -1,4 +1,4 @@
-package nl.esciencecenter.models;
+package nl.esciencecenter.models.benchmarks;
 
 import java.util.ArrayList;
 import java.util.List;

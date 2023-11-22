@@ -221,7 +221,7 @@ public class RestApeController {
                 }
                 try {
                         return ResponseEntity.ok().contentType(mediaType)
-                                        .body(IOUtils.getImageFromFileSystem(path));
+                                        .body(IOUtils.getImageFromFileSystem(path, imgFormat.toLowerCase()));
                 } catch (IOException e) {
                         return ResponseEntity.badRequest().body("The image file could not be found.");
                 }

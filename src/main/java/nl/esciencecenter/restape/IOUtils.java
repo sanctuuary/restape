@@ -20,16 +20,18 @@ public class IOUtils {
      * Get byte array that represents the image from the file system at the given
      * path.
      * 
-     * @param filePath - path to the image
+     * @param filePath   - path to the image
+     * @param formatName - a {@code String} containing the informal name of the
+     *                   format.
      * @return byte array that represents the image
      * @throws IOException - if the image cannot be read
      */
-    public static byte[] getImageFromFileSystem(Path filePath) throws IOException {
+    public static byte[] getImageFromFileSystem(Path filePath, String formatName) throws IOException {
         File currFile = filePath.toFile();
         BufferedImage image = ImageIO.read(currFile);
 
         ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
-        ImageIO.write(image, "png", byteArray);
+        ImageIO.write(image, formatName, byteArray);
 
         return byteArray.toByteArray();
 

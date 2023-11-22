@@ -22,8 +22,8 @@ import com.oracle.truffle.regex.tregex.util.json.JsonObject;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import nl.esciencecenter.models.BenchmarkBase;
-import nl.esciencecenter.models.BioToolsBenchmark;
+import nl.esciencecenter.models.benchmarks.BenchmarkBase;
+import nl.esciencecenter.models.benchmarks.BioToolsBenchmark;
 import nl.uu.cs.ape.solver.solutionStructure.SolutionWorkflow;
 import nl.uu.cs.ape.solver.solutionStructure.SolutionsList;
 import nl.uu.cs.ape.utils.APEFiles;
