@@ -227,7 +227,9 @@ public class ApeAPI {
             for (int i = 0; i < noSolutions; i++) {
                 SolutionWorkflow sol = candidateSolutions.get(i);
                 JSONObject solutionJson = new JSONObject();
-                solutionJson.put("name", sol.getFileName());
+                solutionJson.put("workflow_name", sol.getFileName());
+                solutionJson.put("descriptive_name", sol.getDescriptiveName());
+                solutionJson.put("description", sol.getDescription());
                 solutionJson.put("workflow_length", sol.getSolutionLength());
                 solutionJson.put("run_id", runID);
                 // Add reference to the generated cwl file and figure
