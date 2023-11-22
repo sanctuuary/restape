@@ -49,7 +49,7 @@ class RestApeControllerTest {
      */
     @Test
     void getDataFail() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.get("/get_data").accept(MediaType.APPLICATION_JSON))
+        mvc.perform(MockMvcRequestBuilders.get("/data_taxonomy").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
 
@@ -62,7 +62,7 @@ class RestApeControllerTest {
     void getDataTest() throws Exception {
         String path = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/MassSpectometry/config.json";
 
-        mvc.perform(MockMvcRequestBuilders.get("/get_data?config_path=" + path).accept(MediaType.APPLICATION_JSON))
+        mvc.perform(MockMvcRequestBuilders.get("/data_taxonomy?config_path=" + path).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
@@ -74,7 +74,7 @@ class RestApeControllerTest {
      */
     @Test
     void getToolsFail() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.get("/get_tools").accept(MediaType.APPLICATION_JSON))
+        mvc.perform(MockMvcRequestBuilders.get("/tools_taxonomy").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
 
@@ -87,7 +87,8 @@ class RestApeControllerTest {
     void getToolsTest() throws Exception {
         String path = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/MassSpectometry/config.json";
 
-        mvc.perform(MockMvcRequestBuilders.get("/get_tools?config_path=" + path).accept(MediaType.APPLICATION_JSON))
+        mvc.perform(
+                MockMvcRequestBuilders.get("/tools_taxonomy?config_path=" + path).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }

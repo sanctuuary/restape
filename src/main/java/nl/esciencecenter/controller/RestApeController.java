@@ -55,7 +55,7 @@ public class RestApeController {
          * @param configPath URL to the APE configuration file.
          * @return Taxonomy of data terms.
          */
-        @GetMapping("/get_data")
+        @GetMapping("/data_taxonomy")
         @Operation(summary = "Retrieve data taxonomy", description = "Retrieve data (taxonomy) within the domain.", tags = {
                         "Domain" }, parameters = {
                                         @Parameter(name = "config_path", description = "URL to the APE configuration file.", example = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/MassSpectometry/config.json") }, externalDocs = @ExternalDocumentation(description = "More information about the APE configuration file can be found here.", url = "https://ape-framework.readthedocs.io/en/latest/docs/specifications/setup.html#configuration-file"), responses = {
@@ -80,7 +80,7 @@ public class RestApeController {
          * @param configPath URL to the APE configuration file.
          * @return Taxonomy of tool terms.
          */
-        @GetMapping("/get_tools")
+        @GetMapping("/tools_taxonomy")
         @Operation(summary = "Retrieve tool taxonomy", description = "Retrieve tools (taxonomy) within the domain.", tags = {
                         "Domain" }, parameters = {
                                         @Parameter(name = "config_path", description = "URL to the APE configuration file.", example = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/MassSpectometry/config.json") }, externalDocs = @ExternalDocumentation(description = "More information about the APE configuration file can be found here.", url = "https://ape-framework.readthedocs.io/en/latest/docs/specifications/setup.html#configuration-file"), responses = {
@@ -106,7 +106,7 @@ public class RestApeController {
          * @param configPath URL to the APE configuration file.
          * @return Constraint templates.
          */
-        @GetMapping("/get_constraints")
+        @GetMapping("/constraints")
         @Operation(summary = "Retrieve constraint templates", description = "Retrieve constraint templates used to specify synthesis problem.", tags = {
                         "Domain" }, parameters = {
                                         @Parameter(name = "config_path", description = "URL to the APE configuration file.", example = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/MassSpectometry/config.json") }, externalDocs = @ExternalDocumentation(description = "More information about the APE configuration file can be found here.", url = "https://ape-framework.readthedocs.io/en/latest/docs/specifications/setup.html#configuration-file"), responses = {
@@ -192,10 +192,11 @@ public class RestApeController {
          *                 'run_id' after the synthesis run).
          * @return Image in PNG format representing the workflow.
          */
-        @GetMapping("/get_image")
+        @GetMapping("/image")
         @Operation(summary = "Retrieve an image representing the workflow.", description = "Retrieve a image from the file system representing the workflow generated.", tags = {
                         "Download" }, parameters = {
-                                        @Parameter(name = "file_name", description = "Name of the image file (provided under 'name' after the synthesis run).", example = "workflowSolution_0.png"),
+                                        @Parameter(name = "file_name", description = "Name of the image file (provided under 'name' after the synthesis run).", example = "workflowSolution_0"),
+                                        @Parameter(name = "format", description = "Format of the image ('png' or 'svg').", example = "png"),
                                         @Parameter(name = "run_id", description = "ID of the corresponding synthesis run (provided under 'run_id' after the synthesis run).", example = "04ce2ef00c1685150252568")
 
         }, responses = {
@@ -205,11 +206,22 @@ public class RestApeController {
         })
         public ResponseEntity<?> getImage(
                         @RequestParam("file_name") String fileName,
+                        @RequestParam("format") String imgFormat,
                         @RequestParam("run_id") String runID) {
-                Path path = RestApeUtils.calculatePath(runID, "Figures", fileName);
+                MediaType mediaType = null;
+                Path path = null;
+                if (imgFormat.equalsIgnoreCase("png")) {
+                        mediaType = MediaType.IMAGE_PNG;
+                        path = RestApeUtils.calculatePath(runID, "Figures", fileName + ".png");
+                } else if (imgFormat.equalsIgnoreCase("svg")) {
+                        mediaType = MediaType.valueOf("image/svg+xml");
+                        path = RestApeUtils.calculatePath(runID, "Figures", fileName + ".svg");
+                } else {
+                        return ResponseEntity.badRequest().body("The specified image format is not supported.");
+                }
                 try {
-                        return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG)
-                                        .body(IOUtils.getImageFromFileSystem(path));
+                        return ResponseEntity.ok().contentType(mediaType)
+                                        .body(IOUtils.getImageFromFileSystem(path, imgFormat.toLowerCase()));
                 } catch (IOException e) {
                         return ResponseEntity.badRequest().body("The image file could not be found.");
                 }
@@ -225,9 +237,10 @@ public class RestApeController {
          *                 'run_id' after the synthesis run).
          * @return CWL file representing the workflow.
          */
-        @GetMapping("/get_cwl")
+        @GetMapping("/cwl")
         @Operation(summary = "Retrieve a cwl file", description = "Retrieve a cwl file from the file system, describing the workflow.", tags = {
                         "Download" }, parameters = {
+
                                         @Parameter(name = "file_name", description = "Name of the CWL file (provided under 'figure_name' after the synthesis run).", example = "workflowSolution_0.cwl"),
                                         @Parameter(name = "run_id", description = "ID of the corresponding synthesis run (provided under 'run_id' after the synthesis run).", example = "04ce2ef00c1685150252568")
 
@@ -256,7 +269,7 @@ public class RestApeController {
          *              after the synthesis run).
          * @return CWL input file (.yml) representing the workflow inputs.
          */
-        @GetMapping("/get_cwl_input")
+        @GetMapping("/cwl_input")
         @Operation(summary = "Retrieve a cwl input file", description = "Retrieve a cwl input file from the file system, allowing to execute the workflows in the run.", tags = {
                         "Download" }, parameters = {
                                         @Parameter(name = "run_id", description = "ID of the corresponding synthesis run (provided under 'run_id' after the synthesis run).", example = "04ce2ef00c1685150252568")
@@ -289,7 +302,7 @@ public class RestApeController {
          *                 'run_id' after the synthesis run).
          * @return CWL file representing the workflow.
          */
-        @GetMapping("/get_bench")
+        @GetMapping("/design_time_benchmarks")
         @Operation(summary = "Retrieve a design-time benchmark file", description = "Retrieve a design-time benchmark file from the file system, describing the workflow.", tags = {
                         "Download" }, parameters = {
                                         @Parameter(name = "file_name", description = "Name of the benchmark file (provided under 'bench_name' after the synthesis run).", example = "workflowSolution_0.json"),

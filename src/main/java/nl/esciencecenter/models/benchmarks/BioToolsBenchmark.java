@@ -1,4 +1,4 @@
-package nl.esciencecenter.models;
+package nl.esciencecenter.models.benchmarks;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -223,7 +223,7 @@ public class BioToolsBenchmark {
         for (WorkflowStepBench step : workflow) {
             workflowJson.put(step.toJSON());
         }
-        benchmarkJson.put("workflow", workflowJson);
+        benchmarkJson.put("steps", workflowJson);
         return benchmarkJson;
     }
 }
