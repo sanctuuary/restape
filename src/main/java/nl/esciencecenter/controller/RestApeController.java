@@ -1,12 +1,14 @@
 package nl.esciencecenter.controller;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -208,20 +210,19 @@ public class RestApeController {
                         @RequestParam("file_name") String fileName,
                         @RequestParam("format") String imgFormat,
                         @RequestParam("run_id") String runID) {
-                MediaType mediaType = null;
                 Path path = null;
                 if (imgFormat.equalsIgnoreCase("png")) {
-                        mediaType = MediaType.IMAGE_PNG;
                         path = RestApeUtils.calculatePath(runID, "Figures", fileName + ".png");
                 } else if (imgFormat.equalsIgnoreCase("svg")) {
-                        mediaType = MediaType.valueOf("image/svg+xml");
                         path = RestApeUtils.calculatePath(runID, "Figures", fileName + ".svg");
                 } else {
                         return ResponseEntity.badRequest().body("The specified image format is not supported.");
                 }
+                FileSystemResource resource = new FileSystemResource(path);
                 try {
-                        return ResponseEntity.ok().contentType(mediaType)
-                                        .body(IOUtils.getImageFromFileSystem(path, imgFormat.toLowerCase()));
+                        return ResponseEntity.ok()
+                                        .contentType(MediaType.parseMediaType(Files.probeContentType(path)))
+                                        .body(resource);
                 } catch (IOException e) {
                         return ResponseEntity.badRequest().body("The image file could not be found.");
                 }
