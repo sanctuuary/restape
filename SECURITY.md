@@ -19,7 +19,7 @@ In your report, please provide the following information:
 - Steps to reproduce the vulnerability.
 - Versions of RESTful APE affected.
 
-We are committed to responding promptly to security reports. We will acknowledge your email within 48 hours and will strive to provide a timeline for resolution as soon as possible.
+We are committed to responding promptly to security reports. We will acknowledge your email within a week and will strive to provide a timeline for resolution as soon as possible.
 
 ## Security Response Team
 
