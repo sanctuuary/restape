@@ -12,44 +12,45 @@ import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+/**
+ * {@link ToolBenchmarkingAPIsTest} tests the methods in
+ * {@link ToolBenchmarkingAPIs}.
+ */
 @SpringBootTest
 class ToolBenchmarkingAPIsTest {
 
-    @Test
-    void getToolsFromURLPath() {
-        String urlPath = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/MassSpectometry/config.json";
+    private static final String TOOL_ID = "comet";
 
-        assertDoesNotThrow(() -> ApeAPI.getTools(urlPath));
-
-    }
-
+    /**
+     * Test whether tool annotations from the OpenEBench API can be retrieved.
+     */
     @Test
     void fetchToolAggregateFromOEB() {
-        String toolID = "comet";
-        JSONArray openEBenchAggregateAnnotation = null;
         try {
-            openEBenchAggregateAnnotation = ToolBenchmarkingAPIs.fetchToolAggregateFromOEB(toolID);
+            JSONArray openEBenchAggregateAnnotation = ToolBenchmarkingAPIs.fetchToolAggregateFromOEB(TOOL_ID);
+            assertFalse(openEBenchAggregateAnnotation == null || openEBenchAggregateAnnotation.isEmpty());
         } catch (JSONException | IOException e) {
             e.printStackTrace();
             fail();
         }
-        assertFalse(openEBenchAggregateAnnotation == null || openEBenchAggregateAnnotation.isEmpty());
     }
 
+    /**
+     * Test whether tool versions URLs can be computed from the retrieved OpenEBench
+     * API tool annotations.
+     */
     @Test
     void getToolVersionsURLs() {
-        String toolID = "comet";
-        List<String> toolOEBVersionsURLs = null;
         try {
-            JSONArray openEBenchAggregateAnnotation = ToolBenchmarkingAPIs.fetchToolAggregateFromOEB(toolID);
-            toolOEBVersionsURLs = ToolBenchmarkingAPIs.getToolVersionsURLs(openEBenchAggregateAnnotation);
+            JSONArray openEBenchAggregateAnnotation = ToolBenchmarkingAPIs.fetchToolAggregateFromOEB(TOOL_ID);
+            List<String> toolOEBVersionsURLs = ToolBenchmarkingAPIs.getToolVersionsURLs(openEBenchAggregateAnnotation);
+
+            assertFalse(toolOEBVersionsURLs == null || toolOEBVersionsURLs.isEmpty()
+                    || !toolOEBVersionsURLs.get(0).contains("https://openebench.bsc.es/"));
         } catch (JSONException | IOException e) {
             e.printStackTrace();
             fail();
         }
-
-        assertFalse(toolOEBVersionsURLs == null || toolOEBVersionsURLs.isEmpty()
-                || !toolOEBVersionsURLs.get(0).contains("https://openebench.bsc.es/"));
     }
 
 }

@@ -176,8 +176,17 @@ public class ToolBenchmarkingAPIs {
    }
 
    /**
-    * Get the JSON annotations from bio.tools for the given tool IDs.
+    * Retrieve a JSON object corresponding to the tool from bio.tools for the given
+    * tool ID.
     * The method uses the bio.tools API to fetch the annotations.
+    * 
+    * @param toolID - tool ID, not case sensitive. IDs are transformed into lower
+    *               case as used in bio.tools, e.g.,
+    *               "comet", "blast", etc.
+    * @return JSONObject containing the metrics for the tool.
+    * @throws IOException   In case the tool is not found in bio.tools.
+    * @throws JSONException In case the JSON object returned by bio.tools cannot be
+    *                       parsed.
     */
    public static JSONObject fetchToolFromBioTools(String toolID) throws JSONException, IOException {
       JSONObject bioToolAnnotation;
@@ -207,7 +216,7 @@ public class ToolBenchmarkingAPIs {
     * @param biotoolsExclusive - if true, only bio.tools URLs will be returned
     * @return JSONArray of JSONObjects, each containing the metrics for a tool
     *         version.
-    * @throws IOException
+    * @throws IOException   - In case the tool is not found in bio.tools.
     * @throws JSONException
     */
    public static JSONArray fetchToolVersionsFromOEB(String toolID, boolean biotoolsExclusive)
@@ -267,8 +276,10 @@ public class ToolBenchmarkingAPIs {
     * Parse OpenEBench aggregated annotations to get the list of tool versions and
     * their URLs.
     * 
-    * @param openEBenchAggregateAnnotation
-    * @return
+    * @param openEBenchAggregateAnnotation - JSONArray of JSONObjects, each of
+    *                                      which contains a aggregated tool
+    *                                      annotation.
+    * @return List of tool version URLs.
     */
    static List<String> getToolVersionsURLs(JSONArray openEBenchAggregateAnnotation) throws JSONException {
 
