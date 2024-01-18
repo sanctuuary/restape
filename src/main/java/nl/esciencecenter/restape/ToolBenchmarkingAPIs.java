@@ -22,6 +22,7 @@ import com.oracle.truffle.regex.tregex.util.json.JsonObject;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+
 import nl.esciencecenter.models.BenchmarkBase;
 import nl.esciencecenter.models.BioToolsBenchmark;
 import nl.uu.cs.ape.solver.solutionStructure.SolutionWorkflow;
@@ -217,7 +218,8 @@ public class ToolBenchmarkingAPIs {
     * @return JSONArray of JSONObjects, each containing the metrics for a tool
     *         version.
     * @throws IOException   - In case the tool is not found in bio.tools.
-    * @throws JSONException
+    * @throws JSONException - In case the JSON object returned by bio.tools or
+    *                       OpenEBench API cannot be parsed.
     */
    public static JSONArray fetchToolVersionsFromOEB(String toolID, boolean biotoolsExclusive)
          throws JSONException, IOException {
@@ -228,21 +230,28 @@ public class ToolBenchmarkingAPIs {
       if (biotoolsExclusive) {
          filterOutNonBioTools(toolOEBVersionsURLs);
       }
-      swapOEBCallTool2Metric(toolOEBVersionsURLs);
+      toolOEBVersionsURLs = swapOEBCallTool2Metric(toolOEBVersionsURLs);
 
       JSONArray openEBenchToolVersions = new JSONArray();
 
       // retrieve the JSON metrics for each tool version
       toolOEBVersionsURLs.forEach(metricOEBenchURL -> {
          try {
-            openEBenchToolVersions.put(APEFiles.readPathToJSONObject(metricOEBenchURL));
-         } catch (JSONException | IOException e) {
+            File file = APEFiles.readPathToFile(metricOEBenchURL);
+            String content = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+            openEBenchToolVersions.put(new JSONObject(content));
+         } catch (JSONException e) {
+            log.error("Tool version metrics JSON provided by OEB could not be parsed.");
+            e.printStackTrace();
+         } catch (IOException e) {
+            log.error("Tool version metrics file could not be created.");
             e.printStackTrace();
          }
       });
 
       log.debug("The list of tool versions was successfully fetched from OpenEBench.");
       return openEBenchToolVersions;
+
    }
 
    /**
@@ -309,15 +318,16 @@ public class ToolBenchmarkingAPIs {
    }
 
    /**
-    * Change the URL to retrieve detailed tool metrics rather than general tool
-    * information.
+    * Create a new list of URLs that references tool metrics rather than general
+    * tool
+    * information. In practice, the method replaces `/tool/` with `/metric/` in the
+    * URL.
     * 
     * @param openEBenchToolVersionURLs
-    * @return
+    * @return List of URLs that reference tool metrics.
     */
    static List<String> swapOEBCallTool2Metric(List<String> openEBenchToolVersionURLs) {
-      openEBenchToolVersionURLs.forEach(url -> url.replaceFirst("/tool/", "/metric/"));
-      return openEBenchToolVersionURLs;
+      return openEBenchToolVersionURLs.stream().map(url -> url.replaceFirst("/tool/", "/metrics/")).toList();
    }
 
    /**
@@ -329,8 +339,9 @@ public class ToolBenchmarkingAPIs {
     * 
     * @param toolID
     * @return
-    * @throws JSONException
-    * @throws IOException
+    * @throws JSONException In case the JSON object returned by OpenEBench API
+    *                       cannot be parsed.
+    * @throws IOException   In case a local file cannot be created.
     */
    public static JSONArray fetchToolAggregateFromOEB(String toolID) throws JSONException, IOException {
       JSONArray openEBenchAnnotation;
