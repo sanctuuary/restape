@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -70,12 +71,42 @@ class ToolBenchmarkingAPIsTest {
         }
     }
 
+    /**
+     * Test for isOSIFromOEBMetrics method.
+     * It verifies that the method correctly identifies and returns the OSI status
+     * from the provided JSON object representing tool metrics.
+     */
     @Test
-    void testFetchToolVersionsFromOEB() {
-        try {
-            JSONArray toolVersions = ToolBenchmarkingAPIs.fetchToolVersionsFromOEB(TOOL_ID, true);
+    void testIsOSIFromOEBMetrics() {
+        // Constructing the JSON structure inline for the tool metrics
+        JSONObject mockToolMetrics = new JSONObject("""
+                    {
+                        "project": {
+                            "license": {
+                                "osi": true
+                            }
+                        }
+                    }
+                """);
 
-            assertTrue(toolVersions != null && !toolVersions.isEmpty());
+        // Testing the isOSIFromOEBMetrics method and asserting that the OSI status is
+        // true
+        assertTrue(ToolBenchmarkingAPIs.isOSIFromOEBMetrics(mockToolMetrics) == LicenseType.OSI_Approved,
+                "The method should return true for OSI license");
+    }
+
+    @Test
+    void testFetchToolMetricsPerVersionFromOEB() {
+        try {
+            List<JSONObject> allToolMetrics = ToolBenchmarkingAPIs.fetchToolMetricsPerVersionFromOEB(TOOL_ID);
+            assertTrue(allToolMetrics != null && allToolMetrics.size() > 0);
+            allToolMetrics.forEach(tootMetrics -> {
+                try {
+                    tootMetrics.get("project");
+                } catch (JSONException e) {
+                    fail("An exception occurred while checking for 'osi license' in 'project'. The JSON object could not be parsed correctly.");
+                }
+            });
         } catch (JSONException | IOException e) {
             e.printStackTrace();
             fail();
@@ -83,8 +114,17 @@ class ToolBenchmarkingAPIsTest {
     }
 
     @Test
-    void test() {
-        String toolID = "comet";
+    void testFetchOEBMetricsForBiotoolsVersion() {
+        try {
+            JSONObject toolMetrics = ToolBenchmarkingAPIs.fetchOEBMetricsForBiotoolsVersion("shelx");
+            ToolBenchmarkingAPIs.isOSIFromOEBMetrics(toolMetrics);
+        } catch (JSONException e) {
+            fail("An exception occurred while checking for 'osi license' in 'project'. The JSON object could not be parsed correctly.");
+        } catch (ClassCastException e) {
+            fail("The 'project' field is not a JSONObject");
+        } catch (IOException e) {
+            fail("Failed to fetch metrics for bio.tools version for tool  + " + TOOL_ID);
+        }
     }
 
 }

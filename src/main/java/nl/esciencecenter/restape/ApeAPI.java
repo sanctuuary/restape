@@ -28,8 +28,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 
-import com.oracle.truffle.regex.tregex.util.json.JsonObject;
-
 import guru.nidi.graphviz.attribute.Rank.RankDir;
 import guru.nidi.graphviz.engine.Format;
 import lombok.NoArgsConstructor;
