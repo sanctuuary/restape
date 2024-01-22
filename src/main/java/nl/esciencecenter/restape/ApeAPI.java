@@ -9,7 +9,6 @@ import java.util.Collection;
 import java.util.List;
 
 import nl.esciencecenter.models.BenchmarkBase;
-import nl.esciencecenter.models.BioToolsBenchmark;
 import nl.uu.cs.ape.APE;
 import nl.uu.cs.ape.configuration.APECoreConfig;
 import nl.uu.cs.ape.configuration.APERunConfig;
@@ -22,13 +21,10 @@ import nl.uu.cs.ape.solver.solutionStructure.SolutionWorkflow;
 import nl.uu.cs.ape.solver.solutionStructure.SolutionsList;
 import nl.uu.cs.ape.utils.APEUtils;
 
-import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 
-import guru.nidi.graphviz.attribute.Rank.RankDir;
 import guru.nidi.graphviz.engine.Format;
 import lombok.NoArgsConstructor;
 import lombok.AccessLevel;

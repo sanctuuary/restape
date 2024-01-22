@@ -25,26 +25,6 @@ public class BioToolsBenchmark {
     private double desirabilityValue;
     private List<WorkflowStepBench> workflow;
 
-    private static boolean emptyToolAnnotation(JSONObject toolAnnot) {
-        return !toolAnnot.has("biotoolsID");
-    }
-
-    private static String ratioString(int count, int length) {
-        return count + "/" + length;
-    }
-
-    private static double normalDistribution(int count, int workflowLength) {
-        return 1.0 * count / workflowLength;
-    }
-
-    private static double strictDistribution(int count, int workflowLength) {
-        if (count == workflowLength) {
-            return 1;
-        } else {
-            return 1.0 * count / workflowLength / 10;
-        }
-    }
-
     public static BioToolsBenchmark countEntries(List<JSONObject> biotoolsAnnotations, BenchmarkBase benchmarkTitle) {
         BioToolsBenchmark benchmark = new BioToolsBenchmark(benchmarkTitle);
         int workflowLength = biotoolsAnnotations.size();
@@ -52,8 +32,8 @@ public class BioToolsBenchmark {
         benchmark.workflow = countEntries(biotoolsAnnotations);
         int count = (int) benchmark.workflow.stream().filter(tool -> tool.getDesirabilityValue() > 0).count();
 
-        benchmark.desirabilityValue = strictDistribution(count, workflowLength);
-        benchmark.value = ratioString(count, workflowLength);
+        benchmark.desirabilityValue = BenchmarkBase.strictDesirabilityDistribution(count, workflowLength);
+        benchmark.value = BenchmarkBase.ratioString(count, workflowLength);
 
         return benchmark;
     }
@@ -66,8 +46,8 @@ public class BioToolsBenchmark {
         benchmark.workflow = countField(biotoolsAnnotations, benchmarkTitle.getExpectedField());
         int count = (int) benchmark.workflow.stream().filter(tool -> tool.getDesirabilityValue() > 0).count();
 
-        benchmark.desirabilityValue = strictDistribution(count, workflowLength);
-        benchmark.value = ratioString(count, workflowLength);
+        benchmark.desirabilityValue = BenchmarkBase.strictDesirabilityDistribution(count, workflowLength);
+        benchmark.value = BenchmarkBase.ratioString(count, workflowLength);
 
         return benchmark;
     }
@@ -81,9 +61,9 @@ public class BioToolsBenchmark {
                 benchmarkTitle.getExpectedValue());
         int count = (int) benchmark.workflow.stream().filter(tool -> tool.getDesirabilityValue() > 0).count();
 
-        benchmark.desirabilityValue = normalDistribution(count, workflowLength);
+        benchmark.desirabilityValue = BenchmarkBase.normalDesirabilityDistribution(count, workflowLength);
 
-        benchmark.value = ratioString(count, workflowLength);
+        benchmark.value = BenchmarkBase.ratioString(count, workflowLength);
 
         return benchmark;
     }
@@ -181,6 +161,10 @@ public class BioToolsBenchmark {
         // for each tool in the workflow, get the biotools metadata from bio.tool API
         long count = biotoolsAnnotations.stream().filter(tool -> inAvailable(tool, fieldName)).count();
         return (int) count;
+    }
+
+    private static boolean emptyToolAnnotation(JSONObject toolAnnot) {
+        return !toolAnnot.has("biotoolsID");
     }
 
     /**

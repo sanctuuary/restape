@@ -25,6 +25,7 @@ import lombok.NoArgsConstructor;
 
 import nl.esciencecenter.models.BenchmarkBase;
 import nl.esciencecenter.models.BioToolsBenchmark;
+import nl.esciencecenter.models.OpenEBenchmark;
 import nl.uu.cs.ape.solver.solutionStructure.SolutionWorkflow;
 import nl.uu.cs.ape.solver.solutionStructure.SolutionsList;
 import nl.uu.cs.ape.utils.APEFiles;
@@ -65,7 +66,8 @@ public class ToolBenchmarkingAPIs {
       candidateSolutions.getParallelStream().forEach(workflow -> {
          JSONObject workflowBenchmarks = RestApeUtils.combineJSONObjects(
                computeWorkflowSpecificFields(workflow, runID),
-               computeBiotoolsBenchmark(workflow));
+               computeBiotoolsBenchmark(workflow),
+               computeOpenEBenchmarks(workflow));
          String titleBenchmark = workflow.getFileName() + ".json";
          Path solFolder = candidateSolutions.getRunConfiguration().getSolutionDirPath2CWL();
          File script = solFolder.resolve(titleBenchmark).toFile();
@@ -186,10 +188,9 @@ public class ToolBenchmarkingAPIs {
 
       JSONArray benchmarks = new JSONArray();
 
-      BenchmarkBase license = new BenchmarkBase("License", "License information available",
+      BenchmarkBase licenseBenchmark = new BenchmarkBase("License", "License information available",
             "Number of tools which have a license specified.", "license", null);
-      // benchmarks.put(BioToolsBenchmark.countLicencedEntries(biotoolsAnnotations,
-      // licensedBenchmark).getJson());
+      benchmarks.put(OpenEBenchmark.countLicenceOpenness(openEBenchBiotoolsMetrics, licenseBenchmark).getJson());
 
       benchmarkResult.put("benchmarks", benchmarks);
 
