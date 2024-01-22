@@ -22,10 +22,9 @@ import org.slf4j.LoggerFactory;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-
-import nl.esciencecenter.models.BenchmarkBase;
-import nl.esciencecenter.models.BioToolsBenchmark;
-import nl.esciencecenter.models.OpenEBenchmark;
+import nl.esciencecenter.models.benchmarks.BenchmarkBase;
+import nl.esciencecenter.models.benchmarks.BioToolsBenchmark;
+import nl.esciencecenter.models.benchmarks.OpenEBenchmark;
 import nl.uu.cs.ape.solver.solutionStructure.SolutionWorkflow;
 import nl.uu.cs.ape.solver.solutionStructure.SolutionsList;
 import nl.uu.cs.ape.utils.APEFiles;

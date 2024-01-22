@@ -8,42 +8,42 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import nl.esciencecenter.models.SynthesisRun;
-import nl.esciencecenter.service.SynthesisRunService;
+import nl.esciencecenter.models.Domain;
+import nl.esciencecenter.service.DomainService;
 
 /**
- * RestController to retch the SynthesisRun data from the database.
+ * RestController to handle the Domain data from the database.
  * Not yet implemented.
  */
 public class NotYetAController {
 
-    // autowired the SynthesisRunService class
+    // autowired the DomainService class
     @Autowired
-    SynthesisRunService synthesisRunService;
+    DomainService domainService;
 
     // creating a get mapping that retrieves all the synthesisRuns detail from the
     // database
-    @GetMapping("/synthesisRun")
-    private List<SynthesisRun> getAllSynthesisRun() {
-        return synthesisRunService.getAllSynthesisRun();
+    @GetMapping("/domain")
+    private List<Domain> getAllDomain() {
+        return domainService.getAllDomain();
     }
 
     // creating a get mapping that retrieves the detail of a specific synthesisRun
-    @GetMapping("/synthesisRun/{id}")
-    private SynthesisRun getSynthesisRun(@PathVariable("id") int id) {
-        return synthesisRunService.getSynthesisRunById(id);
+    @GetMapping("/domain/{id}")
+    private Domain getSynthesisRun(@PathVariable("id") int id) {
+        return domainService.getDomainById(id);
     }
 
     // creating a delete mapping that deletes a specific synthesisRun
-    @DeleteMapping("/synthesisRun/{id}")
-    private void deleteSynthesisRun(@PathVariable("id") int id) {
-        synthesisRunService.delete(id);
+    @DeleteMapping("/domain/{id}")
+    private void deleteDomain(@PathVariable("id") int id) {
+        domainService.delete(id);
     }
 
     // creating post mapping that post the synthesisRun detail in the database
-    @PostMapping("/synthesisRun")
-    private int saveSynthesisRun(@RequestBody SynthesisRun synthesisRun) {
-        synthesisRunService.saveOrUpdate(synthesisRun);
-        return synthesisRun.getId();
+    @PostMapping("/domain")
+    private int saveSynthesisRun(@RequestBody Domain domain) {
+        domainService.saveOrUpdate(domain);
+        return domain.getId();
     }
 }

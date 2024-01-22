@@ -40,7 +40,20 @@ jobs:
             type=semver,pattern={{version}}
             type=sha,enable=true,priority=100,prefix=sha-,suffix=,format=short
 
-      - name: Build and push
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: false  # Do not push at this stage
+          tags: ${{ steps.meta.outputs.tags }}
+
+      - name: Install Arial font
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ttf-mscorefonts-installer
+
+          
+      - name: Push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
