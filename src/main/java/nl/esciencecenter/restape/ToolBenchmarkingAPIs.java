@@ -63,10 +63,13 @@ public class ToolBenchmarkingAPIs {
     */
    static boolean computeBenchmarks(SolutionsList candidateSolutions, String runID) {
       candidateSolutions.getParallelStream().forEach(workflow -> {
-         JSONObject workflowBenchmarks = RestApeUtils.combineJSONObjects(
-               computeWorkflowSpecificFields(workflow, runID),
-               computeBiotoolsBenchmark(workflow),
-               computeOpenEBenchmarks(workflow));
+         JSONArray biotoolsbenchmark = computeBiotoolsBenchmark(workflow);
+         JSONArray openEBenchmarks = computeOpenEBenchmarks(workflow);
+         openEBenchmarks.forEach(biotoolsbenchmark::put);
+
+         JSONObject workflowBenchmarks = computeWorkflowSpecificFields(workflow, runID);
+         workflowBenchmarks.put("benchmarks", biotoolsbenchmark);
+
          String titleBenchmark = workflow.getFileName() + ".json";
          Path solFolder = candidateSolutions.getRunConfiguration().getSolutionDirPath2CWL();
          File script = solFolder.resolve(titleBenchmark).toFile();
@@ -98,8 +101,7 @@ public class ToolBenchmarkingAPIs {
     * @param workflow
     * @return
     */
-   private static JSONObject computeBiotoolsBenchmark(SolutionWorkflow workflow) {
-      JSONObject benchmarkResult = new JSONObject();
+   private static JSONArray computeBiotoolsBenchmark(SolutionWorkflow workflow) {
 
       // for each tool in the workflow, get the biotools annotations from bio.tool API
       List<JSONObject> biotoolsAnnotations = new ArrayList<>();
@@ -121,10 +123,6 @@ public class ToolBenchmarkingAPIs {
 
       JSONArray benchmarks = new JSONArray();
 
-      BenchmarkBase licensedBenchmark = new BenchmarkBase("Licensed", "Tools with a license",
-            "Number of tools which have a license specified.", "license", null);
-      benchmarks.put(BioToolsBenchmark.countLicencedEntries(biotoolsAnnotations, licensedBenchmark).getJson());
-
       BenchmarkBase linuxBenchmark = new BenchmarkBase("Linux", "Linux (OS) supported tools",
             "Number of tools which support Linux OS.", "operatingSystem", "Linux");
       benchmarks.put(BioToolsBenchmark.countOSEntries(biotoolsAnnotations, linuxBenchmark).getJson());
@@ -137,19 +135,27 @@ public class ToolBenchmarkingAPIs {
             "Number of tools which support Windows OS.", "operatingSystem", "Windows");
       benchmarks.put(BioToolsBenchmark.countOSEntries(biotoolsAnnotations, windowsBenchmark).getJson());
 
-      BenchmarkBase bioToolBenchmark = new BenchmarkBase("In bio.tools", "Available in bio.tools",
-            "Number of tools annotated in bio.tools.", null, null);
-      benchmarks.put(BioToolsBenchmark.countEntries(biotoolsAnnotations, bioToolBenchmark).getJson());
+      /*
+       * BenchmarkBase licensedBenchmark = new BenchmarkBase("Licensed",
+       * "Tools with a license",
+       * "Number of tools which have a license specified.", "license", null);
+       * benchmarks.put(BioToolsBenchmark.countLicencedEntries(biotoolsAnnotations,
+       * licensedBenchmark).getJson());
+       * 
+       * BenchmarkBase bioToolBenchmark = new BenchmarkBase("In bio.tools",
+       * "Available in bio.tools",
+       * "Number of tools annotated in bio.tools.", null, null);
+       * benchmarks.put(BioToolsBenchmark.countEntries(biotoolsAnnotations,
+       * bioToolBenchmark).getJson());
+       * 
+       * BenchmarkBase openEBenchmark = new BenchmarkBase("In OpenEBench",
+       * "Available in OpenEBench",
+       * "Number of tools tracked in OpenEBench.", null, null);
+       * benchmarks.put(BioToolsBenchmark.countEntries(biotoolsAnnotations,
+       * bioToolBenchmark).getJson());
+       */
 
-      // BenchmarkBase openEBenchmark = new BenchmarkBase("In OpenEBench", "Available
-      // in OpenEBench",
-      // "Number of tools tracked in OpenEBench.", null, null);
-      // benchmarks.put(BioToolsBenchmark.countEntries(biotoolsAnnotations,
-      // bioToolBenchmark).getJson());
-
-      benchmarkResult.put("benchmarks", benchmarks);
-
-      return benchmarkResult;
+      return benchmarks;
 
    }
 
@@ -160,9 +166,7 @@ public class ToolBenchmarkingAPIs {
     * @param workflow
     * @return
     */
-   static JSONObject computeOpenEBenchmarks(SolutionWorkflow workflow) {
-      JSONObject benchmarkResult = new JSONObject();
-
+   static JSONArray computeOpenEBenchmarks(SolutionWorkflow workflow) {
       /*
        * For each tool in the workflow, get the OpenEBench annotations from OpenEBench
        * API
@@ -191,9 +195,11 @@ public class ToolBenchmarkingAPIs {
             "Number of tools which have a license specified.", "license", null);
       benchmarks.put(OpenEBenchmark.countLicenceOpenness(openEBenchBiotoolsMetrics, licenseBenchmark).getJson());
 
-      benchmarkResult.put("benchmarks", benchmarks);
+      BenchmarkBase citationsBenchmark = new BenchmarkBase("Citations", "Citations annotated per tool",
+            "Number of citations per tool.", "citation", null);
+      benchmarks.put(OpenEBenchmark.countCitationsBenchmark(openEBenchBiotoolsMetrics, citationsBenchmark).getJson());
 
-      return benchmarkResult;
+      return benchmarks;
 
    }
 

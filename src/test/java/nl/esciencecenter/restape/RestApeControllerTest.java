@@ -162,6 +162,7 @@ class RestApeControllerTest {
         String content = FileUtils.readFileToString(APEFiles.readPathToFile(configPath),
                 StandardCharsets.UTF_8);
         JSONObject jsonObject = new JSONObject(content);
+        jsonObject.put("solutions", "1");
         JSONArray result = ApeAPI.runSynthesis(jsonObject, true);
         assertFalse(result.isEmpty(), "The encoding should be SAT.");
     }
