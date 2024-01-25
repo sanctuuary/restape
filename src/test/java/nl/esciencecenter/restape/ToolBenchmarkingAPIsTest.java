@@ -15,6 +15,8 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import nl.esciencecenter.models.benchmarks.OpenEBenchmark;
+
 /**
  * {@link ToolBenchmarkingAPIsTest} tests the methods in
  * {@link ToolBenchmarkingAPIs}.
@@ -91,7 +93,7 @@ class ToolBenchmarkingAPIsTest {
 
         // Testing the isOSIFromOEBMetrics method and asserting that the OSI status is
         // true
-        assertTrue(ToolBenchmarkingAPIs.isOSIFromOEBMetrics(mockToolMetrics) == LicenseType.OSI_Approved,
+        assertTrue(OpenEBenchmark.isOSIFromOEBMetrics(mockToolMetrics) == LicenseType.OSI_Approved,
                 "The method should return true for OSI license");
     }
 
@@ -117,7 +119,7 @@ class ToolBenchmarkingAPIsTest {
     void testFetchOEBMetricsForBiotoolsVersion() {
         try {
             JSONObject toolMetrics = ToolBenchmarkingAPIs.fetchOEBMetricsForBiotoolsVersion("shelx");
-            ToolBenchmarkingAPIs.isOSIFromOEBMetrics(toolMetrics);
+            OpenEBenchmark.isOSIFromOEBMetrics(toolMetrics);
         } catch (JSONException e) {
             fail("An exception occurred while checking for 'osi license' in 'project'. The JSON object could not be parsed correctly.");
         } catch (ClassCastException e) {

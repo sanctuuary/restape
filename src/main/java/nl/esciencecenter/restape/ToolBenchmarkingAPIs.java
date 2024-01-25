@@ -49,7 +49,7 @@ public class ToolBenchmarkingAPIs {
 
    public static final String restAPEtoolID = "restAPEtoolID";
    private static final Logger log = LoggerFactory.getLogger(ToolBenchmarkingAPIs.class);
-   public static final OkHttpClient client = new OkHttpClient();
+   private static final OkHttpClient client = new OkHttpClient();
 
    /**
     * Compute the benchmarks for the workflows.
@@ -61,12 +61,12 @@ public class ToolBenchmarkingAPIs {
     */
    static boolean computeBenchmarks(SolutionsList candidateSolutions, String runID) {
       candidateSolutions.getParallelStream().forEach(workflow -> {
-         JSONArray biotoolsbenchmark = computeBiotoolsBenchmark(workflow);
-         JSONArray openEBenchmarks = computeOpenEBenchmarks(workflow);
-         openEBenchmarks.forEach(biotoolsbenchmark::put);
-
+         /* 
+          * Compute the benchmarks for the workflow and save them in a JSON file.
+          */
+         JSONArray combinedBenchmarks = computeWorkflowBenchmarks(workflow);
          JSONObject workflowBenchmarks = computeWorkflowSpecificFields(workflow, runID);
-         workflowBenchmarks.put("benchmarks", biotoolsbenchmark);
+         workflowBenchmarks.put("benchmarks", combinedBenchmarks);
 
          String titleBenchmark = workflow.getFileName() + ".json";
          Path solFolder = candidateSolutions.getRunConfiguration().getSolutionDirPath2CWL();
@@ -82,6 +82,23 @@ public class ToolBenchmarkingAPIs {
       return true;
    }
 
+   /**
+    * Compute the benchmarks (based on bio.tools and OpenEBench APIs) for the workflows and return it in JSON format.
+    * 
+    * @param workflow - workflow for which the benchmarks should be computed.
+    * @return JSONArray containing the benchmarks for the workflow.
+    */
+   private static JSONArray computeWorkflowBenchmarks(SolutionWorkflow workflow) {
+      JSONArray biotoolsBenchmark = computeBiotoolsBenchmark(workflow);
+      JSONArray openEBenchmarks = computeOpenEBenchmarks(workflow);
+
+      for (int i = 0; i < openEBenchmarks.length(); i++) {
+         biotoolsBenchmark.put(openEBenchmarks.get(i));
+      }
+
+      return biotoolsBenchmark;
+   }
+
    private static JSONObject computeWorkflowSpecificFields(SolutionWorkflow workflow, String runID) {
       JSONObject benchmarkResult = new JSONObject();
       // Set workflow specific fields
@@ -93,11 +110,11 @@ public class ToolBenchmarkingAPIs {
    }
 
    /**
-    * Compute the bio.tools benchmarks for the workflows and return it in JSON
+    * Compute the bio.tools benchmarks for the workflows by using bio.tools API to get information about each tool in the workflow. The result (the benchmarks) is returned in JSON
     * format.
     * 
-    * @param workflow
-    * @return
+    * @param workflow - workflow for which the benchmarks should be computed.
+    * @return JSONArray containing the benchmarks for the workflow.
     */
    private static JSONArray computeBiotoolsBenchmark(SolutionWorkflow workflow) {
 
@@ -136,13 +153,13 @@ public class ToolBenchmarkingAPIs {
    }
 
    /**
-    * Compute the OpenEBench benchmarks for the workflows and return it in JSON
+    * Compute the OpenEBench benchmarks for the workflows by using OpenEBench API to get information about each tool in the workflow. The result (the benchmarks) is returned in JSON
     * format.
     * 
-    * @param workflow
-    * @return
+    * @param workflow - workflow for which the benchmarks should be computed. 
+    * @return 
     */
-   static JSONArray computeOpenEBenchmarks(SolutionWorkflow workflow) {
+   private static JSONArray computeOpenEBenchmarks(SolutionWorkflow workflow) {
       /*
        * For each tool in the workflow, get the OpenEBench annotations from OpenEBench
        * API
@@ -151,17 +168,16 @@ public class ToolBenchmarkingAPIs {
 
       workflow.getModuleNodes().forEach(toolNode -> {
          String toolID = toolNode.getUsedModule().getPredicateLabel();
+         JSONObject openEBenchEntry = new JSONObject();
          try {
-            JSONObject openEBenchEntry = ToolBenchmarkingAPIs.fetchOEBMetricsForBiotoolsVersion(toolID);
-            openEBenchEntry.put(ToolBenchmarkingAPIs.restAPEtoolID,
-                  toolNode.getUsedModule().getPredicateLabel());
-            openEBenchBiotoolsMetrics.add(openEBenchEntry);
-         } catch (JSONException | IOException e) {
-            JSONObject openEBenchEntry = new JSONObject();
-            openEBenchEntry.put(ToolBenchmarkingAPIs.restAPEtoolID,
-                  toolNode.getUsedModule().getPredicateLabel());
-            openEBenchBiotoolsMetrics.add(openEBenchEntry);
+            openEBenchEntry = ToolBenchmarkingAPIs.fetchOEBMetricsForBiotoolsVersion(toolID);
+         } catch (JSONException e) {
             e.printStackTrace();
+         } catch (IOException e) {
+            log.error("Tool {} not found in OpenEBench. It will not be benchmarked.", toolID);
+         } finally {
+            openEBenchEntry.put(ToolBenchmarkingAPIs.restAPEtoolID, toolNode.getUsedModule().getPredicateLabel());
+            openEBenchBiotoolsMetrics.add(openEBenchEntry);
          }
       });
 
@@ -169,7 +185,7 @@ public class ToolBenchmarkingAPIs {
 
       BenchmarkBase licenseBenchmark = new BenchmarkBase("License", "License information available",
             "Number of tools which have a license specified.", "license", null);
-      benchmarks.put(OpenEBenchmark.countLicenceOpenness(openEBenchBiotoolsMetrics, licenseBenchmark).getJson());
+      benchmarks.put(OpenEBenchmark.countLicenseOpenness(openEBenchBiotoolsMetrics, licenseBenchmark).getJson());
 
       BenchmarkBase citationsBenchmark = new BenchmarkBase("Citations", "Citations annotated per tool",
             "Number of citations per tool.", "citation", null);
@@ -192,7 +208,7 @@ public class ToolBenchmarkingAPIs {
     * @throws JSONException In case the JSON object returned by bio.tools cannot be
     *                       parsed.
     */
-   public static JSONObject fetchToolFromBioTools(String toolID) throws JSONException, IOException {
+   static JSONObject fetchToolFromBioTools(String toolID) throws JSONException, IOException {
       JSONObject bioToolAnnotation;
       toolID = toolID.toLowerCase();
       String urlToBioTools = "https://bio.tools/api/" + toolID +
@@ -221,11 +237,11 @@ public class ToolBenchmarkingAPIs {
     *               bio.tools), e.g., "comet", "blast", etc.
     * @return List of JSONObjects, each containing the metrics for a tool
     *         version.
-    * @throws IOException   - In case the tool is not found in bio.tools.
+    * @throws IOException   - In case the tool is not found in OpenEBench.
     * @throws JSONException - In case the JSON object returned by bio.tools or
     *                       OpenEBench API cannot be parsed.
     */
-   public static List<JSONObject> fetchToolMetricsPerVersionFromOEB(String toolID)
+   static List<JSONObject> fetchToolMetricsPerVersionFromOEB(String toolID)
          throws JSONException, IOException {
       toolID = toolID.toLowerCase();
       JSONArray openEBenchAggregateAnnotation = fetchToolAggregateFromOEB(toolID);
@@ -271,7 +287,7 @@ public class ToolBenchmarkingAPIs {
     * @throws JSONException - In case the JSON object returned by bio.tools or
     *                       OpenEBench API cannot be parsed.
     */
-   public static JSONObject fetchOEBMetricsForBiotoolsVersion(String toolID)
+   static JSONObject fetchOEBMetricsForBiotoolsVersion(String toolID)
          throws JSONException, IOException {
       toolID = toolID.toLowerCase();
       JSONArray openEBenchAggregateAnnotation = fetchToolAggregateFromOEB(toolID);
@@ -425,32 +441,6 @@ public class ToolBenchmarkingAPIs {
 
       log.debug("The list of tool aggregations was successfully fetched from OpenEBench.");
       return openEBenchAnnotation;
-   }
-
-   /**
-    * Parse the JSON object returned by OpenEBench API describing the tool metrics
-    * and return whether the tool has an OSI approved license.
-    * 
-    * @param toolMetrics - JSON object returned by OpenEBench API describing the
-    *                    tool metrics.
-    * @return true if the tool has an OSI approved license, false otherwise.
-    */
-   public static LicenseType isOSIFromOEBMetrics(JSONObject toolMetrics) throws JSONException {
-      JSONObject licenseJson;
-      try {
-         licenseJson = toolMetrics.getJSONObject("project").getJSONObject("license");
-      } catch (JSONException e) {
-         return LicenseType.Unknown;
-      }
-
-      boolean isOSI = licenseJson.getBoolean("osi");
-      if (isOSI) {
-         return LicenseType.OSI_Approved;
-      } else if (licenseJson.getBoolean("open_source")) {
-         return LicenseType.Open;
-      } else {
-         return LicenseType.Closed;
-      }
    }
 
 }

@@ -26,7 +26,7 @@ public class OpenEBenchmark {
     private double desirabilityValue;
     private List<WorkflowStepBench> workflow;
 
-    public static OpenEBenchmark countLicenceOpenness(List<JSONObject> openEBenchBiotoolsMetrics,
+    public static OpenEBenchmark countLicenseOpenness(List<JSONObject> openEBenchBiotoolsMetrics,
             BenchmarkBase benchmarkTitle) {
         OpenEBenchmark benchmark = new OpenEBenchmark(benchmarkTitle);
         int workflowLength = openEBenchBiotoolsMetrics.size();
@@ -53,7 +53,7 @@ public class OpenEBenchmark {
 
         biotoolsAnnotations.stream().forEach(toolAnnot -> {
             WorkflowStepBench biotoolsEntryBenchmark = new WorkflowStepBench();
-            LicenseType license = ToolBenchmarkingAPIs.isOSIFromOEBMetrics(toolAnnot);
+            LicenseType license = isOSIFromOEBMetrics(toolAnnot);
             // set case for each license type
             switch (license) {
                 case Unknown:
@@ -185,5 +185,31 @@ public class OpenEBenchmark {
         benchmarkJson.put("steps", workflowJson);
         return benchmarkJson;
     }
+
+    /**
+    * Parse the JSON object returned by OpenEBench API describing the tool metrics
+    * and return whether the tool has an OSI approved license.
+    * 
+    * @param toolMetrics - JSON object returned by OpenEBench API describing the
+    *                    tool metrics.
+    * @return true if the tool has an OSI approved license, false otherwise.
+    */
+   public static LicenseType isOSIFromOEBMetrics(JSONObject toolMetrics) throws JSONException {
+    JSONObject licenseJson;
+    try {
+       licenseJson = toolMetrics.getJSONObject("project").getJSONObject("license");
+    } catch (JSONException e) {
+       return LicenseType.Unknown;
+    }
+
+    boolean isOSI = licenseJson.getBoolean("osi");
+    if (isOSI) {
+       return LicenseType.OSI_Approved;
+    } else if (licenseJson.getBoolean("open_source")) {
+       return LicenseType.Open;
+    } else {
+       return LicenseType.Closed;
+    }
+ }
 
 }
