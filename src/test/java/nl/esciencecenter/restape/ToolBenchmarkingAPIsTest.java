@@ -34,7 +34,7 @@ class ToolBenchmarkingAPIsTest {
                 "http://example.com/api/metrics/version1",
                 "http://example.com/api/test/version2");
 
-        List<String> result = ToolBenchmarkingAPIs.swapOEBCallTool2Metric(input);
+        List<String> result = ToolBenchmarkingAPIs.replaceTool2MetricInOEBCall(input);
 
         assertEquals(expected, result, "The URLs should be correctly transformed");
     }
@@ -100,9 +100,9 @@ class ToolBenchmarkingAPIsTest {
         try {
             List<JSONObject> allToolMetrics = ToolBenchmarkingAPIs.fetchToolMetricsPerVersionFromOEB(TOOL_ID);
             assertTrue(allToolMetrics != null && allToolMetrics.size() > 0);
-            allToolMetrics.forEach(tootMetrics -> {
+            allToolMetrics.forEach(toolMetrics -> {
                 try {
-                    tootMetrics.get("project");
+                    toolMetrics.get("project");
                 } catch (JSONException e) {
                     fail("An exception occurred while checking for 'osi license' in 'project'. The JSON object could not be parsed correctly.");
                 }

@@ -6,14 +6,12 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
 import org.apache.commons.io.FileUtils;
-import org.checkerframework.checker.units.qual.t;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -108,16 +106,14 @@ public class ToolBenchmarkingAPIs {
 
       workflow.getModuleNodes().forEach(toolNode -> {
          String toolID = toolNode.getUsedModule().getPredicateLabel();
+         JSONObject biotoolsEntry = new JSONObject();
          try {
-
-            JSONObject biotoolsEntry = ToolBenchmarkingAPIs.fetchToolFromBioTools(toolID);
-            biotoolsEntry.put(ToolBenchmarkingAPIs.restAPEtoolID, toolNode.getUsedModule().getPredicateLabel());
-            biotoolsAnnotations.add(biotoolsEntry);
+            biotoolsEntry = ToolBenchmarkingAPIs.fetchToolFromBioTools(toolID);
          } catch (JSONException | IOException e) {
-            JSONObject biotoolsEntry = new JSONObject();
+            e.printStackTrace();
+         } finally {
             biotoolsEntry.put(ToolBenchmarkingAPIs.restAPEtoolID, toolNode.getUsedModule().getPredicateLabel());
             biotoolsAnnotations.add(biotoolsEntry);
-            e.printStackTrace();
          }
       });
 
@@ -134,26 +130,6 @@ public class ToolBenchmarkingAPIs {
       BenchmarkBase windowsBenchmark = new BenchmarkBase("Windows", "Windows (OS) supported tools",
             "Number of tools which support Windows OS.", "operatingSystem", "Windows");
       benchmarks.put(BioToolsBenchmark.countOSEntries(biotoolsAnnotations, windowsBenchmark).getJson());
-
-      /*
-       * BenchmarkBase licensedBenchmark = new BenchmarkBase("Licensed",
-       * "Tools with a license",
-       * "Number of tools which have a license specified.", "license", null);
-       * benchmarks.put(BioToolsBenchmark.countLicencedEntries(biotoolsAnnotations,
-       * licensedBenchmark).getJson());
-       * 
-       * BenchmarkBase bioToolBenchmark = new BenchmarkBase("In bio.tools",
-       * "Available in bio.tools",
-       * "Number of tools annotated in bio.tools.", null, null);
-       * benchmarks.put(BioToolsBenchmark.countEntries(biotoolsAnnotations,
-       * bioToolBenchmark).getJson());
-       * 
-       * BenchmarkBase openEBenchmark = new BenchmarkBase("In OpenEBench",
-       * "Available in OpenEBench",
-       * "Number of tools tracked in OpenEBench.", null, null);
-       * benchmarks.put(BioToolsBenchmark.countEntries(biotoolsAnnotations,
-       * bioToolBenchmark).getJson());
-       */
 
       return benchmarks;
 
@@ -260,7 +236,7 @@ public class ToolBenchmarkingAPIs {
        * information. The OpenEBench API does not provide a more direct way to
        * retrieve the metrics.
        */
-      toolOEBVersionsURLs = swapOEBCallTool2Metric(toolOEBVersionsURLs);
+      toolOEBVersionsURLs = replaceTool2MetricInOEBCall(toolOEBVersionsURLs);
 
       List<JSONObject> openEBenchToolVersions = new ArrayList<>();
 
@@ -313,7 +289,7 @@ public class ToolBenchmarkingAPIs {
        * information. The OpenEBench API does not provide a more direct way to
        * retrieve the metrics.
        */
-      biotoolsVersionURL = swapOEBCallTool2Metric(biotoolsVersionURL);
+      biotoolsVersionURL = replaceTool2MetricInOEBCall(biotoolsVersionURL);
 
       // retrieve the JSON metrics for each tool version
       String metricsJson = "";
@@ -405,8 +381,8 @@ public class ToolBenchmarkingAPIs {
     * @param openEBenchToolVersionURLs
     * @return List of URLs that reference tool metrics.
     */
-   static List<String> swapOEBCallTool2Metric(List<String> openEBenchToolVersionURLs) {
-      return openEBenchToolVersionURLs.stream().map(url -> swapOEBCallTool2Metric(url)).toList();
+   static List<String> replaceTool2MetricInOEBCall(List<String> openEBenchToolVersionURLs) {
+      return openEBenchToolVersionURLs.stream().map(url -> replaceTool2MetricInOEBCall(url)).toList();
    }
 
    /**
@@ -417,7 +393,7 @@ public class ToolBenchmarkingAPIs {
     * @param openEBenchToolVersionURL
     * @return URL that references tool metrics.
     */
-   static String swapOEBCallTool2Metric(String openEBenchToolVersionURL) {
+   static String replaceTool2MetricInOEBCall(String openEBenchToolVersionURL) {
       return openEBenchToolVersionURL.replaceFirst("/tool/", "/metrics/");
    }
 
@@ -455,14 +431,14 @@ public class ToolBenchmarkingAPIs {
     * Parse the JSON object returned by OpenEBench API describing the tool metrics
     * and return whether the tool has an OSI approved license.
     * 
-    * @param tootMetrics - JSON object returned by OpenEBench API describing the
+    * @param toolMetrics - JSON object returned by OpenEBench API describing the
     *                    tool metrics.
     * @return true if the tool has an OSI approved license, false otherwise.
     */
-   public static LicenseType isOSIFromOEBMetrics(JSONObject tootMetrics) throws JSONException {
+   public static LicenseType isOSIFromOEBMetrics(JSONObject toolMetrics) throws JSONException {
       JSONObject licenseJson;
       try {
-         licenseJson = tootMetrics.getJSONObject("project").getJSONObject("license");
+         licenseJson = toolMetrics.getJSONObject("project").getJSONObject("license");
       } catch (JSONException e) {
          return LicenseType.Unknown;
       }
