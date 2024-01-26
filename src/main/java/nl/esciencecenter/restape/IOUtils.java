@@ -1,18 +1,16 @@
 package nl.esciencecenter.restape;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import javax.imageio.ImageIO;
-
 import org.apache.commons.io.FileUtils;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+/**
+ * The {@code IOUtils} class provides static methods to read the input files.
+ */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class IOUtils {
 

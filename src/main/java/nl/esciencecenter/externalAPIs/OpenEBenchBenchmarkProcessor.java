@@ -1,4 +1,4 @@
-package nl.esciencecenter.models.benchmarks;
+package nl.esciencecenter.externalAPIs;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,34 +8,42 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import nl.esciencecenter.models.benchmarks.Benchmark;
+import nl.esciencecenter.models.benchmarks.BenchmarkBase;
+import nl.esciencecenter.models.benchmarks.WorkflowStepBenchmark;
 import nl.esciencecenter.restape.LicenseType;
-import nl.esciencecenter.restape.ToolBenchmarkingAPIs;
 
-@RequiredArgsConstructor
 /**
- * Class representing the design-time benchmarks for a workflow obtained from
- * bio.tools API.
+ * Class {@link OpenEBenchBenchmarkProcessor} used to compute the design-time benchmarks for a workflow using the
+ * OpenEBench API.<br><br>
+ * The OpenEBench API does not provide a well structured API at the moment. The
+ * current API interface is available at
+ * {@link https://openebench.bsc.es/monitor}. Therefore, some of the methods in
+ * this class are hardcoded to be able to utilize the current API interface.
  */
-public class OpenEBenchmark {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class OpenEBenchBenchmarkProcessor {
 
-    @NonNull
-    private BenchmarkBase benchmarkTitle;
-    private String value;
-    private double desirabilityValue;
-    private List<WorkflowStepBench> workflow;
-
-    public static OpenEBenchmark countLicenseOpenness(List<JSONObject> openEBenchBiotoolsMetrics,
+    /**
+     * Benchmark for each tool in the workflow the license type according to the openness of the license. The licensed are characterized according to {@link LicenseType}.
+     * 
+     * @param openEBenchBiotoolsMetrics - List of JSONObjects containing the openEBench metrics for each tool in the workflow.
+     * @param benchmarkTitle - Information about the benchmark that is being computed.
+     * @return Benchmark object ({@link Benchmark}) containing the benchmark value and desirability value.
+     */
+    public static Benchmark benchmarkLicenses(List<JSONObject> openEBenchBiotoolsMetrics,
             BenchmarkBase benchmarkTitle) {
-        OpenEBenchmark benchmark = new OpenEBenchmark(benchmarkTitle);
+        Benchmark benchmark = new Benchmark(benchmarkTitle);
         int workflowLength = openEBenchBiotoolsMetrics.size();
 
-        benchmark.workflow = evaluateLicenseBenchmark(openEBenchBiotoolsMetrics);
-        int count = (int) benchmark.workflow.stream().filter(tool -> tool.getDesirabilityValue() > 0).count();
+        benchmark.setWorkflow(evaluateLicenseBenchmark(openEBenchBiotoolsMetrics));
+        int count = (int) benchmark.getWorkflow().stream().filter(tool -> tool.getDesirabilityValue() > 0).count();
 
-        benchmark.desirabilityValue = BenchmarkBase.strictDesirabilityDistribution(count, workflowLength);
-        benchmark.value = BenchmarkBase.ratioString(count, workflowLength);
+        benchmark.setDesirabilityValue(BenchmarkUtils.strictDesirabilityDistribution(count, workflowLength));
+        benchmark.setValue(BenchmarkUtils.ratioString(count, workflowLength));
 
         return benchmark;
     }
@@ -48,11 +56,11 @@ public class OpenEBenchmark {
      * @param fieldName
      * @return
      */
-    private static List<WorkflowStepBench> evaluateLicenseBenchmark(List<JSONObject> biotoolsAnnotations) {
-        List<WorkflowStepBench> biotoolsEntries = new ArrayList<>();
+    private static List<WorkflowStepBenchmark> evaluateLicenseBenchmark(List<JSONObject> biotoolsAnnotations) {
+        List<WorkflowStepBenchmark> biotoolsEntries = new ArrayList<>();
 
         biotoolsAnnotations.stream().forEach(toolAnnot -> {
-            WorkflowStepBench biotoolsEntryBenchmark = new WorkflowStepBench();
+            WorkflowStepBenchmark biotoolsEntryBenchmark = new WorkflowStepBenchmark();
             LicenseType license = isOSIFromOEBMetrics(toolAnnot);
             // set case for each license type
             switch (license) {
@@ -85,17 +93,17 @@ public class OpenEBenchmark {
         return biotoolsEntries;
     }
 
-    public static OpenEBenchmark countCitationsBenchmark(List<JSONObject> openEBenchBiotoolsMetrics,
+    public static Benchmark countCitationsBenchmark(List<JSONObject> openEBenchBiotoolsMetrics,
             BenchmarkBase benchmarkTitle) {
-        OpenEBenchmark benchmark = new OpenEBenchmark(benchmarkTitle);
+        Benchmark benchmark = new Benchmark(benchmarkTitle);
 
-        benchmark.workflow = countCitationPerTool(openEBenchBiotoolsMetrics);
+        benchmark.setWorkflow(countCitationPerTool(openEBenchBiotoolsMetrics));
         List<Integer> counts = new ArrayList<>();
-        benchmark.workflow.forEach(tool -> counts.add(Integer.parseInt(tool.getValue())));
+        benchmark.getWorkflow().forEach(tool -> counts.add(Integer.parseInt(tool.getValue())));
         int median = findMedian(counts);
 
-        benchmark.value = median + "";
-        benchmark.desirabilityValue = computeCitationDesirability(median);
+        benchmark.setValue(median + "");
+        benchmark.setDesirabilityValue(computeCitationDesirability(median));
 
         return benchmark;
     }
@@ -126,10 +134,10 @@ public class OpenEBenchmark {
         }
     }
 
-    private static List<WorkflowStepBench> countCitationPerTool(List<JSONObject> openEBenchBiotoolsMetrics) {
-        List<WorkflowStepBench> biotoolsEntries = new ArrayList<>();
+    private static List<WorkflowStepBenchmark> countCitationPerTool(List<JSONObject> openEBenchBiotoolsMetrics) {
+        List<WorkflowStepBenchmark> biotoolsEntries = new ArrayList<>();
         openEBenchBiotoolsMetrics.stream().forEach(toolAnnot -> {
-            WorkflowStepBench biotoolsEntryBenchmark = new WorkflowStepBench();
+            WorkflowStepBenchmark biotoolsEntryBenchmark = new WorkflowStepBenchmark();
             int count = 0;
             try {
                 JSONArray publications = toolAnnot.getJSONObject("project").getJSONArray("publications");
@@ -164,26 +172,13 @@ public class OpenEBenchmark {
             return 0;
         } else if (count < 10) {
             return 0.25;
-        } else if (count < 30) {
+        } else if (count < 100) {
             return 0.5;
-        } else if (count < 50) {
+        } else if (count < 200) {
             return 0.75;
         } else {
             return 1;
         }
-    }
-
-    public JSONObject getJson() {
-        JSONObject benchmarkJson = this.benchmarkTitle.getTitleJson();
-
-        benchmarkJson.put("value", value);
-        benchmarkJson.put("desirability_value", desirabilityValue);
-        JSONArray workflowJson = new JSONArray();
-        for (WorkflowStepBench step : workflow) {
-            workflowJson.put(step.toJSON());
-        }
-        benchmarkJson.put("steps", workflowJson);
-        return benchmarkJson;
     }
 
     /**

@@ -15,7 +15,8 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import nl.esciencecenter.models.benchmarks.OpenEBenchmark;
+import nl.esciencecenter.externalAPIs.OpenEBenchBenchmarkProcessor;
+import nl.esciencecenter.externalAPIs.OpenEBenchRestClient;
 
 /**
  * {@link ToolBenchmarkingAPIsTest} tests the methods in
@@ -36,7 +37,7 @@ class ToolBenchmarkingAPIsTest {
                 "http://example.com/api/metrics/version1",
                 "http://example.com/api/test/version2");
 
-        List<String> result = ToolBenchmarkingAPIs.replaceTool2MetricInOEBCall(input);
+        List<String> result = OpenEBenchRestClient.replaceTool2Metric(input);
 
         assertEquals(expected, result, "The URLs should be correctly transformed");
     }
@@ -47,7 +48,7 @@ class ToolBenchmarkingAPIsTest {
     @Test
     void testFetchToolAggregateFromOEB() {
         try {
-            JSONArray openEBenchAggregateAnnotation = ToolBenchmarkingAPIs.fetchToolAggregateFromOEB(TOOL_ID);
+            JSONArray openEBenchAggregateAnnotation = OpenEBenchRestClient.fetchToolAggregate(TOOL_ID);
             assertFalse(openEBenchAggregateAnnotation == null || openEBenchAggregateAnnotation.isEmpty());
         } catch (JSONException | IOException e) {
             e.printStackTrace();
@@ -62,8 +63,8 @@ class ToolBenchmarkingAPIsTest {
     @Test
     void testGetToolVersionsURLs() {
         try {
-            JSONArray openEBenchAggregateAnnotation = ToolBenchmarkingAPIs.fetchToolAggregateFromOEB(TOOL_ID);
-            List<String> toolOEBVersionsURLs = ToolBenchmarkingAPIs.getToolVersionsURLs(openEBenchAggregateAnnotation);
+            JSONArray openEBenchAggregateAnnotation = OpenEBenchRestClient.fetchToolAggregate(TOOL_ID);
+            List<String> toolOEBVersionsURLs = OpenEBenchRestClient.getToolVersionsURLs(openEBenchAggregateAnnotation);
 
             assertTrue(toolOEBVersionsURLs != null && !toolOEBVersionsURLs.isEmpty()
                     && toolOEBVersionsURLs.get(0).contains("https://openebench.bsc.es/"));
@@ -93,14 +94,14 @@ class ToolBenchmarkingAPIsTest {
 
         // Testing the isOSIFromOEBMetrics method and asserting that the OSI status is
         // true
-        assertTrue(OpenEBenchmark.isOSIFromOEBMetrics(mockToolMetrics) == LicenseType.OSI_Approved,
+        assertTrue(OpenEBenchBenchmarkProcessor.isOSIFromOEBMetrics(mockToolMetrics) == LicenseType.OSI_Approved,
                 "The method should return true for OSI license");
     }
 
     @Test
     void testFetchToolMetricsPerVersionFromOEB() {
         try {
-            List<JSONObject> allToolMetrics = ToolBenchmarkingAPIs.fetchToolMetricsPerVersionFromOEB(TOOL_ID);
+            List<JSONObject> allToolMetrics = OpenEBenchRestClient.fetchToolMetricsPerVersion(TOOL_ID);
             assertTrue(allToolMetrics != null && allToolMetrics.size() > 0);
             allToolMetrics.forEach(toolMetrics -> {
                 try {
@@ -118,8 +119,8 @@ class ToolBenchmarkingAPIsTest {
     @Test
     void testFetchOEBMetricsForBiotoolsVersion() {
         try {
-            JSONObject toolMetrics = ToolBenchmarkingAPIs.fetchOEBMetricsForBiotoolsVersion("shelx");
-            OpenEBenchmark.isOSIFromOEBMetrics(toolMetrics);
+            JSONObject toolMetrics = OpenEBenchRestClient.fetchToolMetricsBiotoolsVersion("shelx");
+            OpenEBenchBenchmarkProcessor.isOSIFromOEBMetrics(toolMetrics);
         } catch (JSONException e) {
             fail("An exception occurred while checking for 'osi license' in 'project'. The JSON object could not be parsed correctly.");
         } catch (ClassCastException e) {
