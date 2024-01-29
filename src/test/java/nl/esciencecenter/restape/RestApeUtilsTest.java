@@ -12,6 +12,9 @@ import nl.uu.cs.ape.utils.APEFiles;
 @SpringBootTest
 class RestApeUtilsTest {
 
+    /**
+     * Test whether the APE API can be setup with a URL path.
+     */
     @Test
     void loadURLPath() {
         String urlPath = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/MassSpectometry/config.json";
@@ -20,6 +23,9 @@ class RestApeUtilsTest {
 
     }
 
+    /**
+     * Test whether the APE API can be setup with a local path.
+     */
     @Test
     void loadLocalPath() {
 
@@ -31,6 +37,10 @@ class RestApeUtilsTest {
 
     }
 
+    /**
+     * Test whether the APE API retrieves data types within a domain configured in
+     * a URL path.
+     */
     @Test
     void getTypesFromURLPath() {
         String urlPath = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/MassSpectometry/config.json";
@@ -39,6 +49,10 @@ class RestApeUtilsTest {
 
     }
 
+    /**
+     * Test whether the APE API retrieves tools within a domain configured in
+     * a local path.
+     */
     @Test
     void getToolsFromURLPath() {
         String urlPath = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/MassSpectometry/config.json";

@@ -128,6 +128,7 @@ class RestApeControllerTest {
         String content = FileUtils.readFileToString(APEFiles.readPathToFile(configPath),
                 StandardCharsets.UTF_8);
         JSONObject jsonObject = new JSONObject(content);
+        jsonObject.put("solutions", "1");
         JSONArray result = ApeAPI.runSynthesis(jsonObject, false);
         assertTrue(result.isEmpty(), "The encoding should be UNSAT.");
     }
@@ -145,6 +146,7 @@ class RestApeControllerTest {
         String content = FileUtils.readFileToString(APEFiles.readPathToFile(configPath),
                 StandardCharsets.UTF_8);
         JSONObject jsonObject = new JSONObject(content);
+        jsonObject.put("solutions", "1");
         JSONArray result = ApeAPI.runSynthesis(jsonObject, false);
         assertFalse(result.isEmpty(), "The encoding should be SAT.");
     }
@@ -162,6 +164,7 @@ class RestApeControllerTest {
         String content = FileUtils.readFileToString(APEFiles.readPathToFile(configPath),
                 StandardCharsets.UTF_8);
         JSONObject jsonObject = new JSONObject(content);
+        jsonObject.put("solutions", "1");
         JSONArray result = ApeAPI.runSynthesis(jsonObject, true);
         assertFalse(result.isEmpty(), "The encoding should be SAT.");
     }

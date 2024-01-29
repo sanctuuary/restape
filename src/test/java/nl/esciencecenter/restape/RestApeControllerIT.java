@@ -15,8 +15,11 @@ class RestApeControllerIT {
     @Autowired
     private TestRestTemplate template;
 
+    /**
+     * Test if the server is running and returns the correct message.
+     */
     @Test
-    void getGreetings() throws Exception {
+    void getGreetings() {
         ResponseEntity<String> response = template.getForEntity("/", String.class);
         assertThat(response.getBody()).isEqualTo("Welcome to the RESTful APE API!");
     }
