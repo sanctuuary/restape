@@ -326,4 +326,37 @@ public class RestApeController {
                         return ResponseEntity.badRequest().body("The CWL file could not be found.");
                 }
         }
+
+        /**
+         * Retrieve the CWL solution files based on the provided run ID and CWL file names
+         * 
+         * @param fileName Name of the CWL file (provided under 'name' after the
+         *                 synthesis run).
+         * @param runID    ID of the corresponding synthesis run (provided under
+         *                 'run_id' after the synthesis run).
+         * @return CWL file representing the workflow.
+         */
+        @PostMapping("/cwl_zip")
+        @Operation(summary = "Retrieve a design-time benchmark file", description = "Retrieve a design-time benchmark file from the file system, describing the workflow.", tags = {
+                        "Download" }, parameters = {
+                                        @Parameter(name = "file_name", description = "Name of the benchmark file (provided under 'bench_name' after the synthesis run).", example = "workflowSolution_0.json"),
+                                        @Parameter(name = "run_id", description = "ID of the corresponding synthesis run (provided under 'run_id' after the synthesis run).", example = "04ce2ef00c1685150252568")
+
+        }, responses = {
+                        @ApiResponse(responseCode = "200", description = "Successful operation. Taxonomy of data terms is provided.", content = @Content(mediaType = "application/x-yaml")),
+                        @ApiResponse(responseCode = "400", description = "Invalid input"),
+                        @ApiResponse(responseCode = "404", description = "Not found")
+
+        })
+        public ResponseEntity<String> getZipCWLs(
+                        @RequestParam("file_name") String fileName,
+                        @RequestParam("run_id") String runID) {
+                try {
+                        Path path = RestApeUtils.calculatePath(runID, "CWL", fileName);
+                        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
+                                        .body(IOUtils.getLocalBenchmarkFile(path));
+                } catch (IOException e) {
+                        return ResponseEntity.badRequest().body("The CWL file could not be found.");
+                }
+        }
 }

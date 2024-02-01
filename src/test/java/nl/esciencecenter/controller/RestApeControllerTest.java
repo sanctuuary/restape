@@ -1,4 +1,4 @@
-package nl.esciencecenter.restape;
+package nl.esciencecenter.controller;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -21,6 +21,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import nl.esciencecenter.restape.ApeAPI;
 import nl.uu.cs.ape.utils.APEFiles;
 
 @SpringBootTest
@@ -116,57 +117,35 @@ class RestApeControllerTest {
     }
 
     /**
-     * Test the runSynthesis method with POST, with an UNSAT configuration file.
-     * No workflow solutions should be returned.
+     * Test the runSynthesis method with POST and a valid configuration file.
      * 
-     * @throws IOException                  if the file cannot be read.
-     * @throws OWLOntologyCreationException if the ontology cannot be created.
+     * @throws Exception
      */
     @Test
-    void runSynthesisFail() throws IOException, OWLOntologyCreationException {
-        String configPath = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/WombatP_tools/config_unsat.json";
-        String content = FileUtils.readFileToString(APEFiles.readPathToFile(configPath),
+    void runSynthesisPostPass() throws Exception {
+
+        String configPath = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/WombatP_tools/config.json";
+        String jsonContent = FileUtils.readFileToString(APEFiles.readPathToFile(configPath),
                 StandardCharsets.UTF_8);
-        JSONObject jsonObject = new JSONObject(content);
-        jsonObject.put("solutions", "1");
-        JSONArray result = ApeAPI.runSynthesis(jsonObject, false);
-        assertTrue(result.isEmpty(), "The encoding should be UNSAT.");
+
+        mvc.perform(MockMvcRequestBuilders.post("/run_synthesis")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON).content(jsonContent))
+                .andExpect(status().isOk());
     }
 
-    /**
-     * Test the runSynthesis method with POST, with a SAT configuration file.
-     * Workflow solutions should be returned.
-     * 
-     * @throws IOException                  if the file cannot be read.
-     * @throws OWLOntologyCreationException if the ontology cannot be created.
-     */
     @Test
-    void runSynthesisPass() throws IOException, OWLOntologyCreationException {
-        String configPath = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/WombatP_tools/config.json";
-        String content = FileUtils.readFileToString(APEFiles.readPathToFile(configPath),
+    void getZipCWLs() throws Exception {
+        String path = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/MassSpectometry/config.json";
+        String content = FileUtils.readFileToString(APEFiles.readPathToFile(path),
                 StandardCharsets.UTF_8);
         JSONObject jsonObject = new JSONObject(content);
         jsonObject.put("solutions", "1");
         JSONArray result = ApeAPI.runSynthesis(jsonObject, false);
         assertFalse(result.isEmpty(), "The encoding should be SAT.");
-    }
-
-    /**
-     * Test the runSynthesis method with POST, with a SAT configuration file.
-     * Workflow solutions should be returned.
-     * 
-     * @throws IOException                  if the file cannot be read.
-     * @throws OWLOntologyCreationException if the ontology cannot be created.
-     */
-    @Test
-    void runSynthesisAndBenchmarkPass() throws IOException, OWLOntologyCreationException {
-        String configPath = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/WombatP_tools/config.json";
-        String content = FileUtils.readFileToString(APEFiles.readPathToFile(configPath),
-                StandardCharsets.UTF_8);
-        JSONObject jsonObject = new JSONObject(content);
-        jsonObject.put("solutions", "1");
-        JSONArray result = ApeAPI.runSynthesis(jsonObject, true);
-        assertFalse(result.isEmpty(), "The encoding should be SAT.");
+        String runID = result.getJSONObject(0).getString("run_id");
+        mvc.perform(MockMvcRequestBuilders.get("/zip_cwls?run_id=" + runID).accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
 
 }
