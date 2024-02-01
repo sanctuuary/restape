@@ -54,8 +54,11 @@ public class Benchmark {
     public JSONObject toJSON() {
         JSONObject benchmarkJson = this.benchmarkInfo.getTitleJson();
 
-        benchmarkJson.put("value", value);
-        benchmarkJson.put("desirability_value", desirabilityValue);
+        JSONObject aggregateValue = new JSONObject();
+        aggregateValue.put("value", value);
+        aggregateValue.put("desirability", desirabilityValue);
+        benchmarkJson.put("aggregate_value", aggregateValue);
+
         JSONArray workflowJson = new JSONArray();
         for (WorkflowStepBenchmark step : workflow) {
             workflowJson.put(step.toJSON());

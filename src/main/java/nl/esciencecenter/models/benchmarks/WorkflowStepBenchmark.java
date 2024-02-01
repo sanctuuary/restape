@@ -37,7 +37,7 @@ public class WorkflowStepBenchmark {
 
     @Override
     public String toString() {
-        return "{ description:" + description + ", value:" + value + ", desirability_value:"
+        return "{ label:" + description + ", value:" + value + ", desirability:"
                 + desirabilityValue + "}";
     }
 
@@ -49,9 +49,9 @@ public class WorkflowStepBenchmark {
      */
     public JSONObject toJSON() {
         JSONObject json = new JSONObject();
-        json.put("description", description);
+        json.put("label", description);
         json.put("value", value);
-        json.put("desirability_value", desirabilityValue);
+        json.put("desirability", desirabilityValue);
         return json;
     }
 

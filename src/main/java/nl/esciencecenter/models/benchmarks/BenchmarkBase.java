@@ -15,17 +15,17 @@ public class BenchmarkBase {
     @NonNull
     private String benchmarkTitle;
     @NonNull
-    private String benchmarkLongTitle;
-    @NonNull
     private String benchmarkDescription;
+    @NonNull
+    private String unit;
     private String expectedField;
     private String expectedValue;
 
     public JSONObject getTitleJson() {
         JSONObject benchmarkJson = new JSONObject();
-        benchmarkJson.put("benchmark_title", benchmarkTitle);
-        benchmarkJson.put("benchmark_long_title", benchmarkLongTitle);
-        benchmarkJson.put("benchmark_description", benchmarkDescription);
+        benchmarkJson.put("title", benchmarkTitle);
+        benchmarkJson.put("description", benchmarkDescription);
+        benchmarkJson.put("unit", unit);
         return benchmarkJson;
     }
 

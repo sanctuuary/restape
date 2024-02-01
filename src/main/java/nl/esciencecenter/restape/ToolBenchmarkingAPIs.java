@@ -139,16 +139,17 @@ public class ToolBenchmarkingAPIs {
 
       List<Benchmark> benchmarks = new ArrayList<>();
 
+      String unitOS = "supported / not supported";
       BenchmarkBase linuxBenchmark = new BenchmarkBase("Linux", "Linux (OS) supported tools",
-            "Number of tools which support Linux OS.", "operatingSystem", "Linux");
+            unitOS, "operatingSystem", "Linux");
       benchmarks.add(BioToolsBenchmarkProcessor.benchmarkOSSupport(biotoolsAnnotations, linuxBenchmark));
 
       BenchmarkBase macOSBenchmark = new BenchmarkBase("Mac OS", "Mac OS supported tools",
-            "Number of tools which support Mac OS.", "operatingSystem", "Mac");
+            unitOS, "operatingSystem", "Mac");
       benchmarks.add(BioToolsBenchmarkProcessor.benchmarkOSSupport(biotoolsAnnotations, macOSBenchmark));
 
       BenchmarkBase windowsBenchmark = new BenchmarkBase("Windows", "Windows (OS) supported tools",
-            "Number of tools which support Windows OS.", "operatingSystem", "Windows");
+            unitOS, "operatingSystem", "Windows");
       benchmarks.add(BioToolsBenchmarkProcessor.benchmarkOSSupport(biotoolsAnnotations, windowsBenchmark));
 
       return benchmarks;
@@ -189,11 +190,11 @@ public class ToolBenchmarkingAPIs {
       List<Benchmark> benchmarks = new ArrayList<>();
 
       BenchmarkBase licenseBenchmark = new BenchmarkBase("License", "License information available",
-            "Number of tools which have a license specified.", "license", null);
+            "license type", "license", null);
       benchmarks.add(OpenEBenchBenchmarkProcessor.benchmarkLicenses(openEBenchBiotoolsMetrics, licenseBenchmark));
 
       BenchmarkBase citationsBenchmark = new BenchmarkBase("Citations", "Citations annotated per tool",
-            "Number of citations per tool.", "citation", null);
+            "citation count", "citation", null);
       benchmarks.add(OpenEBenchBenchmarkProcessor.countCitationsBenchmark(openEBenchBiotoolsMetrics, citationsBenchmark));
 
       return benchmarks;
