@@ -1,15 +1,7 @@
 package nl.esciencecenter.restape;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-
-import nl.esciencecenter.models.benchmarks.BenchmarkBase;
-import nl.esciencecenter.models.benchmarks.BioToolsBenchmark;
 import nl.uu.cs.ape.APE;
 import nl.uu.cs.ape.configuration.APECoreConfig;
 import nl.uu.cs.ape.configuration.APERunConfig;
