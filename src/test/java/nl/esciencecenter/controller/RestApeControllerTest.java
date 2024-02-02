@@ -4,16 +4,12 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
-import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -61,7 +57,7 @@ class RestApeControllerTest {
      */
     @Test
     void getDataTest() throws Exception {
-        String path = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/MassSpectometry/config.json";
+        String path = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/WombatP_tools/config.json";
 
         mvc.perform(MockMvcRequestBuilders.get("/data_taxonomy?config_path=" + path).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -86,7 +82,7 @@ class RestApeControllerTest {
      */
     @Test
     void getToolsTest() throws Exception {
-        String path = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/MassSpectometry/config.json";
+        String path = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/WombatP_tools/config.json";
 
         mvc.perform(
                 MockMvcRequestBuilders.get("/tools_taxonomy?config_path=" + path).accept(MediaType.APPLICATION_JSON))
@@ -136,7 +132,8 @@ class RestApeControllerTest {
 
     @Test
     void getZipCWLs() throws Exception {
-        String path = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/MassSpectometry/config.json";
+        
+        String path = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/WombatP_tools/config.json";
         String content = FileUtils.readFileToString(APEFiles.readPathToFile(path),
                 StandardCharsets.UTF_8);
         JSONObject jsonObject = new JSONObject(content);
@@ -144,7 +141,15 @@ class RestApeControllerTest {
         JSONArray result = ApeAPI.runSynthesis(jsonObject, false);
         assertFalse(result.isEmpty(), "The encoding should be SAT.");
         String runID = result.getJSONObject(0).getString("run_id");
-        mvc.perform(MockMvcRequestBuilders.get("/zip_cwls?run_id=" + runID).accept(MediaType.APPLICATION_JSON))
+        String cwlFile = result.getJSONObject(0).getString("cwl_name");
+
+        // String runID = "3f989fe1d21706795199012";
+        // String cwlFile = "candidate_solution_1.cwl\", \"candidate_solution_2.cwl";
+        String jsonContent = "{\"run_id\": \"" + runID + "\", \"workflows\": [\"" + cwlFile + "\"]}";
+                
+        mvc.perform(MockMvcRequestBuilders.post("/cwl_zip")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON).content(jsonContent))
                 .andExpect(status().isOk());
     }
 
