@@ -21,6 +21,8 @@ public class RestApeUtils {
     private static final String solutionPath = getSolutionsDir();
     private static final String allSolutionsDirName = "apeOutputs";
     private static final int hashLength = 10;
+    private static final int currentTimestampLength = 13;
+    private static final int runIDLength = hashLength + currentTimestampLength;
 
     /**
      * Create a directory in the file system.
@@ -87,7 +89,7 @@ public class RestApeUtils {
      * @return true if the runID is valid, false otherwise.
      */
     public static boolean verifyRunID(String runID) {
-        return runID != null && runID.length() == hashLength && runID.matches("[a-f0-9]+");
+        return runID != null && runID.length() == runIDLength && runID.matches("[a-f0-9]+");
     }
     
     /**
