@@ -18,7 +18,7 @@ public class CWLZip {
      * 
      * @param cwlFilesJson JSON object containing the CWL files.
      */
-    public CWLZip(Map<String, Object> cwlFilesJson) throws ClassCastException{
+    public CWLZip(Map<String, Object> cwlFilesJson) throws ClassCastException {
         this.runID = (String) cwlFilesJson.get("run_id");
         this.workflows = (List<String>) cwlFilesJson.get("workflows");
     }

@@ -29,8 +29,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.Parameter;
 import nl.esciencecenter.models.documentation.APEConfig;
+import nl.esciencecenter.models.documentation.CWLFileInfo;
 import nl.esciencecenter.models.documentation.CWLZip;
 import nl.esciencecenter.models.documentation.ConstraintElem;
+import nl.esciencecenter.models.documentation.ImgFileInfo;
 import nl.esciencecenter.models.documentation.TaxonomyElem;
 import nl.esciencecenter.restape.ApeAPI;
 import nl.esciencecenter.restape.IOUtils;
@@ -65,8 +67,8 @@ public class RestApeController {
          * 
          * @param configPath URL to the APE configuration file.
          * @return Taxonomy of data terms.
-         * @throws IOException 
-         * @throws OWLOntologyCreationException 
+         * @throws IOException
+         * @throws OWLOntologyCreationException
          */
         @GetMapping("/data_taxonomy")
         @Operation(summary = "Retrieve data taxonomy", description = "Retrieve data (taxonomy) within the domain.", tags = {
@@ -78,10 +80,11 @@ public class RestApeController {
 
         })
         public ResponseEntity<String> getData(
-                        @RequestParam("config_path") String configPath) throws OWLOntologyCreationException, IOException, IllegalArgumentException {
-                        RestApeUtils.validateURL(configPath);
-                        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
-                                        .body(ApeAPI.getData(configPath).toString());
+                        @RequestParam("config_path") String configPath)
+                        throws OWLOntologyCreationException, IOException, IllegalArgumentException {
+                RestApeUtils.validateURL(configPath);
+                return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
+                                .body(ApeAPI.getData(configPath).toString());
         }
 
         /**
@@ -89,8 +92,8 @@ public class RestApeController {
          * 
          * @param configPath URL to the APE configuration file.
          * @return Taxonomy of tool terms.
-         * @throws IOException 
-         * @throws OWLOntologyCreationException 
+         * @throws IOException
+         * @throws OWLOntologyCreationException
          */
         @GetMapping("/tools_taxonomy")
         @Operation(summary = "Retrieve tool taxonomy", description = "Retrieve tools (taxonomy) within the domain.", tags = {
@@ -102,7 +105,8 @@ public class RestApeController {
 
         })
         public ResponseEntity<String> getTools(
-                        @RequestParam("config_path") String configPath) throws OWLOntologyCreationException, IOException {
+                        @RequestParam("config_path") String configPath)
+                        throws OWLOntologyCreationException, IOException {
                 RestApeUtils.validateURL(configPath);
                 return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
                                 .body(ApeAPI.getTools(configPath).toString());
@@ -194,8 +198,9 @@ public class RestApeController {
          * @param runID    ID of the corresponding synthesis run (provided under
          *                 'run_id' after the synthesis run).
          * @return Image in PNG format representing the workflow.
+         * @throws IOException 
          */
-        @GetMapping("/image")
+        @PostMapping("/image")
         @Operation(summary = "Retrieve an image representing the workflow.", description = "Retrieve a image from the file system representing the workflow generated.", tags = {
                         "Download" }, parameters = {
                                         @Parameter(name = "file_name", description = "Name of the image file (provided under 'name' after the synthesis run).", example = "workflowSolution_0"),
@@ -208,32 +213,16 @@ public class RestApeController {
                         @ApiResponse(responseCode = "404", description = "Not found")
         })
         public ResponseEntity<?> getImage(
-                        @RequestParam("file_name") String fileName,
-                        @RequestParam("format") String imgFormat,
-                        @RequestParam("run_id") String runID) {
+                        @RequestBody(required = true) Map<String, String> cwlInfoJson) throws IOException {
 
-                if (!RestApeUtils.isValidRunID(runID)) {
-                        return ResponseEntity.badRequest().body(invalidRunIDMsg);
-                } else if (RestApeUtils.isValidAPEFileName(fileName, imgFormat.toLowerCase())) {
-                        return ResponseEntity.badRequest().body(invalidFileNameMsg);
-                }
-                Path path = null;
-                if (imgFormat.equalsIgnoreCase("png")) {
-                        path = RestApeUtils.calculatePath(runID, "Figures", fileName + ".png");
-                } else if (imgFormat.equalsIgnoreCase("svg")) {
-                        path = RestApeUtils.calculatePath(runID, "Figures", fileName + ".svg");
-                } else {
-                        return ResponseEntity.badRequest().body("The specified image format is not supported.");
-                } 
+                ImgFileInfo cwlFileInfo = new ImgFileInfo(cwlInfoJson);
 
+                cwlFileInfo.verifyContent();
+                Path path = cwlFileInfo.calculatePath();
                 FileSystemResource resource = new FileSystemResource(path);
-                try {
-                        return ResponseEntity.ok()
-                                        .contentType(MediaType.parseMediaType(Files.probeContentType(path)))
-                                        .body(resource);
-                } catch (IOException e) {
-                        return ResponseEntity.badRequest().body("The image file could not be found.");
-                }
+                return ResponseEntity.ok()
+                                .contentType(MediaType.parseMediaType(Files.probeContentType(path)))
+                                .body(resource);
         }
 
         /**
