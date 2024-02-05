@@ -219,6 +219,12 @@ public class RestApeController {
                         @RequestParam("file_name") String fileName,
                         @RequestParam("format") String imgFormat,
                         @RequestParam("run_id") String runID) {
+
+                if (!RestApeUtils.verifyRunID(runID)) {
+                        return ResponseEntity.badRequest().body("The run ID is invalid.");
+                } else if (RestApeUtils.verifyAPEGeneratedFileName(fileName, imgFormat.toLowerCase())) {
+                        return ResponseEntity.badRequest().body("The file name format is invalid.");
+                }
                 Path path = null;
                 if (imgFormat.equalsIgnoreCase("png")) {
                         path = RestApeUtils.calculatePath(runID, "Figures", fileName + ".png");
@@ -227,6 +233,7 @@ public class RestApeController {
                 } else {
                         return ResponseEntity.badRequest().body("The specified image format is not supported.");
                 }
+
                 FileSystemResource resource = new FileSystemResource(path);
                 try {
                         return ResponseEntity.ok()
@@ -263,6 +270,11 @@ public class RestApeController {
         public ResponseEntity<String> getCwl(
                         @RequestParam("file_name") String fileName,
                         @RequestParam("run_id") String runID) {
+                if (!RestApeUtils.verifyRunID(runID)) {
+                        return ResponseEntity.badRequest().body("The run ID is invalid.");
+                } else if (RestApeUtils.verifyAPEGeneratedFileName(fileName, "cwl")) {
+                        return ResponseEntity.badRequest().body("The file name format is invalid.");
+                }
                 try {
                         Path path = RestApeUtils.calculatePath(runID, "CWL", fileName);
                         return ResponseEntity.ok().contentType(MediaType.parseMediaType("application/x-yaml"))
@@ -292,6 +304,9 @@ public class RestApeController {
         })
         public ResponseEntity<String> getCwlInput(
                         @RequestParam("run_id") String runID) {
+                if (!RestApeUtils.verifyRunID(runID)) {
+                        return ResponseEntity.badRequest().body("The run ID is invalid.");
+                }
                 try {
                         Path path = RestApeUtils.calculatePath(runID, "CWL", "input.yml");
                         return ResponseEntity.ok().contentType(MediaType.parseMediaType("application/x-yaml"))
@@ -327,6 +342,11 @@ public class RestApeController {
         public ResponseEntity<String> getBenchmarks(
                         @RequestParam("file_name") String fileName,
                         @RequestParam("run_id") String runID) {
+                if (!RestApeUtils.verifyRunID(runID)) {
+                        return ResponseEntity.badRequest().body("The run ID is invalid.");
+                } else if (RestApeUtils.verifyAPEGeneratedFileName(fileName, "json")) {
+                        return ResponseEntity.badRequest().body("The file name format is invalid.");
+                }
                 try {
                         Path path = RestApeUtils.calculatePath(runID, "CWL", fileName);
                         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
@@ -340,7 +360,8 @@ public class RestApeController {
          * Retrieve the CWL solution files based on the provided run ID and CWL file
          * names
          * 
-         * @param cwlFilesJson JSON object containing the run_id and the list of CWL files.
+         * @param cwlFilesJson JSON object containing the run_id and the list of CWL
+         *                     files.
          * @return CWL file representing the workflow.
          */
         @PostMapping("/cwl_zip")
@@ -357,8 +378,15 @@ public class RestApeController {
                         @RequestBody(required = true) Map<String, Object> cwlFilesJson) {
                 try {
                         String runID = (String) cwlFilesJson.get("run_id");
-
+                        if (!RestApeUtils.verifyRunID(runID)) {
+                                return ResponseEntity.badRequest().body("The run ID is invalid.");
+                        }
                         List<String> workflowNames = (List<String>) cwlFilesJson.get("workflows");
+                        workflowNames.forEach(name -> {
+                                if (RestApeUtils.verifyAPEGeneratedFileName(name, "cwl")) {
+                                        ResponseEntity.badRequest().body("The file name format is invalid.");
+                                }
+                        });
                         List<Path> cwlFilePaths = workflowNames.stream()
                                         .map(fileName -> RestApeUtils.calculatePath(runID, "CWL", fileName))
                                         .collect(Collectors.toList());
@@ -391,35 +419,4 @@ public class RestApeController {
                 }
         }
 
-        // public boolean zipFilesToStream(List<Path> files, ZipOutputStream zipOut)
-        // throws IOException {
-        // for (Path file : files) {
-        // zipOut.putNextEntry(new ZipEntry(file.getFileName().toString()));
-        // Files.copy(file, zipOut);
-        // zipOut.closeEntry();
-        // }
-        // return true;
-        // }
-
-        // public void test() {
-        // final FileOutputStream fos = new FileOutputStream(
-        // cwlInputPath.toAbsolutePath() + "/compressed.zip");
-        // ZipOutputStream zipOut = new ZipOutputStream(fos);
-
-        // for (Path cwlFile : cwlFilePaths) {
-        // File fileToZip = cwlFile.toFile();
-        // FileInputStream fis = new FileInputStream(fileToZip);
-        // ZipEntry zipEntry = new ZipEntry(fileToZip.getName());
-        // zipOut.putNextEntry(zipEntry);
-
-        // byte[] bytes = new byte[1024];
-        // int length;
-        // while ((length = fis.read(bytes)) >= 0) {
-        // zipOut.write(bytes, 0, length);
-        // }
-        // fis.close();
-        // }
-
-        // zipOut.close();
-        // fos.close();}
 }

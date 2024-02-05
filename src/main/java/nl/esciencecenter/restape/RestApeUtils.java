@@ -19,7 +19,8 @@ public class RestApeUtils {
 
     @Getter(lazy = true)
     private static final String solutionPath = getSolutionsDir();
-    private static String allSolutionsDirName = "apeOutputs";
+    private static final String allSolutionsDirName = "apeOutputs";
+    private static final int hashLength = 10;
 
     /**
      * Create a directory in the file system.
@@ -75,9 +76,31 @@ public class RestApeUtils {
      * @param text - text to be used in the process
      * @return Unique string.
      */
-    static String generateUniqueString(String text) {
-        return generateStringHash(text, 10) + System.currentTimeMillis();
+    static String generateRunID(String text) {
+        return generateStringHash(text, hashLength) + System.currentTimeMillis();
     }
+
+     /**
+     * Verify if the runID is in valid format, by checking its length and format.
+     * 
+     * @param runID - runID to be verified
+     * @return true if the runID is valid, false otherwise.
+     */
+    public static boolean verifyRunID(String runID) {
+        return runID != null && runID.length() == hashLength && runID.matches("[a-f0-9]+");
+    }
+    
+    /**
+     * Verify if the file name is in valid format, by checking its extension and format. The name should start with `candidate_solution_` followed by a number and end with the specified extension.
+     * 
+     * @param fileName - file name to be verified
+     * @param extension - extension of the file
+     * @return true if the file name is valid, false otherwise.
+     */
+    public static boolean verifyAPEGeneratedFileName(String fileName, String extension) {
+        return fileName != null && fileName.matches("candidate_solution_\\d+\\." + extension);
+    }
+
 
     /**
      * Generate a hashed string of a given length.
