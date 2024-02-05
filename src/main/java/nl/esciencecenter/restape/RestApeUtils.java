@@ -154,4 +154,15 @@ public class RestApeUtils {
         return combinedJson;
     }
 
+    /**
+     * Validate the URL. It should be a valid URL pointing to a JSON file. If the URL is not valid, {@link IllegalArgumentException} exception is thrown.
+     * 
+     * @param configPath - URL to be validated
+     */
+    public static void validateURL(String configPath) throws IllegalArgumentException {
+        if (configPath == null || !configPath.matches("https?://.*\\.json")) {
+            throw new IllegalArgumentException("The provided URL is not valid.");
+        }
+        
+    }
 }

@@ -46,6 +46,9 @@ import nl.uu.cs.ape.configuration.APEConfigException;
 @RestController
 public class RestApeController {
 
+        private static final String invalidRunIDMsg = "The run ID is invalid.";
+        private static final String invalidFileNameMsg = "The file name format is invalid.";
+
         /**
          * Index of the RESTful APE API. Welcome message.
          * 
@@ -62,6 +65,8 @@ public class RestApeController {
          * 
          * @param configPath URL to the APE configuration file.
          * @return Taxonomy of data terms.
+         * @throws IOException 
+         * @throws OWLOntologyCreationException 
          */
         @GetMapping("/data_taxonomy")
         @Operation(summary = "Retrieve data taxonomy", description = "Retrieve data (taxonomy) within the domain.", tags = {
@@ -73,13 +78,10 @@ public class RestApeController {
 
         })
         public ResponseEntity<String> getData(
-                        @RequestParam("config_path") String configPath) {
-                try {
+                        @RequestParam("config_path") String configPath) throws OWLOntologyCreationException, IOException, IllegalArgumentException {
+                        RestApeUtils.validateURL(configPath);
                         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
                                         .body(ApeAPI.getData(configPath).toString());
-                } catch (IOException | OWLOntologyCreationException e) {
-                        return ResponseEntity.badRequest().body(e.getMessage());
-                }
         }
 
         /**
@@ -87,6 +89,8 @@ public class RestApeController {
          * 
          * @param configPath URL to the APE configuration file.
          * @return Taxonomy of tool terms.
+         * @throws IOException 
+         * @throws OWLOntologyCreationException 
          */
         @GetMapping("/tools_taxonomy")
         @Operation(summary = "Retrieve tool taxonomy", description = "Retrieve tools (taxonomy) within the domain.", tags = {
@@ -98,13 +102,10 @@ public class RestApeController {
 
         })
         public ResponseEntity<String> getTools(
-                        @RequestParam("config_path") String configPath) {
-                try {
-                        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
-                                        .body(ApeAPI.getTools(configPath).toString());
-                } catch (IOException | OWLOntologyCreationException e) {
-                        return ResponseEntity.badRequest().body(e.getMessage());
-                }
+                        @RequestParam("config_path") String configPath) throws OWLOntologyCreationException, IOException {
+                RestApeUtils.validateURL(configPath);
+                return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
+                                .body(ApeAPI.getTools(configPath).toString());
         }
 
         /**
@@ -123,13 +124,11 @@ public class RestApeController {
                                                         @ApiResponse(responseCode = "404", description = "Not found")
 
         })
-        public ResponseEntity<String> getConstraints(@RequestParam("config_path") String configPath) {
-                try {
-                        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
-                                        .body(ApeAPI.getConstraints(configPath).toString());
-                } catch (IOException | OWLOntologyCreationException e) {
-                        return ResponseEntity.badRequest().body(e.getMessage());
-                }
+        public ResponseEntity<String> getConstraints(@RequestParam("config_path") String configPath)
+                        throws JSONException, OWLOntologyCreationException, IOException {
+
+                return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
+                                .body(ApeAPI.getConstraints(configPath).toString());
         }
 
         /**
@@ -138,6 +137,7 @@ public class RestApeController {
          * @param configJson JSON object containing the configuration for the synthesis.
          * @return List of resulting solutions, where each element describes a workflow
          *         (name,length, run_id, etc.)
+         * @throws OWLOntologyCreationException
          */
         @PostMapping("/run_synthesis")
         @Operation(summary = "Run workflow synthesis", description = "Run workflow synthesis using the APE library. Returns the list of resulting solutions, where each element describes a workflow (name,length, run_id, etc.).", tags = {
@@ -150,15 +150,12 @@ public class RestApeController {
 
         })
         public ResponseEntity<String> runSynthesis(
-                        @RequestBody(required = true) Map<String, Object> configJson) {
-                try {
-                        JSONObject config = new JSONObject(configJson);
+                        @RequestBody(required = true) Map<String, Object> configJson)
+                        throws APEConfigException, JSONException, OWLOntologyCreationException, IOException {
+                JSONObject config = new JSONObject(configJson);
 
-                        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
-                                        .body(ApeAPI.runSynthesis(config, false).toString());
-                } catch (APEConfigException | JSONException | OWLOntologyCreationException | IOException e) {
-                        return ResponseEntity.internalServerError().body(e.getMessage());
-                }
+                return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
+                                .body(ApeAPI.runSynthesis(config, false).toString());
         }
 
         /**
@@ -167,6 +164,7 @@ public class RestApeController {
          * @param configJson JSON object containing the configuration for the synthesis.
          * @return List of resulting solutions, where each element describes a workflow
          *         (name,length, run_id, etc.)
+         * @throws IOException
          */
         @PostMapping("/run_synthesis_and_bench")
         @Operation(summary = "Run workflow synthesis and provide design-time benchmarks", description = "Run workflow synthesis using the APE library. In addition, evaluate design time benchmarks of the generated workflows. Returns the list of resulting solutions, where each element describes a workflow (name,length, run_id, etc.).", tags = {
@@ -179,15 +177,12 @@ public class RestApeController {
 
         })
         public ResponseEntity<String> runSynthesisAndBench(
-                        @RequestBody(required = true) Map<String, Object> configJson) {
-                try {
-                        JSONObject config = new JSONObject(configJson);
+                        @RequestBody(required = true) Map<String, Object> configJson)
+                        throws APEConfigException, JSONException, OWLOntologyCreationException, IOException {
+                JSONObject config = new JSONObject(configJson);
 
-                        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
-                                        .body(ApeAPI.runSynthesis(config, true).toString());
-                } catch (APEConfigException | JSONException | OWLOntologyCreationException | IOException e) {
-                        return ResponseEntity.internalServerError().body(e.getMessage());
-                }
+                return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
+                                .body(ApeAPI.runSynthesis(config, true).toString());
         }
 
         /**
@@ -218,9 +213,9 @@ public class RestApeController {
                         @RequestParam("run_id") String runID) {
 
                 if (!RestApeUtils.isValidRunID(runID)) {
-                        return ResponseEntity.badRequest().body("The run ID is invalid.");
+                        return ResponseEntity.badRequest().body(invalidRunIDMsg);
                 } else if (RestApeUtils.isValidAPEFileName(fileName, imgFormat.toLowerCase())) {
-                        return ResponseEntity.badRequest().body("The file name format is invalid.");
+                        return ResponseEntity.badRequest().body(invalidFileNameMsg);
                 }
                 Path path = null;
                 if (imgFormat.equalsIgnoreCase("png")) {
@@ -229,7 +224,7 @@ public class RestApeController {
                         path = RestApeUtils.calculatePath(runID, "Figures", fileName + ".svg");
                 } else {
                         return ResponseEntity.badRequest().body("The specified image format is not supported.");
-                }
+                } 
 
                 FileSystemResource resource = new FileSystemResource(path);
                 try {
@@ -268,9 +263,9 @@ public class RestApeController {
                         @RequestParam("file_name") String fileName,
                         @RequestParam("run_id") String runID) {
                 if (!RestApeUtils.isValidRunID(runID)) {
-                        return ResponseEntity.badRequest().body("The run ID is invalid.");
+                        return ResponseEntity.badRequest().body(invalidRunIDMsg);
                 } else if (RestApeUtils.isValidAPEFileName(fileName, "cwl")) {
-                        return ResponseEntity.badRequest().body("The file name format is invalid.");
+                        return ResponseEntity.badRequest().body(invalidFileNameMsg);
                 }
                 try {
                         Path path = RestApeUtils.calculatePath(runID, "CWL", fileName);
@@ -302,7 +297,7 @@ public class RestApeController {
         public ResponseEntity<String> getCwlInput(
                         @RequestParam("run_id") String runID) {
                 if (!RestApeUtils.isValidRunID(runID)) {
-                        return ResponseEntity.badRequest().body("The run ID is invalid.");
+                        return ResponseEntity.badRequest().body(invalidRunIDMsg);
                 }
                 try {
                         Path path = RestApeUtils.calculatePath(runID, "CWL", "input.yml");
@@ -340,9 +335,9 @@ public class RestApeController {
                         @RequestParam("file_name") String fileName,
                         @RequestParam("run_id") String runID) {
                 if (!RestApeUtils.isValidRunID(runID)) {
-                        return ResponseEntity.badRequest().body("The run ID is invalid.");
+                        return ResponseEntity.badRequest().body(invalidRunIDMsg);
                 } else if (RestApeUtils.isValidAPEFileName(fileName, "json")) {
-                        return ResponseEntity.badRequest().body("The file name format is invalid.");
+                        return ResponseEntity.badRequest().body(invalidFileNameMsg);
                 }
                 try {
                         Path path = RestApeUtils.calculatePath(runID, "CWL", fileName);
@@ -355,8 +350,9 @@ public class RestApeController {
 
         /**
          * Retrieve the CWL solution files based on the provided run ID and CWL file
-         * names. 
-         * TODO: Exeptions don't handle all cases or illegal arguments (e.g. invalid workflow name that ends with an open quotation`candidate_solution_1.cwl"`).
+         * names.
+         * TODO: Exeptions don't handle all cases or illegal arguments (e.g. invalid
+         * workflow name that ends with an open quotation`candidate_solution_1.cwl"`).
          * 
          * @param cwlFilesJson JSON object containing the run_id and the list of CWL
          *                     files.
@@ -377,7 +373,7 @@ public class RestApeController {
                 try {
                         CWLZip cwlZip = new CWLZip(cwlFilesJson);
                         cwlZip.verifyStructure();
-                        
+
                         List<Path> cwlFilePaths = cwlZip.getCWLPaths();
 
                         // Add the CWL input file to the zip
@@ -406,9 +402,28 @@ public class RestApeController {
                 }
         }
 
-
         @ExceptionHandler(IllegalArgumentException.class)
-        public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException e) {
+        public ResponseEntity<String> handleException(IllegalArgumentException e) {
+                return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
+        @ExceptionHandler(OWLOntologyCreationException.class)
+        public ResponseEntity<String> handleException(OWLOntologyCreationException e) {
+                return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
+        @ExceptionHandler(IOException.class)
+        public ResponseEntity<String> handleException(IOException e) {
+                return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
+        @ExceptionHandler(JSONException.class)
+        public ResponseEntity<String> handleException(JSONException e) {
+                return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
+        @ExceptionHandler(APEConfigException.class)
+        public ResponseEntity<String> handleException(APEConfigException e) {
                 return ResponseEntity.badRequest().body(e.getMessage());
         }
 
