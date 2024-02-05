@@ -1,14 +1,10 @@
 package nl.esciencecenter.controller;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,6 +15,7 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -220,9 +217,9 @@ public class RestApeController {
                         @RequestParam("format") String imgFormat,
                         @RequestParam("run_id") String runID) {
 
-                if (!RestApeUtils.verifyRunID(runID)) {
+                if (!RestApeUtils.isValidRunID(runID)) {
                         return ResponseEntity.badRequest().body("The run ID is invalid.");
-                } else if (RestApeUtils.verifyAPEGeneratedFileName(fileName, imgFormat.toLowerCase())) {
+                } else if (RestApeUtils.isValidAPEFileName(fileName, imgFormat.toLowerCase())) {
                         return ResponseEntity.badRequest().body("The file name format is invalid.");
                 }
                 Path path = null;
@@ -270,9 +267,9 @@ public class RestApeController {
         public ResponseEntity<String> getCwl(
                         @RequestParam("file_name") String fileName,
                         @RequestParam("run_id") String runID) {
-                if (!RestApeUtils.verifyRunID(runID)) {
+                if (!RestApeUtils.isValidRunID(runID)) {
                         return ResponseEntity.badRequest().body("The run ID is invalid.");
-                } else if (RestApeUtils.verifyAPEGeneratedFileName(fileName, "cwl")) {
+                } else if (RestApeUtils.isValidAPEFileName(fileName, "cwl")) {
                         return ResponseEntity.badRequest().body("The file name format is invalid.");
                 }
                 try {
@@ -304,7 +301,7 @@ public class RestApeController {
         })
         public ResponseEntity<String> getCwlInput(
                         @RequestParam("run_id") String runID) {
-                if (!RestApeUtils.verifyRunID(runID)) {
+                if (!RestApeUtils.isValidRunID(runID)) {
                         return ResponseEntity.badRequest().body("The run ID is invalid.");
                 }
                 try {
@@ -342,9 +339,9 @@ public class RestApeController {
         public ResponseEntity<String> getBenchmarks(
                         @RequestParam("file_name") String fileName,
                         @RequestParam("run_id") String runID) {
-                if (!RestApeUtils.verifyRunID(runID)) {
+                if (!RestApeUtils.isValidRunID(runID)) {
                         return ResponseEntity.badRequest().body("The run ID is invalid.");
-                } else if (RestApeUtils.verifyAPEGeneratedFileName(fileName, "json")) {
+                } else if (RestApeUtils.isValidAPEFileName(fileName, "json")) {
                         return ResponseEntity.badRequest().body("The file name format is invalid.");
                 }
                 try {
@@ -358,7 +355,8 @@ public class RestApeController {
 
         /**
          * Retrieve the CWL solution files based on the provided run ID and CWL file
-         * names
+         * names. 
+         * TODO: Exeptions don't handle all cases or illegal arguments (e.g. invalid workflow name that ends with an open quotation`candidate_solution_1.cwl"`).
          * 
          * @param cwlFilesJson JSON object containing the run_id and the list of CWL
          *                     files.
@@ -377,46 +375,41 @@ public class RestApeController {
         public ResponseEntity<?> getZipCWLs(
                         @RequestBody(required = true) Map<String, Object> cwlFilesJson) {
                 try {
-                        String runID = (String) cwlFilesJson.get("run_id");
-                        if (!RestApeUtils.verifyRunID(runID)) {
-                                return ResponseEntity.badRequest().body("The run ID is invalid.");
-                        }
-                        List<String> workflowNames = (List<String>) cwlFilesJson.get("workflows");
-                        workflowNames.forEach(name -> {
-                                if (RestApeUtils.verifyAPEGeneratedFileName(name, "cwl")) {
-                                        ResponseEntity.badRequest().body("The file name format is invalid.");
-                                }
-                        });
-                        List<Path> cwlFilePaths = workflowNames.stream()
-                                        .map(fileName -> RestApeUtils.calculatePath(runID, "CWL", fileName))
-                                        .collect(Collectors.toList());
+                        CWLZip cwlZip = new CWLZip(cwlFilesJson);
+                        cwlZip.verifyStructure();
+                        
+                        List<Path> cwlFilePaths = cwlZip.getCWLPaths();
 
-                        Path cwlInputPath = RestApeUtils.calculatePath(runID, "CWL", "input.yml");
+                        // Add the CWL input file to the zip
+                        Path cwlInputPath = RestApeUtils.calculatePath(cwlZip.getRunID(), "CWL", "input.yml");
                         cwlFilePaths.add(cwlInputPath);
 
-                        Path zipPath = cwlInputPath.getParent().resolve("workflows.zip");
-                        try (FileOutputStream fos = new FileOutputStream(zipPath.toFile());
-                                        ZipOutputStream zipOut = new ZipOutputStream(fos)) {
-                                for (Path file : cwlFilePaths) {
-                                        zipOut.putNextEntry(new ZipEntry(file.getFileName().toString()));
-                                        Files.copy(file, zipOut);
-                                        zipOut.closeEntry();
-                                }
-                        }
+                        // Zip the CWL files
+                        Path zipPath = IOUtils.zipFiles(cwlFilePaths, cwlInputPath.getParent());
 
-                        Resource resource = new UrlResource(zipPath.toUri());
-                        String contentType = Files.probeContentType(zipPath);
+                        Resource zipResource = new UrlResource(zipPath.toUri());
+                        String zipContentType = Files.probeContentType(zipPath);
                         return ResponseEntity.ok()
                                         .contentType(MediaType.parseMediaType(
-                                                        contentType != null ? contentType : "application/zip"))
+                                                        zipContentType != null ? zipContentType : "application/zip"))
                                         .header(HttpHeaders.CONTENT_DISPOSITION,
                                                         "attachment; filename=\"" + zipPath.getFileName().toString()
                                                                         + "\"")
-                                        .body(resource);
-                } catch (Exception e) { // Catching Exception to cover all bases, consider catching more specific
-                                        // exceptions
-                        return ResponseEntity.badRequest().body("An error occurred: " + e.getMessage());
+                                        .body(zipResource);
+                } catch (IOException e) {
+                        return ResponseEntity.badRequest()
+                                        .body("An error occurred while creating the zip file.");
+                } catch (ClassCastException e) {
+                        return ResponseEntity.badRequest().body("JSON structure is not not valid.");
+                } catch (IllegalArgumentException e) {
+                        return ResponseEntity.badRequest().body(e.getMessage());
                 }
+        }
+
+
+        @ExceptionHandler(IllegalArgumentException.class)
+        public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException e) {
+                return ResponseEntity.badRequest().body(e.getMessage());
         }
 
 }

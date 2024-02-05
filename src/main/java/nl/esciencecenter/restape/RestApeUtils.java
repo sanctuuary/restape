@@ -83,23 +83,23 @@ public class RestApeUtils {
     }
 
      /**
-     * Verify if the runID is in valid format, by checking its length and format.
+     * Check whether the runID is valid, by checking its length and format.
      * 
      * @param runID - runID to be verified
      * @return true if the runID is valid, false otherwise.
      */
-    public static boolean verifyRunID(String runID) {
+    public static boolean isValidRunID(String runID) {
         return runID != null && runID.length() == runIDLength && runID.matches("[a-f0-9]+");
     }
     
     /**
-     * Verify if the file name is in valid format, by checking its extension and format. The name should start with `candidate_solution_` followed by a number and end with the specified extension.
+     * Checks whether the file name is valid, by checking its extension and format. The name should start with `candidate_solution_` followed by a number and end with the specified extension.
      * 
      * @param fileName - file name to be verified
      * @param extension - extension of the file
      * @return true if the file name is valid, false otherwise.
      */
-    public static boolean verifyAPEGeneratedFileName(String fileName, String extension) {
+    public static boolean isValidAPEFileName(String fileName, String extension) {
         return fileName != null && fileName.matches("candidate_solution_\\d+\\." + extension);
     }
 
