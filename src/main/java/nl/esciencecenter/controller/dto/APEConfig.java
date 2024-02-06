@@ -3,6 +3,7 @@ package nl.esciencecenter.controller.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
+import nl.uu.cs.ape.models.enums.ConfigEnum;
 
 @Getter
 @Setter
@@ -92,9 +93,4 @@ public class APEConfig {
         public String[] apeLabel;
     }
     
-    // Enum for configuration options
-    public enum ConfigEnum {
-        ALL, ONE 
-    }
-
 }

@@ -39,7 +39,7 @@ public class ImgFileInfo {
      * @throws IllegalArgumentException If the structure is not valid.
      */
     public void setFileName(String fileName) throws IllegalArgumentException {
-        if (!RestApeUtils.isValidAPEFileName(fileName)) {
+        if (!RestApeUtils.isValidAPEFileNameNoExtension(fileName)) {
             throw new IllegalArgumentException("The image file_name format '" + fileName + "' is invalid.");
         }
         this.fileName = fileName;

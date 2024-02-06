@@ -180,7 +180,7 @@ public class RestApeController {
 
         })
         public ResponseEntity<String> runSynthesisAndBench(
-                        @RequestBody(required = true) APEConfig configJson)
+                        @RequestBody(required = true) Map<String, Object> configJson)
                         throws APEConfigException, JSONException, OWLOntologyCreationException, IOException {
                 JSONObject config = new JSONObject(configJson);
 
