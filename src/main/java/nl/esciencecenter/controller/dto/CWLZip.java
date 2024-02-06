@@ -1,0 +1,68 @@
+package nl.esciencecenter.controller.dto;
+
+import java.nio.file.Path;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import nl.esciencecenter.restape.RestApeUtils;
+
+@Getter
+@Setter
+@NoArgsConstructor
+public class CWLZip {
+    @JsonProperty("run_id")
+    private String runID;
+    private List<String> workflows;
+
+    /**
+     * Set the runID in case it is valid, i.e., corresponds to runID formatting defined within RESTful APE. If the runID is not valid, an exception is thrown.
+     * 
+     * @throws IllegalArgumentException If the structure is not valid.
+     */
+    public void setRunID(String runID) throws IllegalArgumentException {
+        if (!RestApeUtils.isValidRunID(runID)) {
+            throw new IllegalArgumentException("The runID format '" + runID + "' is invalid.");
+        }
+        this.runID = runID;
+    }
+    
+    /**
+     * Set the workflow file names in case they are valid, i.e., corresponds to file name formatting defined within APE and include the required cwl extension. 
+     * If the file names are not valid, an exception is thrown.
+     * 
+     * @throws IllegalArgumentException If the structure is not valid.
+     */
+    public void setWorkflows(List<String> workflows) throws IllegalArgumentException {
+        if (!verifyWorkflows(workflows)) {
+            throw new IllegalArgumentException("The CWL file name formats (under workflows) are invalid.");
+        }
+        this.workflows = workflows;
+    }
+
+    /**
+     * Check whether all the workflows are valid CWL file names.
+     * @param workflows2 
+     * 
+     * @return true if all the workflows are valid CWL file names, false otherwise.
+     */
+    private boolean verifyWorkflows(List<String> workflows) {
+        return workflows.stream().allMatch(workflowName -> RestApeUtils.isValidAPEFileName(workflowName, CWLFileInfo.cwlExtension));
+    }
+
+    /**
+     * Get the paths to the CWL files.
+     * 
+     * @return List of paths to the CWL files.
+     */
+    public List<Path> getCWLPaths() {
+        return workflows.stream()
+                .map(fileName -> RestApeUtils.calculatePath(runID, "CWL", fileName))
+                .collect(Collectors.toList());
+    }
+
+}

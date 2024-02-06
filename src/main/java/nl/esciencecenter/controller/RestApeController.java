@@ -21,19 +21,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.Parameter;
-import nl.esciencecenter.models.documentation.APEConfig;
-import nl.esciencecenter.models.documentation.CWLFileInfo;
-import nl.esciencecenter.models.documentation.CWLZip;
-import nl.esciencecenter.models.documentation.ConstraintElem;
-import nl.esciencecenter.models.documentation.ImgFileInfo;
-import nl.esciencecenter.models.documentation.TaxonomyElem;
+import nl.esciencecenter.controller.dto.APEConfig;
+import nl.esciencecenter.controller.dto.CWLFileInfo;
+import nl.esciencecenter.controller.dto.CWLZip;
+import nl.esciencecenter.controller.dto.ConstraintElem;
+import nl.esciencecenter.controller.dto.ImgFileInfo;
+import nl.esciencecenter.controller.dto.TaxonomyElem;
 import nl.esciencecenter.restape.ApeAPI;
 import nl.esciencecenter.restape.IOUtils;
 import nl.esciencecenter.restape.RestApeUtils;
@@ -181,7 +180,7 @@ public class RestApeController {
 
         })
         public ResponseEntity<String> runSynthesisAndBench(
-                        @RequestBody(required = true) Map<String, Object> configJson)
+                        @RequestBody(required = true) APEConfig configJson)
                         throws APEConfigException, JSONException, OWLOntologyCreationException, IOException {
                 JSONObject config = new JSONObject(configJson);
 
@@ -198,7 +197,7 @@ public class RestApeController {
          * @param runID    ID of the corresponding synthesis run (provided under
          *                 'run_id' after the synthesis run).
          * @return Image in PNG format representing the workflow.
-         * @throws IOException 
+         * @throws IOException
          */
         @PostMapping("/image")
         @Operation(summary = "Retrieve an image representing the workflow.", description = "Retrieve a image from the file system representing the workflow generated.", tags = {
@@ -213,16 +212,12 @@ public class RestApeController {
                         @ApiResponse(responseCode = "404", description = "Not found")
         })
         public ResponseEntity<?> getImage(
-                        @RequestBody(required = true) Map<String, String> cwlInfoJson) throws IOException {
+                        @RequestBody(required = true) ImgFileInfo imgFileInfo) throws IOException {
 
-                ImgFileInfo cwlFileInfo = new ImgFileInfo(cwlInfoJson);
-
-                cwlFileInfo.verifyContent();
-                Path path = cwlFileInfo.calculatePath();
-                FileSystemResource resource = new FileSystemResource(path);
+                Path path = imgFileInfo.calculatePath();
                 return ResponseEntity.ok()
                                 .contentType(MediaType.parseMediaType(Files.probeContentType(path)))
-                                .body(resource);
+                                .body(new FileSystemResource(path));
         }
 
         /**
@@ -235,7 +230,7 @@ public class RestApeController {
          *                 'run_id' after the synthesis run).
          * @return CWL file representing the workflow.
          */
-        @GetMapping("/cwl")
+        @PostMapping("/cwl")
         @Operation(summary = "Retrieve a cwl file", description = "Retrieve a cwl file from the file system, describing the workflow.", tags = {
                         "Download" }, parameters = {
 
@@ -249,20 +244,11 @@ public class RestApeController {
 
         })
         public ResponseEntity<String> getCwl(
-                        @RequestParam("file_name") String fileName,
-                        @RequestParam("run_id") String runID) {
-                if (!RestApeUtils.isValidRunID(runID)) {
-                        return ResponseEntity.badRequest().body(invalidRunIDMsg);
-                } else if (RestApeUtils.isValidAPEFileName(fileName, "cwl")) {
-                        return ResponseEntity.badRequest().body(invalidFileNameMsg);
-                }
-                try {
-                        Path path = RestApeUtils.calculatePath(runID, "CWL", fileName);
-                        return ResponseEntity.ok().contentType(MediaType.parseMediaType("application/x-yaml"))
-                                        .body(IOUtils.getLocalCwlFile(path));
-                } catch (IOException e) {
-                        return ResponseEntity.badRequest().body("The CWL file could not be found.");
-                }
+                        @RequestBody(required = true) CWLFileInfo cwlInfoJson) throws IOException {
+
+                Path path = cwlInfoJson.calculatePath();
+                return ResponseEntity.ok().contentType(MediaType.parseMediaType("application/x-yaml"))
+                                .body(IOUtils.getLocalCwlFile(path));
         }
 
         /**
@@ -358,15 +344,12 @@ public class RestApeController {
 
         })
         public ResponseEntity<?> getZipCWLs(
-                        @RequestBody(required = true) Map<String, Object> cwlFilesJson) {
+                        @RequestBody(required = true) CWLZip cwlZipInfo) {
                 try {
-                        CWLZip cwlZip = new CWLZip(cwlFilesJson);
-                        cwlZip.verifyStructure();
-
-                        List<Path> cwlFilePaths = cwlZip.getCWLPaths();
+                        List<Path> cwlFilePaths = cwlZipInfo.getCWLPaths();
 
                         // Add the CWL input file to the zip
-                        Path cwlInputPath = RestApeUtils.calculatePath(cwlZip.getRunID(), "CWL", "input.yml");
+                        Path cwlInputPath = RestApeUtils.calculatePath(cwlZipInfo.getRunID(), "CWL", "input.yml");
                         cwlFilePaths.add(cwlInputPath);
 
                         // Zip the CWL files

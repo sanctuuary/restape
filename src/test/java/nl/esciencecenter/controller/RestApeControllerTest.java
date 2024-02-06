@@ -18,7 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import nl.esciencecenter.models.documentation.CWLZip;
+import nl.esciencecenter.controller.dto.CWLZip;
 import nl.esciencecenter.restape.ApeAPI;
 import nl.uu.cs.ape.utils.APEFiles;
 

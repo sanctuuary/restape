@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+import java.nio.file.NoSuchFileException;
 
 import org.apache.commons.io.FileUtils;
 
@@ -27,7 +28,7 @@ public class IOUtils {
      * @return CWL content of the file representing a workflow
      * @throws IOException - if the file cannot be read
      */
-    public static String getLocalCwlFile(Path filePath) throws IOException {
+    public static String getLocalCwlFile(Path filePath) throws IOException, NoSuchFileException {
         return FileUtils.readFileToString(filePath.toFile(), StandardCharsets.UTF_8);
     }
 
