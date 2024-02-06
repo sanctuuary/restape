@@ -11,16 +11,16 @@ import nl.esciencecenter.restape.RestApeUtils;
 
 @Getter
 @NoArgsConstructor
-public class CWLFileInfo {
+public class BenchmarkFileInfo {
     @JsonProperty("run_id")
     private String runID;
 
     @JsonProperty("file_name")
     private String fileName;
     /**
-     * The extension of the CWL file.
+     * The extension of the benchmark file.
      */
-    static final String extension = "cwl";
+    static final String extension = "json";
 
 
     /**
@@ -36,29 +36,29 @@ public class CWLFileInfo {
     }
     
     /**
-     * Set the file name in case it is valid, i.e., corresponds to file name formatting defined within APE and includes the supported cwl extension. 
+     * Set the file name in case it is valid, i.e., corresponds to file name formatting defined within APE and includes the supported design-time benchmark extension. 
      * If the file name is not valid, an exception is thrown.
      * 
      * @throws IllegalArgumentException If the structure is not valid.
      */
     public void setFileName(String fileName) throws IllegalArgumentException {
         if (!RestApeUtils.isValidAPEFileName(fileName, extension)) {
-            throw new IllegalArgumentException("The CWL file_name format '" + fileName + "' is invalid.");
+            throw new IllegalArgumentException("The benchmark file_name format '" + fileName + "' is invalid.");
         }
         this.fileName = fileName;
     }
 
     /**
-     * Get the path to the CWL file. If the file does not exist or is not accessible, an exception is thrown.
+     * Get the path to the benchmark file. If the file does not exist or is not accessible, an exception is thrown.
      * 
-     * @return Path to the CWL file.
+     * @return Path to the benchmark file.
      */
     public Path calculatePath() {
         Path path = RestApeUtils.calculatePath(runID, "CWL", fileName);
             if(Files.notExists(path)) {
-                throw new IllegalArgumentException("The specified CWL file does not exist: " + path.toString());
+                throw new IllegalArgumentException("The specified benchmark file does not exist: " + path.toString());
             } else if (!Files.isReadable(path)) {
-                throw new IllegalArgumentException("The CWL file cannot be accessed: " + path.toString());
+                throw new IllegalArgumentException("The benchmark file cannot be accessed: " + path.toString());
             }
         return path;
     }

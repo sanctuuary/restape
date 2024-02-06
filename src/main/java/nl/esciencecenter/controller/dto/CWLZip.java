@@ -51,7 +51,7 @@ public class CWLZip {
      * @return true if all the workflows are valid CWL file names, false otherwise.
      */
     private boolean verifyWorkflows(List<String> workflows) {
-        return workflows.stream().allMatch(workflowName -> RestApeUtils.isValidAPEFileName(workflowName, CWLFileInfo.cwlExtension));
+        return workflows.stream().allMatch(workflowName -> RestApeUtils.isValidAPEFileName(workflowName, CWLFileInfo.extension));
     }
 
     /**
