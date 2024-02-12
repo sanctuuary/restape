@@ -311,7 +311,7 @@ public class RestApeController {
                         @RequestParam("run_id") String runID) {
                 if (!RestApeUtils.isValidRunID(runID)) {
                         return ResponseEntity.badRequest().body(invalidRunIDMsg);
-                } else if (RestApeUtils.isValidAPEFileName(fileName, "json")) {
+                } else if (!RestApeUtils.isValidAPEFileName(fileName, "json")) {
                         return ResponseEntity.badRequest().body(invalidFileNameMsg);
                 }
                 try {
