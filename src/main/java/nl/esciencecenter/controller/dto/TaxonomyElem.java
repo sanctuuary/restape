@@ -1,4 +1,4 @@
-package nl.esciencecenter.models.documentation;
+package nl.esciencecenter.controller.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;

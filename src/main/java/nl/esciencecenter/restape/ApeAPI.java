@@ -149,7 +149,7 @@ public class ApeAPI {
             throws OWLOntologyCreationException, IOException {
 
         // Define the synthesis run ID
-        String runID = RestApeUtils.generateUniqueString(configJson.toString());
+        String runID = RestApeUtils.generateRunID(configJson.toString());
 
         SolutionsList candidateSolutions = executeSynthesis(configJson, runID);
 
