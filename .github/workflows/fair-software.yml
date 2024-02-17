@@ -1,4 +1,4 @@
-name: fair-software
+name: "Check FAIRness of software"
 
 on:
   push:
