@@ -1,6 +1,7 @@
-name: ghcr actions
+name: clean-containers
 
 on:
+  workflow_dispatch:  # This line adds the manual trigger
   schedule:
     - cron: "21 21 * * *"
 
