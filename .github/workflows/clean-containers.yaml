@@ -1,4 +1,4 @@
-name: clean-containers
+name: "Clean the old docker images"
 
 on:
   workflow_dispatch:  # This line adds the manual trigger
