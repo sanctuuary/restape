@@ -94,19 +94,19 @@ public class RestApeUtils {
 
     /**
      * Checks whether the file name is valid, by checking its format. The name
-     * should start with `candidate_solution_` followed by a number and without an
+     * should start with `candidate_workflow_` followed by a number and without an
      * extension.
      * 
      * @param fileName - file name to be verified
      * @return true if the file name is valid, false otherwise.
      */
     public static boolean isValidAPEFileNameNoExtension(String fileName) {
-        return fileName != null && fileName.matches("candidate_solution_\\d+");
+        return fileName != null && fileName.matches("candidate_workflow_\\d+");
     }
 
     /**
      * Checks whether the file name is valid, by checking its format. The name
-     * should start with `candidate_solution_` followed by a number and with an
+     * should start with `candidate_workflow_` followed by a number and with an
      * extension.
      * 
      * @param fileName - file name to be verified
@@ -118,7 +118,7 @@ public class RestApeUtils {
 
     /**
      * Checks whether the file name is valid, by checking its extension and format.
-     * The name should start with `candidate_solution_` followed by a number and end
+     * The name should start with `candidate_workflow_` followed by a number and end
      * with the specified extension.
      * 
      * @param fileName  - file name to be verified
@@ -126,7 +126,7 @@ public class RestApeUtils {
      * @return true if the file name is valid, false otherwise.
      */
     public static boolean isValidAPEFileName(String fileName, String extension) {
-        return fileName != null && fileName.matches("candidate_solution_\\d+\\." + extension);
+        return fileName != null && fileName.matches("candidate_workflow_\\d+\\." + extension);
     }
 
     /**

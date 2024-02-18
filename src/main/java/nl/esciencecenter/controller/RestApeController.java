@@ -211,7 +211,7 @@ public class RestApeController {
                         @ApiResponse(responseCode = "400", description = "Invalid input"),
                         @ApiResponse(responseCode = "404", description = "Not found")
         })
-        public ResponseEntity<?> getImage(
+        public ResponseEntity<?> postImage(
                         @RequestBody(required = true) ImgFileInfo imgFileInfo) throws IOException {
 
                 Path path = imgFileInfo.calculatePath();
@@ -243,7 +243,7 @@ public class RestApeController {
                         @ApiResponse(responseCode = "404", description = "Not found")
 
         })
-        public ResponseEntity<String> getCwl(
+        public ResponseEntity<String> postCwl(
                         @RequestBody(required = true) CWLFileInfo cwlInfoJson) throws IOException {
 
                 Path path = cwlInfoJson.calculatePath();
@@ -327,7 +327,7 @@ public class RestApeController {
          * Retrieve the CWL solution files based on the provided run ID and CWL file
          * names.
          * TODO: Exeptions don't handle all cases or illegal arguments (e.g. invalid
-         * workflow name that ends with an open quotation`candidate_solution_1.cwl"`).
+         * workflow name that ends with an open quotation`candidate_workflow_1.cwl"`).
          * 
          * @param cwlFilesJson JSON object containing the run_id and the list of CWL
          *                     files.
@@ -343,17 +343,10 @@ public class RestApeController {
                                                         @ApiResponse(responseCode = "500", description = "Internal server error"),
 
         })
-        public ResponseEntity<?> getZipCWLs(
+        public ResponseEntity<?> postZipCWLs(
                         @RequestBody(required = true) CWLZip cwlZipInfo) {
                 try {
-                        List<Path> cwlFilePaths = cwlZipInfo.getCWLPaths();
-
-                        // Add the CWL input file to the zip
-                        Path cwlInputPath = RestApeUtils.calculatePath(cwlZipInfo.getRunID(), "CWL", "input.yml");
-                        cwlFilePaths.add(cwlInputPath);
-
-                        // Zip the CWL files
-                        Path zipPath = IOUtils.zipFiles(cwlFilePaths, cwlInputPath.getParent());
+                        Path zipPath = IOUtils.zipFilesForLocalExecution(cwlZipInfo);
 
                         Resource zipResource = new UrlResource(zipPath.toUri());
                         String zipContentType = Files.probeContentType(zipPath);
