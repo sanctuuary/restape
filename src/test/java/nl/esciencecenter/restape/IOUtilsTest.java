@@ -10,15 +10,11 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
-import nl.esciencecenter.controller.dto.CWLFileInfo;
 import nl.esciencecenter.controller.dto.CWLZip;
 import nl.uu.cs.ape.utils.APEFiles;
 
 @SpringBootTest
-public class IOUtilsTest {
+class IOUtilsTest {
     
 
     @Test
