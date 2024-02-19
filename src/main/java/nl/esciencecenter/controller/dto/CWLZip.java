@@ -11,6 +11,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import nl.esciencecenter.restape.RestApeUtils;
 
+/**
+ * The {@code CWLZip} class represents the structure of the request to zip CWL files. It contains the runID and the list of workflow file names.
+ 
+ */
 @Getter
 @Setter
 @NoArgsConstructor

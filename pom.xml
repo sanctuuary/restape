@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>nl.esciencecenter</groupId>
 	<artifactId>restape</artifactId>
-	<version>0.3.0</version>
+	<version>0.3.1</version>
 	<name>restape</name>
 	<description>RESTful API for the APE library</description>
 	<licenses>
@@ -42,7 +42,7 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
-			<version>3.2.1</version>
+			<version>3.2.2</version>
 		</dependency>
 
 		<dependency>
@@ -61,28 +61,14 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
-			<version>3.2.1</version>
+			<version>3.2.2</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-jpa -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
-			<version>3.2.1</version>
-		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-validation -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-validation</artifactId>
-			<version>3.2.1</version>
-		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-devtools -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-devtools</artifactId>
-			<version>3.2.1</version>
+			<version>3.2.2</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/com.h2database/h2 -->
@@ -96,7 +82,7 @@
 		<dependency>
 			<groupId>io.github.sanctuuary</groupId>
 			<artifactId>APE</artifactId>
-			<version>2.2.6</version>
+			<version>2.3.0</version>
 		</dependency>
 		
 		<!-- https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-starter-webmvc-ui -->

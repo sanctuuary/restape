@@ -35,7 +35,7 @@ class RestApeControllerTest {
      * @throws Exception
      */
     @Test
-    void getGreetings() throws Exception {
+    void testGetGreetings() throws Exception {
         mvc.perform(MockMvcRequestBuilders.get("/").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string(equalTo("Welcome to the RESTful APE API!")));
@@ -47,7 +47,7 @@ class RestApeControllerTest {
      * @throws Exception
      */
     @Test
-    void getDataFail() throws Exception {
+    void testGetDataFail() throws Exception {
         mvc.perform(MockMvcRequestBuilders.get("/data_taxonomy").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
@@ -58,7 +58,7 @@ class RestApeControllerTest {
      * @throws Exception
      */
     @Test
-    void getDataTest() throws Exception {
+    void testGetData() throws Exception {
         String path = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/WombatP_tools/config.json";
 
         mvc.perform(MockMvcRequestBuilders.get("/data_taxonomy?config_path=" + path).accept(MediaType.APPLICATION_JSON))
@@ -72,7 +72,7 @@ class RestApeControllerTest {
      * @throws Exception
      */
     @Test
-    void getToolsFail() throws Exception {
+    void testGetToolsFail() throws Exception {
         mvc.perform(MockMvcRequestBuilders.get("/tools_taxonomy").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
@@ -83,7 +83,7 @@ class RestApeControllerTest {
      * @throws Exception
      */
     @Test
-    void getToolsTest() throws Exception {
+    void testGetTools() throws Exception {
         String path = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/WombatP_tools/config.json";
 
         mvc.perform(
@@ -98,7 +98,7 @@ class RestApeControllerTest {
      * @throws Exception
      */
     @Test
-    void runSynthesisGetFail() throws Exception {
+    void testRunSynthesisGestFail() throws Exception {
         mvc.perform(MockMvcRequestBuilders.get("/run_synthesis").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isMethodNotAllowed());
     }
@@ -109,7 +109,7 @@ class RestApeControllerTest {
      * @throws Exception
      */
     @Test
-    void runSynthesisPostFail() throws Exception {
+    void testRunSynthesisFail() throws Exception {
         mvc.perform(MockMvcRequestBuilders.post("/run_synthesis").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
@@ -120,7 +120,7 @@ class RestApeControllerTest {
      * @throws Exception
      */
     @Test
-    void runSynthesisPostPass() throws Exception {
+    void testRunSynthesisPass() throws Exception {
 
         String configPath = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/WombatP_tools/config.json";
         String jsonContent = FileUtils.readFileToString(APEFiles.readPathToFile(configPath),
@@ -133,7 +133,7 @@ class RestApeControllerTest {
     }
 
     @Test
-    void getZipCWLs() throws Exception {
+    void testPostZipCWLs() throws Exception {
 
             String path = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/WombatP_tools/config.json";
             String content = FileUtils.readFileToString(APEFiles.readPathToFile(path),
