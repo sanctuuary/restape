@@ -1,31 +1,34 @@
 ---
-name: Bug report
-about: Create a report to help us improve
-title: ''
-labels: ''
+name: Bug Report
+about: Create a report to help improve the RESTful APE service
+title: '[BUG] '
+labels: 'bug'
 assignees: vedran-kasalica
 
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+**Note:** Not all fields are obligatory, but the more details you provide, the easier it will be for us to address the issue. Feel free to omit sections that you feel are not relevant to your report.
 
-**To Reproduce**
-Steps to reproduce the behaviour:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+## Description
+<!-- Provide a clear and concise description of what the bug is. -->
 
-**Expected behaviour**
-A clear and concise description of what you expected to happen.
+## Endpoint
+<!-- Specify the API endpoint(s) involved in the bug. -->
 
-**RESTful APE version**
-The version used [e.g. 0.2.0] 
+## HTTP Method
+<!-- Indicate the HTTP method(s) (GET, POST, PUT, DELETE, etc.) used when the bug occurred. -->
 
-**Desktop (please complete the following information):**
- - OS: [e.g. Ubuntu]
- - OS version [e.g. 22.04]
+## Request Payload
+<!-- If applicable, provide the request payload or parameters. Use code blocks for JSON or other data formats. -->
 
-**Additional context**
-Please feel free to add any other context about the problem here.
+## Expected Behavior
+<!-- Describe what you expected to happen. -->
+
+## Actual Behavior
+<!-- Describe what actually happened. Include complete HTTP response status, error messages, screenshots, or logs if possible. -->
+
+## APE Version
+<!-- Specify the version of the APE library being used. -->
+
+## Spring Boot Version
+<!-- Specify
