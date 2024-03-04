@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
@@ -33,14 +34,14 @@ import nl.esciencecenter.controller.dto.CWLZip;
 import nl.esciencecenter.controller.dto.ConstraintElem;
 import nl.esciencecenter.controller.dto.ImgFileInfo;
 import nl.esciencecenter.controller.dto.TaxonomyElem;
+import nl.esciencecenter.restape.APEWorkflowMetadata;
 import nl.esciencecenter.restape.ApeAPI;
 import nl.esciencecenter.restape.IOUtils;
 import nl.esciencecenter.restape.RestApeUtils;
 import nl.uu.cs.ape.configuration.APEConfigException;
 
 /**
- * This class represents the RESTful APE controller.
- * TODO: Setup response code 400 and 404 when needed.
+ * This class represents the RESTful APE controller. It provides the RESTful API for the APE library.
  * 
  * @author Vedran
  */
@@ -70,14 +71,24 @@ public class RestApeController {
          * @throws OWLOntologyCreationException
          */
         @GetMapping("/data_taxonomy")
-        @Operation(summary = "Retrieve data taxonomy", description = "Retrieve data (taxonomy) within the domain.", tags = {
-                        "Domain" }, parameters = {
-                                        @Parameter(name = "config_path", description = "URL to the APE configuration file.", example = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/WombatP_tools/config.json") }, externalDocs = @ExternalDocumentation(description = "More information about the APE configuration file can be found here.", url = "https://ape-framework.readthedocs.io/en/latest/docs/specifications/setup.html#configuration-file"), responses = {
-                                                        @ApiResponse(responseCode = "200", description = "Successful operation. Taxonomy of data terms is provided.", content = @Content(schema = @Schema(implementation = TaxonomyElem.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
-                                                        @ApiResponse(responseCode = "400", description = "Invalid input"),
-                                                        @ApiResponse(responseCode = "404", description = "Not found")
-
-        })
+        @Operation(summary = "Retrieve data taxonomy",
+                description = "Retrieve data (taxonomy) within the domain.",
+                tags = {"Domain"},
+                parameters = {
+                        @Parameter(name = "config_path", 
+                                description = "URL to the APE configuration file.",
+                                example = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/WombatP_tools/config.json")
+                },
+                externalDocs = @ExternalDocumentation(description = "More information about the APE configuration file can be found here.",
+                                                        url = "https://ape-framework.readthedocs.io/en/latest/docs/specifications/setup.html#configuration-file"),
+                responses = {
+                        @ApiResponse(responseCode = "200", 
+                                description = "Successful operation. Taxonomy of data terms is provided.",
+                                content = @Content(schema = @Schema(implementation = TaxonomyElem.class), 
+                                                mediaType = MediaType.APPLICATION_JSON_VALUE)),
+                        @ApiResponse(responseCode = "400", description = "Invalid input"),
+                        @ApiResponse(responseCode = "404", description = "Not found")
+                })
         public ResponseEntity<String> getData(
                         @RequestParam("config_path") String configPath)
                         throws OWLOntologyCreationException, IOException, IllegalArgumentException {
@@ -95,14 +106,24 @@ public class RestApeController {
          * @throws OWLOntologyCreationException
          */
         @GetMapping("/tools_taxonomy")
-        @Operation(summary = "Retrieve tool taxonomy", description = "Retrieve tools (taxonomy) within the domain.", tags = {
-                        "Domain" }, parameters = {
-                                        @Parameter(name = "config_path", description = "URL to the APE configuration file.", example = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/WombatP_tools/config.json") }, externalDocs = @ExternalDocumentation(description = "More information about the APE configuration file can be found here.", url = "https://ape-framework.readthedocs.io/en/latest/docs/specifications/setup.html#configuration-file"), responses = {
-                                                        @ApiResponse(responseCode = "200", description = "Successful operation. Taxonomy of data terms is provided.", content = @Content(schema = @Schema(implementation = TaxonomyElem.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
-                                                        @ApiResponse(responseCode = "400", description = "Invalid input"),
-                                                        @ApiResponse(responseCode = "404", description = "Not found")
-
-        })
+        @Operation(summary = "Retrieve tool taxonomy",
+                description = "Retrieve tools (taxonomy) within the domain.",
+                tags = {"Domain"},
+                parameters = {
+                        @Parameter(name = "config_path", 
+                                description = "URL to the APE configuration file.",
+                                example = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/WombatP_tools/config.json")
+                },
+                externalDocs = @ExternalDocumentation(description = "More information about the APE configuration file can be found here.",
+                                                        url = "https://ape-framework.readthedocs.io/en/latest/docs/specifications/setup.html#configuration-file"),
+                responses = {
+                        @ApiResponse(responseCode = "200", 
+                                        description = "Successful operation. Taxonomy of tool terms is provided.",
+                                        content = @Content(schema = @Schema(implementation = TaxonomyElem.class), 
+                                                        mediaType = MediaType.APPLICATION_JSON_VALUE)),
+                        @ApiResponse(responseCode = "400", description = "Invalid input"),
+                        @ApiResponse(responseCode = "404", description = "Not found")
+                })
         public ResponseEntity<String> getTools(
                         @RequestParam("config_path") String configPath)
                         throws OWLOntologyCreationException, IOException {
@@ -119,14 +140,24 @@ public class RestApeController {
          * @return Constraint templates.
          */
         @GetMapping("/constraints")
-        @Operation(summary = "Retrieve constraint templates", description = "Retrieve constraint templates used to specify synthesis problem.", tags = {
-                        "Domain" }, parameters = {
-                                        @Parameter(name = "config_path", description = "URL to the APE configuration file.", example = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/WombatP_tools/config.json") }, externalDocs = @ExternalDocumentation(description = "More information about the APE configuration file can be found here.", url = "https://ape-framework.readthedocs.io/en/latest/docs/specifications/setup.html#configuration-file"), responses = {
-                                                        @ApiResponse(responseCode = "200", description = "Successful operation. Taxonomy of data terms is provided.", content = @Content(schema = @Schema(implementation = ConstraintElem.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
-                                                        @ApiResponse(responseCode = "400", description = "Invalid input"),
-                                                        @ApiResponse(responseCode = "404", description = "Not found")
-
-        })
+        @Operation(summary = "Retrieve constraint templates",
+                description = "Retrieve constraint templates used to specify the synthesis problem.",
+                tags = {"Domain"},
+                parameters = {
+                        @Parameter(name = "config_path", 
+                                description = "URL to the APE configuration file.",
+                                example = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/WombatP_tools/config.json")
+                },
+                externalDocs = @ExternalDocumentation(description = "More information about the APE configuration file can be found here.",
+                                                        url = "https://ape-framework.readthedocs.io/en/latest/docs/specifications/setup.html#configuration-file"),
+                responses = {
+                        @ApiResponse(responseCode = "200", 
+                                        description = "Successful operation. Constraint templates are provided.",
+                                        content = @Content(schema = @Schema(implementation = ConstraintElem.class), 
+                                                        mediaType = MediaType.APPLICATION_JSON_VALUE)),
+                        @ApiResponse(responseCode = "400", description = "Invalid input"),
+                        @ApiResponse(responseCode = "404", description = "Not found")
+                })
         public ResponseEntity<String> getConstraints(@RequestParam("config_path") String configPath)
                         throws JSONException, OWLOntologyCreationException, IOException {
 
@@ -143,15 +174,27 @@ public class RestApeController {
          * @throws OWLOntologyCreationException
          */
         @PostMapping("/run_synthesis")
-        @Operation(summary = "Run workflow synthesis", description = "Run workflow synthesis using the APE library. Returns the list of resulting solutions, where each element describes a workflow (name,length, run_id, etc.).", tags = {
-                        "APE" }, requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "JSON object containing the configuration for the synthesis.", content = @Content(schema = @Schema(implementation = APEConfig.class))), parameters = {
-                                        @Parameter(name = "configJson", description = "APE configuration JSON file.", example = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/WombatP_tools/config.json") }, externalDocs = @ExternalDocumentation(description = "More information about the APE configuration file can be found here.", url = "https://ape-framework.readthedocs.io/en/latest/docs/specifications/setup.html#configuration-file"), responses = {
-                                                        @ApiResponse(responseCode = "200", description = "Successful operation. Synthesis solutions are returned."),
-                                                        @ApiResponse(responseCode = "400", description = "Invalid input"),
-                                                        @ApiResponse(responseCode = "404", description = "Not found"),
-                                                        @ApiResponse(responseCode = "500", description = "Internal server error"),
-
-        })
+        @Operation(summary = "Run workflow synthesis",
+                description = "Run workflow synthesis using the APE library. Returns the list of resulting solutions, where each element describes a workflow (name, length, run_id, etc.).",
+                tags = {"APE"},
+                requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                        description = "JSON object containing the configuration for the synthesis.",
+                        required = true,
+                        content = @Content(
+                                mediaType = "application/json",
+                                schema = @Schema(implementation = APEConfig.class))
+                ),
+                externalDocs = @ExternalDocumentation(
+                        description = "More information about the APE configuration file can be found here.",
+                        url = "https://ape-framework.readthedocs.io/en/latest/docs/specifications/setup.html#configuration-file"),
+                responses = {
+                        @ApiResponse(responseCode = "200", description = "Successful operation. A list of synthesized workflow solutions is returned.", 
+                                        content = @Content(mediaType = "application/json", 
+                                                        schema = @Schema(implementation = APEWorkflowMetadata[].class))),
+                        @ApiResponse(responseCode = "400", description = "Invalid input"),
+                        @ApiResponse(responseCode = "404", description = "Not found"),
+                        @ApiResponse(responseCode = "500", description = "Internal server error")
+                })
         public ResponseEntity<String> runSynthesis(
                         @RequestBody(required = true) Map<String, Object> configJson)
                         throws APEConfigException, JSONException, OWLOntologyCreationException, IOException {
@@ -170,47 +213,57 @@ public class RestApeController {
          * @throws IOException
          */
         @PostMapping("/run_synthesis_and_bench")
-        @Operation(summary = "Run workflow synthesis and provide design-time benchmarks", description = "Run workflow synthesis using the APE library. In addition, evaluate design time benchmarks of the generated workflows. Returns the list of resulting solutions, where each element describes a workflow (name,length, run_id, etc.).", tags = {
-                        "APE" }, requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "JSON object containing the configuration for the synthesis.", content = @Content(schema = @Schema(implementation = APEConfig.class))), parameters = {
-                                        @Parameter(name = "configJson", description = "APE configuration JSON file.", example = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/WombatP_tools/config.json") }, externalDocs = @ExternalDocumentation(description = "More information about the APE configuration file can be found here.", url = "https://ape-framework.readthedocs.io/en/latest/docs/specifications/setup.html#configuration-file"), responses = {
-                                                        @ApiResponse(responseCode = "200", description = "Successful operation. Synthesis solutions are returned."),
-                                                        @ApiResponse(responseCode = "400", description = "Invalid input"),
-                                                        @ApiResponse(responseCode = "404", description = "Not found"),
-                                                        @ApiResponse(responseCode = "500", description = "Internal server error"),
-
-        })
-        public ResponseEntity<String> runSynthesisAndBench(
+        @Operation(summary = "Run workflow synthesis and provide design-time benchmarks", 
+                description = "This endpoint triggers the synthesis of workflows using the APE library and evaluates design-time benchmarks for the generated workflows. It returns a list of APEWorkflowMetadata objects, each representing a synthesized workflow solution with detailed metadata.",
+                tags = { "APE" },
+                requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "JSON object containing the configuration for the synthesis.", 
+                                                content = @Content(schema = @Schema(implementation = APEConfig.class))),
+                responses = {
+                        @ApiResponse(responseCode = "200", description = "Successful operation. A list of synthesized workflow solutions is returned.", 
+                                        content = @Content(mediaType = "application/json", 
+                                                        schema = @Schema(implementation = APEWorkflowMetadata[].class))),
+                        @ApiResponse(responseCode = "400", description = "Invalid input. The request body does not match the expected schema."),
+                        @ApiResponse(responseCode = "404", description = "Not found. The specified resource could not be found."),
+                        @ApiResponse(responseCode = "500", description = "Internal server error. An unexpected error occurred.")
+                },
+                externalDocs = @ExternalDocumentation(description = "More information about the APE configuration file.", 
+                                                        url = "https://ape-framework.readthedocs.io/en/latest/docs/specifications/setup.html#configuration-file"))
+        public ResponseEntity<String>  runSynthesisAndBench(
                         @RequestBody(required = true) Map<String, Object> configJson)
                         throws APEConfigException, JSONException, OWLOntologyCreationException, IOException {
                 JSONObject config = new JSONObject(configJson);
 
+                List<APEWorkflowMetadata> solutions = ApeAPI.runSynthesis(config, true);
+                JSONArray solutionsArray = new JSONArray(solutions);
                 return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
-                                .body(ApeAPI.runSynthesis(config, true).toString());
+                                .body(solutionsArray.toString());
         }
 
         /**
          * Retrieve the solution workflow based on the provided run ID and a candidate
          * solution.
          * 
-         * @param fileName Name of the workflow file (provided under 'name' after
-         *                 the synthesis run).
-         * @param runID    ID of the corresponding synthesis run (provided under
-         *                 'run_id' after the synthesis run).
-         * @return Image in PNG format representing the workflow.
-         * @throws IOException
+         * @param imgFileInfo JSON object containing the configuration for the synthesis.
+         * @return ResponseEntity containing the image representing the workflow.
+         * @throws IOException if there is an error reading the image file.
          */
         @PostMapping("/image")
-        @Operation(summary = "Retrieve an image representing the workflow.", description = "Retrieve a image from the file system representing the workflow generated.", tags = {
-                        "Download" }, parameters = {
-                                        @Parameter(name = "file_name", description = "Name of the image file (provided under 'name' after the synthesis run).", example = "workflowSolution_0"),
-                                        @Parameter(name = "format", description = "Format of the image ('png' or 'svg').", example = "png"),
-                                        @Parameter(name = "run_id", description = "ID of the corresponding synthesis run (provided under 'run_id' after the synthesis run).", example = "04ce2ef00c1685150252568")
-
-        }, responses = {
-                        @ApiResponse(responseCode = "200", description = "Successful operation. Taxonomy of data terms is provided.", content = @Content(mediaType = MediaType.IMAGE_PNG_VALUE)),
+        @Operation(summary = "Retrieve an image representing the workflow",
+                description = "Retrieve an image from the file system representing the workflow generated.",
+                tags = {"Download"},
+                requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                        description = "JSON object containing the information about the image, including the name of the image file, format of the image ('png' or 'svg'), and ID of the corresponding synthesis run.",
+                        required = true,
+                        content = @Content(
+                                mediaType = "application/json",
+                                schema = @Schema(implementation = ImgFileInfo.class))
+                ),
+                responses = {
+                        @ApiResponse(responseCode = "200", description = "Successful operation. Image representing the workflow is provided.",
+                                content = @Content(mediaType = MediaType.IMAGE_PNG_VALUE)),
                         @ApiResponse(responseCode = "400", description = "Invalid input"),
                         @ApiResponse(responseCode = "404", description = "Not found")
-        })
+                })
         public ResponseEntity<?> postImage(
                         @RequestBody(required = true) ImgFileInfo imgFileInfo) throws IOException {
 
@@ -231,18 +284,21 @@ public class RestApeController {
          * @return CWL file representing the workflow.
          */
         @PostMapping("/cwl")
-        @Operation(summary = "Retrieve a cwl file", description = "Retrieve a cwl file from the file system, describing the workflow.", tags = {
-                        "Download" }, parameters = {
-
-                                        @Parameter(name = "file_name", description = "Name of the CWL file (provided under 'figure_name' after the synthesis run).", example = "workflowSolution_0.cwl"),
-                                        @Parameter(name = "run_id", description = "ID of the corresponding synthesis run (provided under 'run_id' after the synthesis run).", example = "04ce2ef00c1685150252568")
-
-        }, responses = {
-                        @ApiResponse(responseCode = "200", description = "Successful operation. Taxonomy of data terms is provided.", content = @Content(mediaType = "application/x-yaml")),
+        @Operation(summary = "Retrieve a cwl file",
+                description = "Retrieve a cwl file from the file system, describing the workflow.",
+                tags = {"Download"},
+                requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                        description = "JSON object containing the information for retrieving the CWL file, including the name of the CWL file (as 'figure_name') and the ID of the corresponding synthesis run.",
+                        required = true,
+                        content = @Content(
+                                mediaType = "application/json",
+                                schema = @Schema(implementation = CWLFileInfo.class))
+                ),
+                responses = {
+                        @ApiResponse(responseCode = "200", description = "Successful operation. CWL file describing the workflow is provided.", content = @Content(mediaType = "application/x-yaml")),
                         @ApiResponse(responseCode = "400", description = "Invalid input"),
                         @ApiResponse(responseCode = "404", description = "Not found")
-
-        })
+                })
         public ResponseEntity<String> postCwl(
                         @RequestBody(required = true) CWLFileInfo cwlInfoJson) throws IOException {
 
@@ -259,16 +315,21 @@ public class RestApeController {
          * @return CWL input file (.yml) representing the workflow inputs.
          */
         @GetMapping("/cwl_input")
-        @Operation(summary = "Retrieve a cwl input file", description = "Retrieve a cwl input file from the file system, allowing to execute the workflows in the run.", tags = {
-                        "Download" }, parameters = {
-                                        @Parameter(name = "run_id", description = "ID of the corresponding synthesis run (provided under 'run_id' after the synthesis run).", example = "04ce2ef00c1685150252568")
-
-        }, responses = {
-                        @ApiResponse(responseCode = "200", description = "Successful operation. Taxonomy of data terms is provided.", content = @Content(mediaType = "application/x-yaml")),
+        @Operation(summary = "Retrieve a cwl input file",
+                description = "Retrieve a cwl input file from the file system, allowing to execute the workflows in the run.",
+                tags = {"Download"},
+                parameters = {
+                        @Parameter(name = "run_id", 
+                                description = "ID of the corresponding synthesis run (provided under 'run_id' after the synthesis run).",
+                                example = "04ce2ef00c1685150252568")
+                },
+                responses = {
+                        @ApiResponse(responseCode = "200", 
+                                        description = "Successful operation. CWL input file representing the workflow inputs is provided.",
+                                        content = @Content(mediaType = "application/x-yaml")),
                         @ApiResponse(responseCode = "400", description = "Invalid input"),
                         @ApiResponse(responseCode = "404", description = "Not found")
-
-        })
+                })
         public ResponseEntity<String> getCwlInput(
                         @RequestParam("run_id") String runID) {
                 if (!RestApeUtils.isValidRunID(runID)) {
@@ -295,17 +356,24 @@ public class RestApeController {
          * @return CWL file representing the workflow.
          */
         @GetMapping("/design_time_benchmarks")
-        @Operation(summary = "Retrieve a design-time benchmark file", description = "Retrieve a design-time benchmark file from the file system, describing the workflow.", tags = {
-                        "Download" }, parameters = {
-                                        @Parameter(name = "file_name", description = "Name of the benchmark file (provided under 'bench_name' after the synthesis run).", example = "workflowSolution_0.json"),
-                                        @Parameter(name = "run_id", description = "ID of the corresponding synthesis run (provided under 'run_id' after the synthesis run).", example = "04ce2ef00c1685150252568")
-
-        }, responses = {
-                        @ApiResponse(responseCode = "200", description = "Successful operation. Taxonomy of data terms is provided.", content = @Content(mediaType = "application/x-yaml")),
+        @Operation(summary = "Retrieve a design-time benchmark file",
+                description = "Retrieve a design-time benchmark file from the file system, describing the workflow.",
+                tags = {"Download"},
+                parameters = {
+                        @Parameter(name = "file_name", 
+                                description = "Name of the benchmark file (provided under 'bench_name' after the synthesis run).",
+                                example = "workflowSolution_0.json"),
+                        @Parameter(name = "run_id", 
+                                description = "ID of the corresponding synthesis run (provided under 'run_id' after the synthesis run).",
+                                example = "04ce2ef00c1685150252568")
+                },
+                responses = {
+                        @ApiResponse(responseCode = "200", 
+                                description = "Successful operation. Design-time benchmark file describing the workflow is provided.",
+                                content = @Content(mediaType = "application/json")),
                         @ApiResponse(responseCode = "400", description = "Invalid input"),
                         @ApiResponse(responseCode = "404", description = "Not found")
-
-        })
+                })
         public ResponseEntity<String> getBenchmarks(
                         @RequestParam("file_name") String fileName,
                         @RequestParam("run_id") String runID) {
@@ -326,23 +394,28 @@ public class RestApeController {
         /**
          * Retrieve the CWL solution files based on the provided run ID and CWL file
          * names.
-         * TODO: Exeptions don't handle all cases or illegal arguments (e.g. invalid
-         * workflow name that ends with an open quotation`candidate_workflow_1.cwl"`).
          * 
          * @param cwlFilesJson JSON object containing the run_id and the list of CWL
          *                     files.
          * @return CWL file representing the workflow.
          */
         @PostMapping("/cwl_zip")
-        @Operation(summary = "Retrieve the zip of cwl files.", description = "Retrieve the zip comprising CWL files specified in the request body. The request body should be a JSON object with the following fields: 'run_id' and 'workflows'. The 'run_id' field specifies the ID of the synthesis run, while the 'workflows' field is a list of CWL file names (provided under 'name' after the synthesis run).", tags = {
-                        "Download" }, requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "JSON object containing the following fields: 'run_id' and 'workflows'.", content = @Content(schema = @Schema(implementation = CWLZip.class))), parameters = {
-                                        @Parameter(name = "cwlFilesJson", description = "Synthesis run_id and the cwl file names.") }, responses = {
-                                                        @ApiResponse(responseCode = "200", description = "Successful operation. Synthesis solutions are returned."),
-                                                        @ApiResponse(responseCode = "400", description = "Invalid input"),
-                                                        @ApiResponse(responseCode = "404", description = "Not found"),
-                                                        @ApiResponse(responseCode = "500", description = "Internal server error"),
-
-        })
+        @Operation(summary = "Retrieve the zip of cwl files.",
+                description = "Retrieve the zip comprising CWL files specified in the request body. The request body should be a JSON object with the following fields: 'run_id' and 'workflows'. The 'run_id' field specifies the ID of the synthesis run, while the 'workflows' field is a list of CWL file names.",
+                tags = {"Download"},
+                requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                description = "JSON object containing the following fields: 'run_id' and 'workflows'.",
+                required = true,
+                content = @Content(schema = @Schema(implementation = CWLZip.class))
+                ),
+                responses = {
+                        @ApiResponse(responseCode = "200", 
+                                description = "Successful operation. A zip file comprising specified CWL files is returned.",
+                                content = @Content(mediaType = "application/zip")),
+                        @ApiResponse(responseCode = "400", description = "Invalid input"),
+                        @ApiResponse(responseCode = "404", description = "Not found"),
+                        @ApiResponse(responseCode = "500", description = "Internal server error")
+                })
         public ResponseEntity<?> postZipCWLs(
                         @RequestBody(required = true) CWLZip cwlZipInfo) {
                 try {
