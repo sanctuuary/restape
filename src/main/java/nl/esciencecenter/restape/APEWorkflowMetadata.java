@@ -80,7 +80,7 @@ public class APEWorkflowMetadata {
         json.put("run_id", this.runId);
         json.put("cwl_name", this.cwlName);
         json.put("figure_name", this.figureName);
-        if (this.benchmarkFile != null) {
+        if (this.benchmarkFile != null && !this.benchmarkFile.isEmpty()) {
             json.put("benchmark_file", this.benchmarkFile);
         }
         return json.toString();

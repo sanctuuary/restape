@@ -195,13 +195,13 @@ public class RestApeController {
                         @ApiResponse(responseCode = "404", description = "Not found"),
                         @ApiResponse(responseCode = "500", description = "Internal server error")
                 })
-        public ResponseEntity<String> runSynthesis(
+        public ResponseEntity<List<APEWorkflowMetadata>> runSynthesis(
                         @RequestBody(required = true) Map<String, Object> configJson)
                         throws APEConfigException, JSONException, OWLOntologyCreationException, IOException {
                 JSONObject config = new JSONObject(configJson);
 
                 return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
-                                .body(ApeAPI.runSynthesis(config, false).toString());
+                                .body(ApeAPI.runSynthesis(config, false));
         }
 
         /**
@@ -228,15 +228,13 @@ public class RestApeController {
                 },
                 externalDocs = @ExternalDocumentation(description = "More information about the APE configuration file.", 
                                                         url = "https://ape-framework.readthedocs.io/en/latest/docs/specifications/setup.html#configuration-file"))
-        public ResponseEntity<String>  runSynthesisAndBench(
+        public ResponseEntity<List<APEWorkflowMetadata>>  runSynthesisAndBench(
                         @RequestBody(required = true) Map<String, Object> configJson)
                         throws APEConfigException, JSONException, OWLOntologyCreationException, IOException {
                 JSONObject config = new JSONObject(configJson);
 
-                List<APEWorkflowMetadata> solutions = ApeAPI.runSynthesis(config, true);
-                JSONArray solutionsArray = new JSONArray(solutions);
                 return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
-                                .body(solutionsArray.toString());
+                                .body(ApeAPI.runSynthesis(config, true));
         }
 
         /**
