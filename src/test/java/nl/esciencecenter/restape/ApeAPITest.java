@@ -5,9 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
@@ -32,7 +32,7 @@ class ApeAPITest {
                 StandardCharsets.UTF_8);
         JSONObject jsonObject = new JSONObject(content);
         jsonObject.put("solutions", "1");
-        JSONArray result = ApeAPI.runSynthesis(jsonObject, false);
+        List<APEWorkflowMetadata> result = ApeAPI.runSynthesis(jsonObject, false);
         assertTrue(result.isEmpty(), "The encoding should be UNSAT.");
     }
 
@@ -50,7 +50,7 @@ class ApeAPITest {
                 StandardCharsets.UTF_8);
         JSONObject jsonObject = new JSONObject(content);
         jsonObject.put("solutions", "1");
-        JSONArray result = ApeAPI.runSynthesis(jsonObject, false);
+        List<APEWorkflowMetadata> result = ApeAPI.runSynthesis(jsonObject, false);
         assertFalse(result.isEmpty(), "The encoding should be SAT.");
     }
 
@@ -68,7 +68,7 @@ class ApeAPITest {
                 StandardCharsets.UTF_8);
         JSONObject jsonObject = new JSONObject(content);
         jsonObject.put("solutions", "1");
-        JSONArray result = ApeAPI.runSynthesis(jsonObject, true);
+        List<APEWorkflowMetadata> result = ApeAPI.runSynthesis(jsonObject, true);
         assertFalse(result.isEmpty(), "The encoding should be SAT.");
     }
 }

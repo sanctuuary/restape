@@ -1,7 +1,10 @@
 package nl.esciencecenter.restape;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+
 import nl.uu.cs.ape.APE;
 import nl.uu.cs.ape.configuration.APECoreConfig;
 import nl.uu.cs.ape.configuration.APERunConfig;
@@ -10,7 +13,6 @@ import nl.uu.cs.ape.models.AllModules;
 import nl.uu.cs.ape.models.AllPredicates;
 import nl.uu.cs.ape.models.AllTypes;
 import nl.uu.cs.ape.models.logic.constructs.TaxonomyPredicate;
-import nl.uu.cs.ape.solver.solutionStructure.SolutionWorkflow;
 import nl.uu.cs.ape.solver.solutionStructure.SolutionsList;
 import nl.uu.cs.ape.utils.APEUtils;
 
@@ -139,13 +141,13 @@ public class ApeAPI {
      * @param configJson - configuration of the synthesis run
      * @param benchmark  - boolean to indicate if the workflows should be
      *                   benchmarked
-     * @return - JSONArray with the metadata results of the synthesis, each element
+     * @return - List of {@link APEWorkflowMetadata}s with the metadata results of the synthesis, each element
      *         describes a workflow solution (name, length, runID, path to a CWL
      *         file, etc.).
      * @throws OWLOntologyCreationException
      * @throws IOException
      */
-    public static JSONArray runSynthesis(JSONObject configJson, boolean benchmark)
+    public static List<APEWorkflowMetadata> runSynthesis(JSONObject configJson, boolean benchmark)
             throws OWLOntologyCreationException, IOException {
 
         // Define the synthesis run ID
@@ -205,32 +207,22 @@ public class ApeAPI {
      *                           of the synthesis as well as information about the
      *                           synthesis run.
      * @runID - ID of the synthesis run
-     * @return - JSONArray with the results of the synthesis, each element describes
+     * @return - List of {@link APEWorkflowMetadata}s with the results of the synthesis, each element describes
      *         a workflow solution (name, length, runID, path to a CWL file, etc.).
      */
-    private static JSONArray workflowMetadataToJson(SolutionsList candidateSolutions, String runID, boolean benchmark) {
-        JSONArray generatedSolutionsJson = new JSONArray();
+    private static List<APEWorkflowMetadata> workflowMetadataToJson(SolutionsList candidateSolutions, String runID, boolean benchmark) {
+        List<APEWorkflowMetadata> generatedSolutionsJson = new ArrayList<>();
 
         if (candidateSolutions.isEmpty()) {
-            return new JSONArray();
+            return new ArrayList<>();
         } else {
             // Generate objects that return the solutions in JSON format
             int noSolutions = candidateSolutions.getNumberOfSolutions();
             for (int i = 0; i < noSolutions; i++) {
-                SolutionWorkflow sol = candidateSolutions.get(i);
-                JSONObject solutionJson = new JSONObject();
-                solutionJson.put("workflow_name", sol.getFileName());
-                solutionJson.put("descriptive_name", sol.getDescriptiveName());
-                solutionJson.put("description", sol.getDescription());
-                solutionJson.put("workflow_length", sol.getSolutionLength());
-                solutionJson.put("run_id", runID);
-                // Add reference to the generated cwl file and figure
-                solutionJson.put("cwl_name", sol.getFileName() + ".cwl");
-                solutionJson.put("figure_name", sol.getFileName());
-                if (benchmark) {
-                    solutionJson.put("benchmark_file", sol.getFileName() + ".json");
-                }
-                generatedSolutionsJson.put(solutionJson);
+
+                APEWorkflowMetadata solutionJson = new APEWorkflowMetadata(candidateSolutions.get(i), runID, benchmark);
+
+                generatedSolutionsJson.add(solutionJson);
             }
             return generatedSolutionsJson;
         }
