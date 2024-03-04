@@ -6,7 +6,6 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
@@ -43,7 +42,6 @@ import nl.uu.cs.ape.configuration.APEConfigException;
 /**
  * This class represents the RESTful APE controller. It provides the RESTful API for the APE library.
  * 
- * @author Vedran
  */
 @RestController
 public class RestApeController {
@@ -188,9 +186,8 @@ public class RestApeController {
                         description = "More information about the APE configuration file can be found here.",
                         url = "https://ape-framework.readthedocs.io/en/latest/docs/specifications/setup.html#configuration-file"),
                 responses = {
-                        @ApiResponse(responseCode = "200", description = "Successful operation. A list of synthesized workflow solutions is returned.", 
-                                        content = @Content(mediaType = "application/json", 
-                                                        schema = @Schema(implementation = APEWorkflowMetadata[].class))),
+                        @ApiResponse(responseCode = "200", description = "Successful operation. A list of synthesized workflow solutions is returned."
+                                        ),
                         @ApiResponse(responseCode = "400", description = "Invalid input"),
                         @ApiResponse(responseCode = "404", description = "Not found"),
                         @ApiResponse(responseCode = "500", description = "Internal server error")
@@ -219,9 +216,7 @@ public class RestApeController {
                 requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "JSON object containing the configuration for the synthesis.", 
                                                 content = @Content(schema = @Schema(implementation = APEConfig.class))),
                 responses = {
-                        @ApiResponse(responseCode = "200", description = "Successful operation. A list of synthesized workflow solutions is returned.", 
-                                        content = @Content(mediaType = "application/json", 
-                                                        schema = @Schema(implementation = APEWorkflowMetadata[].class))),
+                        @ApiResponse(responseCode = "200", description = "Successful operation. A list of synthesized workflow solutions is returned."),
                         @ApiResponse(responseCode = "400", description = "Invalid input. The request body does not match the expected schema."),
                         @ApiResponse(responseCode = "404", description = "Not found. The specified resource could not be found."),
                         @ApiResponse(responseCode = "500", description = "Internal server error. An unexpected error occurred.")
