@@ -1,6 +1,5 @@
-![RestAPE Logo](https://user-images.githubusercontent.com/11068408/225042915-416975d6-56c9-40d3-97b9-e2854cc19a1c.png#gh-dark-mode-only)
-![RestAPE Logo](https://user-images.githubusercontent.com/11068408/225042428-824741e2-9618-413c-9546-bc352b3bb23b.png#gh-light-mode-only)
-
+<img src="https://raw.githubusercontent.com/sanctuuary/.github/main/logos/RestAPE-dark-logo.png#gh-dark-mode-only" alt="RestAPE Logo" style="width: 60%;">
+<img src="https://raw.githubusercontent.com/sanctuuary/.github/main/logos/RestAPE-light-logo.png#gh-light-mode-only" alt="RestAPE Logo" style="width: 60%;">
 
 | Badges | |
 |:----:|----|
@@ -10,8 +9,6 @@
 | **Documentation** | [![Documentation Status](https://readthedocs.org/projects/ape-framework/badge/?version=latest)](https://ape-framework.readthedocs.io/en/latest/docs/restful-ape/introduction.html) |
 | **DOI** | [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10048236.svg)](https://doi.org/10.5281/zenodo.10048236) |
 | **License** |  [![GitHub license](https://img.shields.io/github/license/sanctuuary/RESTAPE)](https://github.com/sanctuuary/RESTAPE/blob/master/LICENSE) |
-
-
 
 A RESTful API for the APE library (RESTful APE) provides a way for users to interact with APE's automated pipeline exploration capabilities through HTTP requests. APE is a command line tool and Java API that automates the exploration of possible computational pipelines from large collections of computational tools.
 
@@ -35,9 +32,8 @@ and then run the jar package
 
 `java -jar target/restape-[version].jar`
 
-
-
 OpenAPI documentation is available at
+
 ````
 [host]:[port]]/swagger-ui/index.html
 ````
@@ -49,11 +45,14 @@ you can install APE in your local repository and use it to build the back-end.
 To do so, [download](https://github.com/sanctuuary/APE#releases)
 or [compile](https://github.com/sanctuuary/APE#build-ape-from-source-using-maven) the APE version you wish to use.
 In the location where you have the resulting APE.jar file, run the following command:
+
 ````shell
-$ mvn install:install-file -Dfile=APE-<version>.jar
+mvn install:install-file -Dfile=APE-<version>.jar
 ````
+
 This adds the specified APE file to your local Maven repository.
 You can now build the back-end using:
+
 ````shell
-$ mvn package -DskipTests=true
+mvn package -DskipTests=true
 ````
