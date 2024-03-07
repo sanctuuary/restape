@@ -1,5 +1,5 @@
-<img src="https://raw.githubusercontent.com/sanctuuary/.github/main/logos/RestAPE-dark-logo.png#gh-dark-mode-only" alt="RestAPE Logo" style="width: 60%;">
-<img src="https://raw.githubusercontent.com/sanctuuary/.github/main/logos/RestAPE-light-logo.png#gh-light-mode-only" alt="RestAPE Logo" style="width: 60%;">
+<img src="https://raw.githubusercontent.com/sanctuuary/.github/main/logos/RestAPE-dark-logo.png#gh-dark-mode-only" alt="RestAPE Logo" style="width: 80%;">
+<img src="https://raw.githubusercontent.com/sanctuuary/.github/main/logos/RestAPE-light-logo.png#gh-light-mode-only" alt="RestAPE Logo" style="width: 80%;">
 
 | Badges | |
 |:----:|----|
