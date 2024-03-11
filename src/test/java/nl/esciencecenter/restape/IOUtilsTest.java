@@ -6,7 +6,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,10 +24,10 @@ class IOUtilsTest {
                             StandardCharsets.UTF_8);
             JSONObject jsonObject = new JSONObject(content);
             jsonObject.put("solutions", "1");
-            JSONArray result = ApeAPI.runSynthesis(jsonObject, false);
+            List<APEWorkflowMetadata> result = ApeAPI.runSynthesis(jsonObject, false);
             assertFalse(result.isEmpty(), "The encoding should be SAT.");
-            String runID = result.getJSONObject(0).getString("run_id");
-            String cwlFile = result.getJSONObject(0).getString("cwl_name");
+            String runID = result.get(0).getRunId();
+            String cwlFile = result.get(0).getCwlName();
 
             CWLZip cwlZip = new CWLZip();
             cwlZip.setRunID(runID);
