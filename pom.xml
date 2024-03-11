@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>nl.esciencecenter</groupId>
 	<artifactId>restape</artifactId>
-	<version>0.3.1</version>
+	<version>0.3.2</version>
 	<name>restape</name>
 	<description>RESTful API for the APE library</description>
 	<licenses>
@@ -42,7 +42,7 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
-			<version>3.2.2</version>
+			<version>3.2.3</version>
 		</dependency>
 
 		<dependency>
@@ -61,14 +61,14 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
-			<version>3.2.2</version>
+			<version>3.2.3</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-jpa -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
-			<version>3.2.2</version>
+			<version>3.2.3</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-validation -->
@@ -85,6 +85,7 @@
 			<version>2.2.224</version>
 			<scope>runtime</scope>
 		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/io.github.sanctuuary/APE -->
 		<dependency>
 			<groupId>io.github.sanctuuary</groupId>
@@ -103,7 +104,7 @@
 		<dependency>
 			<groupId>org.graalvm.js</groupId>
 			<artifactId>js</artifactId>
-			<version>23.0.2</version>
+			<version>23.0.3</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
