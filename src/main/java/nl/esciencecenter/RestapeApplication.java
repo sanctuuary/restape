@@ -24,11 +24,10 @@ public class RestapeApplication {
 
 	public static void main(String[] args) {
 		SpringApplication app = new SpringApplication(RestapeApplication.class);
-        
-		app.setDefaultProperties(Collections
-				.singletonMap("server.port", "4444"));
+
+		app.setDefaultProperties(Collections.singletonMap("server.port", "4444"));
 		log.info("Starting RestApe API server...");
-        app.run(args);
-    }
+		app.run(args);
+	}
 
 }
