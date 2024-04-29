@@ -154,7 +154,7 @@ public class OpenEBenchBenchmarkProcessor {
                 e.printStackTrace();
                 // set case for each license type
                 biotoolsEntryBenchmark.setDesirabilityValue(0);
-                biotoolsEntryBenchmark.setValue("Unknown");
+                biotoolsEntryBenchmark.setValue("0");
                 biotoolsEntryBenchmark.setDescription("Unknown");
                 biotoolsEntries.add(biotoolsEntryBenchmark);
             }
