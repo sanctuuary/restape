@@ -67,7 +67,7 @@ public class IOUtils {
         public static Path zipFilesForLocalExecution(CWLZip cwlZipInfo) throws IOException {
                 
                 List<Path> cwlFilePaths = cwlZipInfo.getCWLPaths();
-
+                cwlFilePaths.addAll(cwlZipInfo.getSVGPaths());
                 // Add the CWL input file to the zip
                 Path cwlInputPath = RestApeUtils.calculatePath(cwlZipInfo.getRunID(), "CWL", "input.yml");
                 cwlFilePaths.add(cwlInputPath);

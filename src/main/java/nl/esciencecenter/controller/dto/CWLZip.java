@@ -69,4 +69,15 @@ public class CWLZip {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Get the paths to the CWL files.
+     * 
+     * @return List of paths to the CWL files.
+     */
+    public List<Path> getSVGPaths() {
+        return workflows.stream()
+                .map(fileName -> RestApeUtils.calculatePath(runID, "Figures", fileName.replace(".cwl", ".svg")))
+                .collect(Collectors.toList());
+    }
+
 }
