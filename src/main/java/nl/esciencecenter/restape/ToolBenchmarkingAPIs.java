@@ -2,16 +2,11 @@ package nl.esciencecenter.restape;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-
-import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -130,7 +125,7 @@ public class ToolBenchmarkingAPIs {
          try {
             biotoolsEntry = BioToolsRestClient.fetchToolFromBioTools(toolID);
          } catch (JSONException | IOException e) {
-            e.printStackTrace();
+           log.warn(e.getMessage());
          } finally {
             biotoolsEntry.put(ToolBenchmarkingAPIs.restAPEtoolID, toolNode.getUsedModule().getPredicateLabel());
             biotoolsAnnotations.add(biotoolsEntry);

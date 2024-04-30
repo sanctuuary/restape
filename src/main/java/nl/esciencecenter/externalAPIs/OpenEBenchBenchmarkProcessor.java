@@ -7,6 +7,8 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -15,6 +17,7 @@ import nl.esciencecenter.models.benchmarks.Benchmark;
 import nl.esciencecenter.models.benchmarks.BenchmarkBase;
 import nl.esciencecenter.models.benchmarks.WorkflowStepBenchmark;
 import nl.esciencecenter.restape.LicenseType;
+import nl.esciencecenter.restape.ToolBenchmarkingAPIs;
 
 /**
  * Class {@link OpenEBenchBenchmarkProcessor} used to compute the design-time benchmarks for a workflow using the
@@ -26,6 +29,8 @@ import nl.esciencecenter.restape.LicenseType;
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class OpenEBenchBenchmarkProcessor {
+
+    private static final Logger log = LoggerFactory.getLogger(OpenEBenchBenchmarkProcessor.class);
 
     /**
      * Benchmark for each tool in the workflow the license type according to the openness of the license. The licensed are characterized according to {@link LicenseType}.
@@ -151,7 +156,7 @@ public class OpenEBenchBenchmarkProcessor {
                 biotoolsEntryBenchmark.setDescription(String.valueOf(count));
                 biotoolsEntries.add(biotoolsEntryBenchmark);
             } catch (JSONException e) {
-                e.printStackTrace();
+                log.warn("No publication data found for tool: {}", toolAnnot.getString(ToolBenchmarkingAPIs.restAPEtoolID));
                 // set case for each license type
                 biotoolsEntryBenchmark.setDesirabilityValue(0);
                 biotoolsEntryBenchmark.setValue("0");

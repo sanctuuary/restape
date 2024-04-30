@@ -1,6 +1,9 @@
 package nl.esciencecenter.restape;
 
 import org.json.JSONObject;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import nl.uu.cs.ape.solver.solutionStructure.SolutionWorkflow;
@@ -15,13 +18,21 @@ import nl.uu.cs.ape.solver.solutionStructure.SolutionWorkflow;
 @NoArgsConstructor
 public class APEWorkflowMetadata {
     
+    @JsonProperty("workflow_name")
     private String workflowName;
+    @JsonProperty("descriptive_name")
     private String descriptiveName;
+    @JsonProperty("description")
     private String description;
+    @JsonProperty("workflow_length")
     private int workflowLength;
+    @JsonProperty("run_id")
     private String runId;
+    @JsonProperty("cwl_name")
     private String cwlName;
+    @JsonProperty("figure_name")
     private String figureName;
+    @JsonProperty("benchmark_file")
     private String benchmarkFile; // Optional, indicates if benchmark data should be included.
 
     /**
@@ -72,17 +83,6 @@ public class APEWorkflowMetadata {
      * @return A JSON string representation of the APEWorkflowMetadata instance.
      */
     public String toString() {
-        JSONObject json = new JSONObject();
-        json.put("workflow_name", this.workflowName);
-        json.put("descriptive_name", this.descriptiveName);
-        json.put("description", this.description);
-        json.put("workflow_length", this.workflowLength);
-        json.put("run_id", this.runId);
-        json.put("cwl_name", this.cwlName);
-        json.put("figure_name", this.figureName);
-        if (this.benchmarkFile != null && !this.benchmarkFile.isEmpty()) {
-            json.put("benchmark_file", this.benchmarkFile);
-        }
-        return json.toString();
+        return toJSONObject().toString();
     }
 }
