@@ -1,6 +1,7 @@
 package nl.esciencecenter.controller.dto;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -67,6 +68,20 @@ public class CWLZip {
         return workflows.stream()
                 .map(fileName -> RestApeUtils.calculatePath(runID, "CWL", fileName))
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Get the paths to the CWL files and the SVG files.
+     * 
+     * @return List of paths to the CWL files and the SVG files.
+     */
+    public List<Path> getCWLandSVGPaths() {
+        List<Path> paths = new ArrayList<>();
+        for (String fileName : workflows) {
+            paths.add(RestApeUtils.calculatePath(runID, "CWL", fileName));
+            paths.add(RestApeUtils.calculatePath(runID, "Figures", fileName.replace(".cwl", ".svg")));
+        }
+        return paths;
     }
 
 }
