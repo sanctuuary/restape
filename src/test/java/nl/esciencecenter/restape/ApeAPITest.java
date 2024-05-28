@@ -27,11 +27,11 @@ class ApeAPITest {
      */
     @Test
     void runSynthesisFail() throws IOException, OWLOntologyCreationException {
-        String configPath = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/WombatP_tools/config_unsat.json";
+        String configPath = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/WombatP_tools/config.json";
         String content = FileUtils.readFileToString(APEFiles.readPathToFile(configPath),
                 StandardCharsets.UTF_8);
         JSONObject jsonObject = new JSONObject(content);
-        jsonObject.put("solutions", "1");
+        jsonObject.put("solution_length", new JSONObject().put("min", 1).put("max", 1));
         List<APEWorkflowMetadata> result = ApeAPI.runSynthesis(jsonObject, false);
         assertTrue(result.isEmpty(), "The encoding should be UNSAT.");
     }
