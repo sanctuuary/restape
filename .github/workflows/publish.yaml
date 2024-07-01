@@ -42,7 +42,7 @@ jobs:
             type=sha,enable=true,priority=100,prefix=sha-,suffix=,format=short
 
       - name: Build Docker image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
           push: false  # Do not push at this stage
@@ -55,7 +55,7 @@ jobs:
 
           
       - name: Push Docker image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
           push: true
