@@ -4,17 +4,22 @@
 | Badges | |
 |:----:|----|
 | **Fairness** |  [![fair-software.eu](https://img.shields.io/badge/fair--software.eu-%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F-green)](https://fair-software.eu) [![OpenSSF Best Practices](https://bestpractices.coreinfrastructure.org/projects/8082/badge)](https://www.bestpractices.dev/projects/8082) |
-| **Packages and Releases** |  [![Latest release](https://img.shields.io/github/release/sanctuuary/RESTAPE.svg)](https://github.com/sanctuuary/restape/releases/latest) [![Static Badge](https://img.shields.io/badge/RSD-RESTfulAPE-ape)](https://research-software-directory.org/software/restape) |
+| **Packages and Releases** |  [![Latest release](https://img.shields.io/github/release/sanctuuary/RESTAPE.svg)](https://github.com/sanctuuary/restape/releases/latest) [![Static Badge](https://img.shields.io/badge/RSD-RESTfulAPE-ape)](https://research-software-directory.org/software/restape) | 
+
 | **Build Status** | ![build](https://github.com/sanctuuary/RestAPE/actions/workflows/maven.yml/badge.svg) [![CodeQL](https://github.com/sanctuuary/restape/actions/workflows/codeql.yml/badge.svg)](https://github.com/sanctuuary/restape/actions/workflows/codeql.yml) |
 | **Documentation** | [![Documentation Status](https://readthedocs.org/projects/ape-framework/badge/?version=latest)](https://ape-framework.readthedocs.io/en/latest/docs/restful-ape/introduction.html) |
 | **DOI** | [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10048236.svg)](https://doi.org/10.5281/zenodo.10048236) |
 | **License** |  [![GitHub license](https://img.shields.io/github/license/sanctuuary/RESTAPE)](https://github.com/sanctuuary/RESTAPE/blob/master/LICENSE) |
 
-A RESTful API for the APE library (RESTful APE) provides a way for users to interact with APE's automated pipeline exploration capabilities through HTTP requests. APE is a command line tool and Java API that automates the exploration of possible computational pipelines from large collections of computational tools.
+The RESTful API for the APE library (RESTful APE) allows users to interact with APE's automated pipeline exploration features through HTTP requests. APE automates the exploration of computational pipelines from large collections of computational tools.
 
-The RESTful API allows users to submit requests to the APE server for pipeline exploration, which returns results in a standard format such as JSON or XML. Users can interact with APE through a web browser or any other HTTP client, and the API can be integrated into other applications for seamless pipeline exploration.
+Users can submit pipeline exploration requests to the APE server and receive results in JSON format. This interface allows interaction with APE via web browsers or any HTTP client and can be integrated into other applications.
 
-Overall, the RESTful API for APE provides a powerful and flexible way for users to leverage APE's capabilities in their scientific workflows.
+In addition to APE's core feature of automated workflow composition, the API performs design-time benchmarking of workflows by aggregating tool-specific information such as licenses and citations for better workflow comparison.
+
+RESTful APE is packaged in a [Docker image](https://github.com/sanctuuary/restape/pkgs/container/restape).
+
+Overall, the RESTful API for APE provides a flexible way to leverage APE's capabilities in scientific workflows.
 
 ## Development
 
