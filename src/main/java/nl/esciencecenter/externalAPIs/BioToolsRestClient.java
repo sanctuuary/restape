@@ -12,7 +12,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 /**
- * The {@code BiotoolsAPI} class provides methods to retrieve and process tool metrics
+ * The {@code BioToolsRestClient} class provides methods to retrieve and process tool metrics
  * provided by bio.tools API.
  */
 @Slf4j
@@ -34,22 +34,24 @@ public class BioToolsRestClient {
     * @throws JSONException In case the JSON object returned by bio.tools cannot be
     *                       parsed.
     */
-   public static JSONObject fetchToolFromBioTools(String toolID) throws JSONException, IOException {
-      JSONObject bioToolAnnotation;
-      toolID = toolID.toLowerCase();
-      String urlToBioTools = "https://bio.tools/api/" + toolID +
-            "?format=json";
-      Request request = new Request.Builder().url(urlToBioTools).build();
-      Response response = client.newCall(request).execute();
+    public static JSONObject fetchToolFromBioTools(String toolID) throws JSONException, IOException {
+       JSONObject bioToolAnnotation;
+       toolID = toolID.toLowerCase();
+       String urlToBioTools = "https://bio.tools/api/" + toolID +
+             "?format=json";
+       Request request = new Request.Builder().url(urlToBioTools).build();
+       Response response = client.newCall(request).execute();
 
-      if (!response.isSuccessful()) {
-         throw new IOException("Tool " + toolID + " not found in bio.tools.");
-      }
+       if (!response.isSuccessful()) {
+          throw new IOException("Tool " + toolID + " not found in bio.tools.");
+       }
 
-      bioToolAnnotation = new JSONObject(response.body().string());
-      response.close();
+       bioToolAnnotation = new JSONObject(response.body().string());
+       response.close();
 
-      log.debug("The list of tools successfully fetched from bio.tools.");
-      return bioToolAnnotation;
-   }
+       log.debug("The list of tools successfully fetched from bio.tools.");
+       return bioToolAnnotation;
+    }
+   
+
 }
