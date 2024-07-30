@@ -4,8 +4,8 @@ on:
   workflow_dispatch:  # This line adds the manual trigger
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    pull_request:
+      branches: [ "main" ]
 
 env:
   REGISTRY: ghcr.io
@@ -48,16 +48,17 @@ jobs:
           sudo apt-get update
           sudo apt install ttf-mscorefonts-installer
           sudo apt-get install -y ttf-mscorefonts-installer
+          sudo fc-cache -f
 
       - name: Build Docker image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v5
         with:
           context: .
           push: false  # Do not push at this stage
           tags: ${{ steps.meta.outputs.tags }}
 
       - name: Push Docker image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v5
         with:
           context: .
           push: true
