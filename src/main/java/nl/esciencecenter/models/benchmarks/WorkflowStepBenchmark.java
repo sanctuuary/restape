@@ -1,17 +1,12 @@
 package nl.esciencecenter.models.benchmarks;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 import org.json.JSONObject;
 
-import com.oracle.truffle.regex.tregex.util.json.JsonObject;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import nl.esciencecenter.restape.ToolBenchmarkingAPIs;
 
 @Data
 @NoArgsConstructor
