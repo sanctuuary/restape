@@ -21,10 +21,10 @@ jobs:
       - name: Delete 'PR' containers older than a week
         uses: snok/container-retention-policy@v3.0.0
         with:
-          account: user
+          account: sanctuuary
           image-names: "!latest"
           token: ${{ secrets.GH_REPO_TOKEN }}
-          image-tags: "!latest"
           cut-off: 2w 3d
           dry-run: true
+          keep-n-most-recent: 1
 
