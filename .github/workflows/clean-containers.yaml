@@ -26,5 +26,4 @@ jobs:
           token: ${{ secrets.GH_REPO_TOKEN }}
           cut-off: 2w 3d
           dry-run: true
-          keep-n-most-recent: 1
 
