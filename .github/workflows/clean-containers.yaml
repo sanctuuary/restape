@@ -1,9 +1,6 @@
 name: "Clean the old docker images"
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:  # Manual trigger
   schedule:
     - cron: "21 21 * * *"  # Scheduled run
@@ -25,10 +22,9 @@ jobs:
         uses: snok/container-retention-policy@v3.0.0
         with:
           account: user
-          image-names: ${{ env.REGISTRY }}/${{ env.REPO }}
+          image-names: "!latest"
           token: ${{ secrets.GH_REPO_TOKEN }}
-          image-tags: "pr*"  # target any image that has a tag starting with the word test or dev
-          # image-tags: "!latest"
+          image-tags: "!latest"
           cut-off: 2w 3d
           dry-run: true
 
