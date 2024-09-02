@@ -3,7 +3,7 @@ name: "Clean the old docker images"
 on:
   workflow_dispatch:  # Manual trigger
   schedule:
-    - cron: "21 21 * * *"  # Scheduled run
+    - cron: "21 21 * * 0"  # Scheduled run every Sunday at 21:21
 
 jobs:
   clean-ghcr:
