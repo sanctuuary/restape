@@ -4,7 +4,7 @@ on:
   workflow_dispatch:  # This line adds the manual trigger
   push:
     branches: [ "main" ]
-  pull_request:
+  pull_request: # this should be removed before merging
     branches: [ "main" ]
 
 env:
