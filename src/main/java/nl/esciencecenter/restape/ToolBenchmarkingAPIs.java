@@ -7,6 +7,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.OkHttpClient;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,6 +31,7 @@ import nl.esciencecenter.models.benchmarks.Benchmark;
 import nl.esciencecenter.models.benchmarks.BenchmarkBase;
 import nl.uu.cs.ape.solver.solutionStructure.SolutionWorkflow;
 import nl.uu.cs.ape.solver.solutionStructure.SolutionsList;
+import nl.uu.cs.ape.solver.solutionStructure.cwl.DefaultCWLCreator;
 import nl.uu.cs.ape.utils.APEFiles;
 
 /**
@@ -63,7 +72,14 @@ public class ToolBenchmarkingAPIs {
           * Compute the benchmarks for the workflow and save them in a JSON file.
           */
          JSONObject workflowBenchmarks = computeWorkflowSpecificFields(workflow, runID);
-         workflowBenchmarks.put("benchmarks", computeWorkflowBenchmarks(workflow));
+         JSONArray benchmarks = computeWorkflowBenchmarks(workflow);
+         JSONObject additionalBenchmarks = getPubmetricBenchmarks(workflow);
+
+         if (!additionalBenchmarks.isEmpty() && additionalBenchmarks.has("benchmarks")) {
+            additionalBenchmarks.getJSONArray("benchmarks").forEach(benchmark -> benchmarks.put(benchmark));
+         }
+         
+         workflowBenchmarks.put("benchmarks", benchmarks);
 
          String titleBenchmark = workflow.getFileName() + ".json";
          Path solFolder = candidateSolutions.getRunConfiguration().getSolutionDirPath2CWL();
@@ -79,6 +95,65 @@ public class ToolBenchmarkingAPIs {
       return true;
    }
 
+   /**
+    * Get the Pubmetric benchmarks for the workflow.
+    * @param workflow
+    * @return
+    */
+   public static JSONObject getPubmetricBenchmarks(SolutionWorkflow workflow) {
+      // Generate the CWL file content
+      DefaultCWLCreator cwlCreator = new DefaultCWLCreator(workflow);
+      String cwlFileContent = cwlCreator.generate();
+
+      // Convert the CWL content to a byte array
+      byte[] cwlFileBytes = cwlFileContent.getBytes();
+
+      return sendPostToPubmetric(cwlFileBytes);
+   }
+
+
+   /**
+    * Send a POST request to the Pubmetric API to get the benchmarks for the CWL file.
+    * @param cwlFileBytes
+    * @return
+    */
+   public static JSONObject sendPostToPubmetric(byte[] cwlFileBytes) {
+      // Create the HTTP client
+      CloseableHttpClient httpClient = HttpClients.createDefault();
+      HttpPost uploadFile = new HttpPost("http://pubmetric:8000/score_workflow/");
+
+      // Create a multipart entity with the CWL file
+      MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+      builder.addBinaryBody("cwl_file", cwlFileBytes, org.apache.http.entity.ContentType.DEFAULT_BINARY,
+            "workflow.cwl");
+
+      HttpEntity multipart = builder.build();
+      uploadFile.setEntity(multipart);
+
+      // Execute the request
+      CloseableHttpResponse response;
+      try {
+         response = httpClient.execute(uploadFile);
+         HttpEntity responseEntity = response.getEntity();
+
+         // Print the response
+         if (responseEntity != null) {
+            String responseString = EntityUtils.toString(responseEntity);
+            return new JSONObject(responseString);
+         }
+
+         // Close resources
+         response.close();
+         httpClient.close();
+      } catch (IOException e) {
+         log.error("Error while fetching the Pubmetric benchmarks");
+      } catch (JSONException e) {
+         log.error("Error while parsing the Pubmetric benchmarks");
+      }
+
+      return new JSONObject();
+   }
+   
    /**
     * Compute the benchmarks (based on bio.tools and OpenEBench APIs) for the
     * workflows and return it in JSON format.

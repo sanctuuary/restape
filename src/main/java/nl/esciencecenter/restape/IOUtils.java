@@ -29,7 +29,7 @@ public class IOUtils {
         /**
          * URL to the README file containing instructions on how to run the workflows.
          */
-        private static final String README_URL = "https://raw.githubusercontent.com/Workflomics/containers/add_instructions/instructions.txt";
+        private static final String README_URL = "https://raw.githubusercontent.com/Workflomics/tools-and-domains/refs/heads/add_instructions/instructions.txt";
 
         /**
          * Get the CWL content of the file at the given path.

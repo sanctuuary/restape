@@ -58,7 +58,7 @@ class RestApeControllerTest {
      */
     @Test
     void testGetData() throws Exception {
-        String path = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/WombatP_tools/config.json";
+        String path = "https://raw.githubusercontent.com/Workflomics/tools-and-domains/refs/heads/main/domains/proteomics/config.json";
 
         mvc.perform(MockMvcRequestBuilders.get("/data_taxonomy?config_path=" + path).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -83,7 +83,7 @@ class RestApeControllerTest {
      */
     @Test
     void testGetTools() throws Exception {
-        String path = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/WombatP_tools/config.json";
+        String path = "https://raw.githubusercontent.com/Workflomics/tools-and-domains/refs/heads/main/domains/proteomics/config.json";
 
         mvc.perform(
                 MockMvcRequestBuilders.get("/tools_taxonomy?config_path=" + path).accept(MediaType.APPLICATION_JSON))
@@ -121,7 +121,7 @@ class RestApeControllerTest {
     @Test
     void testRunSynthesisPass() throws Exception {
 
-        String configPath = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/WombatP_tools/config.json";
+        String configPath = "https://raw.githubusercontent.com/Workflomics/tools-and-domains/refs/heads/main/domains/proteomics/config.json";
         String jsonContent = FileUtils.readFileToString(APEFiles.readPathToFile(configPath),
                 StandardCharsets.UTF_8);
 
@@ -134,7 +134,7 @@ class RestApeControllerTest {
     @Test
     void testPostZipCWLs() throws Exception {
 
-            String path = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/WombatP_tools/config.json";
+            String path = "https://raw.githubusercontent.com/Workflomics/tools-and-domains/refs/heads/main/domains/proteomics/config.json";
             String content = FileUtils.readFileToString(APEFiles.readPathToFile(path),
                             StandardCharsets.UTF_8);
             JSONObject jsonObject = new JSONObject(content);

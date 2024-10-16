@@ -27,7 +27,7 @@ class ApeAPITest {
      */
     @Test
     void runSynthesisFail() throws IOException, OWLOntologyCreationException {
-        String configPath = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/WombatP_tools/config.json";
+        String configPath = "https://raw.githubusercontent.com/Workflomics/tools-and-domains/refs/heads/main/domains/proteomics/config.json";
         String content = FileUtils.readFileToString(APEFiles.readPathToFile(configPath),
                 StandardCharsets.UTF_8);
         JSONObject jsonObject = new JSONObject(content);
@@ -45,7 +45,7 @@ class ApeAPITest {
      */
     @Test
     void runSynthesisPass() throws IOException, OWLOntologyCreationException {
-        String configPath = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/WombatP_tools/config.json";
+        String configPath = "https://raw.githubusercontent.com/Workflomics/tools-and-domains/refs/heads/main/domains/proteomics/config.json";
         String content = FileUtils.readFileToString(APEFiles.readPathToFile(configPath),
                 StandardCharsets.UTF_8);
         JSONObject jsonObject = new JSONObject(content);
@@ -63,7 +63,7 @@ class ApeAPITest {
      */
     @Test
     void runSynthesisAndBenchmarkPass() throws IOException, OWLOntologyCreationException {
-        String configPath = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/WombatP_tools/config.json";
+        String configPath = "https://raw.githubusercontent.com/Workflomics/tools-and-domains/refs/heads/main/domains/proteomics/config.json";
         String content = FileUtils.readFileToString(APEFiles.readPathToFile(configPath),
                 StandardCharsets.UTF_8);
         JSONObject jsonObject = new JSONObject(content);

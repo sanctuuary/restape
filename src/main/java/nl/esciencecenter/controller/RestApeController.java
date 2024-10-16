@@ -75,7 +75,7 @@ public class RestApeController {
                 parameters = {
                         @Parameter(name = "config_path", 
                                 description = "URL to the APE configuration file.",
-                                example = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/WombatP_tools/config.json")
+                                example = "https://raw.githubusercontent.com/Workflomics/tools-and-domains/refs/heads/main/domains/proteomics/config.json")
                 },
                 externalDocs = @ExternalDocumentation(description = "More information about the APE configuration file can be found here.",
                                                         url = "https://ape-framework.readthedocs.io/en/latest/docs/specifications/setup.html#configuration-file"),
@@ -110,7 +110,7 @@ public class RestApeController {
                 parameters = {
                         @Parameter(name = "config_path", 
                                 description = "URL to the APE configuration file.",
-                                example = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/WombatP_tools/config.json")
+                                example = "https://raw.githubusercontent.com/Workflomics/tools-and-domains/refs/heads/main/domains/proteomics/config.json")
                 },
                 externalDocs = @ExternalDocumentation(description = "More information about the APE configuration file can be found here.",
                                                         url = "https://ape-framework.readthedocs.io/en/latest/docs/specifications/setup.html#configuration-file"),
@@ -144,7 +144,7 @@ public class RestApeController {
                 parameters = {
                         @Parameter(name = "config_path", 
                                 description = "URL to the APE configuration file.",
-                                example = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/WombatP_tools/config.json")
+                                example = "https://raw.githubusercontent.com/Workflomics/tools-and-domains/refs/heads/main/domains/proteomics/config.json")
                 },
                 externalDocs = @ExternalDocumentation(description = "More information about the APE configuration file can be found here.",
                                                         url = "https://ape-framework.readthedocs.io/en/latest/docs/specifications/setup.html#configuration-file"),
