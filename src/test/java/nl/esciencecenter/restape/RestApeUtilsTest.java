@@ -17,7 +17,7 @@ class RestApeUtilsTest {
      */
     @Test
     void loadURLPath() {
-        String urlPath = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/WombatP_tools/config.json";
+        String urlPath = "https://raw.githubusercontent.com/Workflomics/tools-and-domains/refs/heads/main/domains/proteomics/config.json";
 
         assertDoesNotThrow(() -> ApeAPI.setupApe(urlPath));
 
@@ -31,7 +31,7 @@ class RestApeUtilsTest {
 
         assertDoesNotThrow(() -> {
             File config = APEFiles.readPathToFile(
-                    "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/WombatP_tools/config.json");
+                    "https://raw.githubusercontent.com/Workflomics/tools-and-domains/refs/heads/main/domains/proteomics/config.json");
             ApeAPI.setupApe(config.getAbsolutePath());
         });
 
@@ -43,7 +43,7 @@ class RestApeUtilsTest {
      */
     @Test
     void getTypesFromURLPath() {
-        String urlPath = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/WombatP_tools/config.json";
+        String urlPath = "https://raw.githubusercontent.com/Workflomics/tools-and-domains/refs/heads/main/domains/proteomics/config.json";
 
         assertDoesNotThrow(() -> ApeAPI.getData(urlPath));
 
@@ -55,7 +55,7 @@ class RestApeUtilsTest {
      */
     @Test
     void getToolsFromURLPath() {
-        String urlPath = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/WombatP_tools/config.json";
+        String urlPath = "https://raw.githubusercontent.com/Workflomics/tools-and-domains/refs/heads/main/domains/proteomics/config.json";
 
         assertDoesNotThrow(() -> ApeAPI.getTools(urlPath));
 

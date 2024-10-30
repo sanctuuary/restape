@@ -19,7 +19,7 @@ class IOUtilsTest {
     @Test
     void testZipFilesForLocalExecution() throws Exception {
 
-            String path = "https://raw.githubusercontent.com/Workflomics/domain-annotations/main/WombatP_tools/config.json";
+            String path = "https://raw.githubusercontent.com/Workflomics/tools-and-domains/refs/heads/main/domains/proteomics/config.json";
             String content = FileUtils.readFileToString(APEFiles.readPathToFile(path),
                             StandardCharsets.UTF_8);
             JSONObject jsonObject = new JSONObject(content);

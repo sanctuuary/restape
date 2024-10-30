@@ -130,7 +130,19 @@ public class ApeAPI {
         APE apeFramework = setupApe(configFileURL);
         Collection<ConstraintTemplate> constraints = apeFramework.getConstraintTemplates();
         JSONArray arrayConstraints = new JSONArray();
-        constraints.forEach(constraint -> arrayConstraints.put(constraint.toJSON()));
+        constraints.forEach(constraint -> {
+            JSONObject constraintJson = constraint.toJSON();
+            if (constraint.getConstraintID().equals("connected_op")) {
+                constraintJson.remove("label");
+                constraintJson.put("label", "Use operations sequentially.");
+            } else if (constraint.getConstraintID().equals("not_connected_op")) {
+                constraintJson.remove("label");
+                constraintJson.put("label", "Do not use operations sequentially.");
+            }
+        
+            arrayConstraints.put(constraintJson);
+
+        });
 
         return arrayConstraints;
     }
