@@ -78,7 +78,7 @@ public class ToolBenchmarkingAPIs {
          if (!additionalBenchmarks.isEmpty() && additionalBenchmarks.has("benchmarks")) {
             additionalBenchmarks.getJSONArray("benchmarks").forEach(benchmark -> benchmarks.put(benchmark));
          }
-         
+
          workflowBenchmarks.put("benchmarks", benchmarks);
 
          String titleBenchmark = workflow.getFileName() + ".json";
@@ -96,64 +96,62 @@ public class ToolBenchmarkingAPIs {
    }
 
    /**
-     * Get the Pubmetric benchmarks for the workflow.
-     * @param workflow the SolutionWorkflow instance
-     * @return JSON response from Pubmetric API
-     */
-    public static JSONObject getPubmetricBenchmarks(SolutionWorkflow workflow) {
+    * Get the Pubmetric benchmarks for the workflow.
+    * 
+    * @param workflow the SolutionWorkflow instance
+    * @return JSON response from Pubmetric API
+    */
+   public static JSONObject getPubmetricBenchmarks(SolutionWorkflow workflow) {
       DefaultCWLCreator cwlCreator = new DefaultCWLCreator(workflow);
       String cwlFileContent = cwlCreator.generate();
       byte[] cwlFileBytes = cwlFileContent.getBytes();
 
       return sendPostToPubmetric(cwlFileBytes);
-  }
+   }
 
-  /**
-   * Send a POST request to the Pubmetric API to get benchmarks.
-   * @param cwlFileBytes byte array of CWL file content
-   * @return JSON response from Pubmetric API
-   */
-  public static JSONObject sendPostToPubmetric(byte[] cwlFileBytes) {
-      try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-          HttpPost uploadFile = createHttpPost(cwlFileBytes);
-          return executeRequest(httpClient, uploadFile);
-      } catch (IOException | JSONException e) {
-          log.error("Error while processing Pubmetric benchmarks", e);
-          return new JSONObject(); // return empty JSON if an error occurs
-      }
-  }
+   /**
+    * Send a POST request to the Pubmetric API to get benchmarks.
+    * 
+    * @param cwlFileBytes byte array of CWL file content
+    * @return JSON response from Pubmetric API
+    */
+   public static JSONObject sendPostToPubmetric(byte[] cwlFileBytes) {
+      // Create the HTTP client
+      CloseableHttpClient httpClient = HttpClients.createDefault();
+      HttpPost uploadFile = new HttpPost("http://pubmetric:8000/score_workflow/");
 
-  /**
-   * Creates an HttpPost request with the provided CWL content.
-   * @param cwlFileBytes byte array of CWL file content
-   * @return configured HttpPost request
-   */
-  private static HttpPost createHttpPost(byte[] cwlFileBytes) {
-      HttpPost uploadFile = new HttpPost("http://localhost:8000/score_workflow/");
+      // Create a multipart entity with the CWL file
       MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-      builder.addBinaryBody("cwl_file", cwlFileBytes, org.apache.http.entity.ContentType.DEFAULT_BINARY, "workflow.cwl");
-      uploadFile.setEntity(builder.build());
-      return uploadFile;
-  }
+      builder.addBinaryBody("cwl_file", cwlFileBytes, org.apache.http.entity.ContentType.DEFAULT_BINARY,
+            "workflow.cwl");
 
-  /**
-   * Executes the HTTP request and returns the response as a JSONObject.
-   * @param httpClient the HTTP client
-   * @param uploadFile the configured HttpPost request
-   * @return JSON response from Pubmetric API
-   * @throws IOException if an error occurs during the HTTP call
-   */
-  private static JSONObject executeRequest(CloseableHttpClient httpClient, HttpPost uploadFile) throws IOException {
-      try (CloseableHttpResponse response = httpClient.execute(uploadFile)) {
-          HttpEntity responseEntity = response.getEntity();
-          if (responseEntity != null) {
-              String responseString = EntityUtils.toString(responseEntity);
-              return new JSONObject(responseString);
-          }
-          return new JSONObject(); // return empty JSON if no response entity
+      HttpEntity multipart = builder.build();
+      uploadFile.setEntity(multipart);
+
+      // Execute the request
+      CloseableHttpResponse response;
+      try {
+         response = httpClient.execute(uploadFile);
+         HttpEntity responseEntity = response.getEntity();
+
+         // Print the response
+         if (responseEntity != null) {
+            String responseString = EntityUtils.toString(responseEntity);
+            return new JSONObject(responseString);
+         }
+
+         // Close resources
+         response.close();
+         httpClient.close();
+      } catch (IOException e) {
+         log.error("Error while fetching the Pubmetric benchmarks");
+      } catch (JSONException e) {
+         log.error("Error while parsing the Pubmetric benchmarks");
       }
-  }
-   
+
+      return new JSONObject();
+   }
+
    /**
     * Compute the benchmarks (based on bio.tools and OpenEBench APIs) for the
     * workflows and return it in JSON format.
@@ -200,7 +198,7 @@ public class ToolBenchmarkingAPIs {
          try {
             biotoolsEntry = BioToolsRestClient.fetchToolFromBioTools(toolID);
          } catch (JSONException | IOException e) {
-           log.warn(e.getMessage());
+            log.warn(e.getMessage());
          } finally {
             biotoolsEntry.put(ToolBenchmarkingAPIs.restAPEtoolID, toolNode.getUsedModule().getPredicateLabel());
             biotoolsAnnotations.add(biotoolsEntry);
@@ -265,7 +263,8 @@ public class ToolBenchmarkingAPIs {
 
       BenchmarkBase citationsBenchmark = new BenchmarkBase("Citations", "Bibliometrics", "Citations annotated per tool",
             "citation count", "citation", null);
-      benchmarks.add(OpenEBenchBenchmarkProcessor.countCitationsBenchmark(openEBenchBiotoolsMetrics, citationsBenchmark));
+      benchmarks
+            .add(OpenEBenchBenchmarkProcessor.countCitationsBenchmark(openEBenchBiotoolsMetrics, citationsBenchmark));
 
       return benchmarks;
 
