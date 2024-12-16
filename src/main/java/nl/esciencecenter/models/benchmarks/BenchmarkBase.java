@@ -15,6 +15,8 @@ public class BenchmarkBase {
     @NonNull
     private String benchmarkTitle;
     @NonNull
+    private String benchmarkCategory;
+    @NonNull
     private String benchmarkDescription;
     @NonNull
     private String unit;
@@ -24,6 +26,7 @@ public class BenchmarkBase {
     public JSONObject getTitleJson() {
         JSONObject benchmarkJson = new JSONObject();
         benchmarkJson.put("title", benchmarkTitle);
+        benchmarkJson.put("category", benchmarkCategory);
         benchmarkJson.put("description", benchmarkDescription);
         benchmarkJson.put("unit", unit);
         return benchmarkJson;
