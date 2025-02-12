@@ -69,6 +69,16 @@ class ApeAPITest {
     }
 
     /**
+     * Test getDomainIOConstraints method to verify retrieval of domain-specific input and output data terms.
+     */
+    @Test
+    void getDomainIOConstraintsTest() throws IOException, OWLOntologyCreationException {
+        JSONObject domainIO = ApeAPI.getDomainIO(CONFIG_PATH);
+        assertNotNull(domainIO, "Domain IO constraints should not be null.");
+        assertFalse(domainIO.isEmpty(), "Domain IO constraints should not be empty.");
+    }
+
+    /**
      * Test runSynthesis method with an UNSAT configuration.
      */
     @Test

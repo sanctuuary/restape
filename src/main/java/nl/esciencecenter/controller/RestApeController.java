@@ -197,6 +197,41 @@ public class RestApeController {
         }
 
         /**
+         * Retrieve default input and output data terms based on the provided domain configuration file.
+         * 
+         * @param configPath URL to the APE configuration file.
+         * @return Taxonomy of data terms.
+         * @throws IOException - if the URL is invalid
+         * @throws OWLOntologyCreationException - if the ontology cannot be created
+         */
+        @GetMapping("/domain_io")
+        @Operation(summary = "Retrieve default domain input and output data",
+                description = "Retrieve default input and output data terms within the domain.",
+                tags = {"Domain"},
+                parameters = {
+                        @Parameter(name = "config_path", 
+                                description = "URL to the APE configuration file.",
+                                example = "https://raw.githubusercontent.com/Workflomics/tools-and-domains/refs/heads/main/domains/proteomics/config.json")
+                },
+                externalDocs = @ExternalDocumentation(description = "More information about the APE configuration file can be found here.",
+                                                        url = "https://ape-framework.readthedocs.io/en/latest/docs/specifications/setup.html#configuration-file"),
+                responses = {
+                        @ApiResponse(responseCode = "200", 
+                                description = "Successful operation. Default domain input and output data terms are provided.",
+                                content = @Content(schema = @Schema(implementation = TaxonomyElem.class), 
+                                                mediaType = MediaType.APPLICATION_JSON_VALUE)),
+                        @ApiResponse(responseCode = "400", description = "Invalid input"),
+                        @ApiResponse(responseCode = "404", description = "Not found")
+                })
+        public ResponseEntity<String> getDomainIO(
+                        @RequestParam("config_path") String configPath)
+                        throws OWLOntologyCreationException, IOException, IllegalArgumentException {
+                RestApeUtils.validateURL(configPath);
+                return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
+                                .body(ApeAPI.getDomainIO(configPath).toString());
+        }
+
+        /**
          * Synthesize workflow based on the provided run configuration file.
          * 
          * @param configJson JSON object containing the configuration for the synthesis.
