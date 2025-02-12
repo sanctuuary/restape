@@ -42,6 +42,19 @@ OpenAPI documentation is available at
 [host]:[port]]/swagger-ui/index.html
 ````
 
+### Configure .env file
+
+To configure the application, you can create a `.env` file in the root directory of the project, with the following content:
+
+```
+REST_APE_PORT = <port>
+PUBMETRIC_ENDPOINT = <pubmetric-endpoint>
+PUBMETRIC_PORT = <pubmetric-port>
+```
+
+We use `REST_APE_PORT` to specify the port on which the application will run. When run locally under `REST_APE_PORT=4444` the service would be available on `localhost:4444`.
+The `PUBMETRIC_ENDPOINT` and `PUBMETRIC_PORT` are used to specify the endpoint and port of the Pubmetric service that is used to retrieve tool metrics.
+
 #### Use local APE version
 
 If the APE version you wish to use is not available on the [Mvn repository](https://mvnrepository.com/artifact/io.github.sanctuuary/APE)

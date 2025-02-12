@@ -1,5 +1,6 @@
 package nl.esciencecenter.restape;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -14,6 +15,7 @@ import nl.uu.cs.ape.models.AllPredicates;
 import nl.uu.cs.ape.models.AllTypes;
 import nl.uu.cs.ape.models.logic.constructs.TaxonomyPredicate;
 import nl.uu.cs.ape.solver.solutionStructure.SolutionsList;
+import nl.uu.cs.ape.utils.APEFiles;
 import nl.uu.cs.ape.utils.APEUtils;
 
 import org.json.JSONArray;
@@ -139,13 +141,36 @@ public class ApeAPI {
                 constraintJson.remove("label");
                 constraintJson.put("label", "Do not use operations sequentially.");
             }
-        
+
             arrayConstraints.put(constraintJson);
 
         });
 
         return arrayConstraints;
     }
+    
+    /**
+     * Return the json object representing a fixed set of domain specific constraints provided in the configuration file.
+     * 
+     * @return - json object with all available constraint templates
+     * @throws IOException                  - if the configuration file cannot be
+     *                                      found
+     * @throws OWLOntologyCreationException - if the ontology cannot be created
+     */
+    public static JSONArray getDomainConstraints(String configFileURL)
+            throws OWLOntologyCreationException, IOException {
+                
+        JSONObject configurationJson = APEFiles.readPathToJSONObject(configFileURL);
+
+        APE apeFramework = setupApe(configFileURL);
+
+        APERunConfig runConfig = new APERunConfig(configurationJson, apeFramework.getDomainSetup());
+
+        JSONArray arrayConstraints = runConfig.getConstraintsJSON();
+
+        return arrayConstraints;
+    }
+    
 
     /**
      * Execute the synthesis of workflows using the APE framework.
