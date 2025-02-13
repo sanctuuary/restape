@@ -44,12 +44,12 @@ OpenAPI documentation is available at
 
 ### Configure .env file
 
-To configure the application, you can create a `.env` file in the root directory of the project, with the following content:
+To configure the application, you can create a `.env` file in the root directory of the project. See the following content as an example:
 
 ```
-REST_APE_PORT = <port>
-PUBMETRIC_ENDPOINT = <pubmetric-endpoint>
-PUBMETRIC_PORT = <pubmetric-port>
+REST_APE_PORT = 4444
+PUBMETRIC_ENDPOINT= localhost
+PUBMETRIC_PORT = 8000
 ```
 
 We use `REST_APE_PORT` to specify the port on which the application will run. When run locally under `REST_APE_PORT=4444` the service would be available on `localhost:4444`.
