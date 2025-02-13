@@ -1,9 +1,11 @@
 package nl.esciencecenter.restape;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import nl.uu.cs.ape.APE;
 import nl.uu.cs.ape.configuration.APECoreConfig;
@@ -12,8 +14,11 @@ import nl.uu.cs.ape.constraints.ConstraintTemplate;
 import nl.uu.cs.ape.models.AllModules;
 import nl.uu.cs.ape.models.AllPredicates;
 import nl.uu.cs.ape.models.AllTypes;
+import nl.uu.cs.ape.models.AuxTypePredicate;
+import nl.uu.cs.ape.models.Type;
 import nl.uu.cs.ape.models.logic.constructs.TaxonomyPredicate;
 import nl.uu.cs.ape.solver.solutionStructure.SolutionsList;
+import nl.uu.cs.ape.utils.APEFiles;
 import nl.uu.cs.ape.utils.APEUtils;
 
 import org.json.JSONArray;
@@ -139,13 +144,89 @@ public class ApeAPI {
                 constraintJson.remove("label");
                 constraintJson.put("label", "Do not use operations sequentially.");
             }
-        
+
             arrayConstraints.put(constraintJson);
 
         });
 
         return arrayConstraints;
     }
+    
+    /**
+     * Return the json object representing a fixed set of domain specific constraints provided in the configuration file.
+     * 
+     * @return - json object with all available constraint templates
+     * @throws IOException                  - if the configuration file cannot be
+     *                                      found
+     * @throws OWLOntologyCreationException - if the ontology cannot be created
+     */
+    public static JSONArray getDomainConstraints(String configFileURL)
+            throws OWLOntologyCreationException, IOException {
+
+        JSONObject configurationJson = APEFiles.readPathToJSONObject(configFileURL);
+
+        APE apeFramework = setupApe(configFileURL);
+
+        APERunConfig runConfig = new APERunConfig(configurationJson, apeFramework.getDomainSetup());
+
+        JSONArray arrayConstraints = runConfig.getConstraintsJSON();
+
+        return arrayConstraints;
+    }
+
+    /**
+     * Return the json object representing a fixed set of domain specific constraints provided in the configuration file.
+     * 
+     * @return - json object with all available constraint templates
+     * @throws IOException                  - if the configuration file cannot be
+     *                                      found
+     * @throws OWLOntologyCreationException - if the ontology cannot be created
+     */
+    public static JSONObject getDomainIO(String configFileURL)
+            throws OWLOntologyCreationException, IOException {
+
+        JSONObject configurationJson = APEFiles.readPathToJSONObject(configFileURL);
+
+        APE apeFramework = setupApe(configFileURL);
+
+        APERunConfig runConfig = new APERunConfig(configurationJson, apeFramework.getDomainSetup());
+
+        JSONArray inputArray = new JSONArray();
+        List<Type> inputs = runConfig.getProgramInputs();
+        inputs.forEach(input -> {
+            inputArray.put(toJSON(((AuxTypePredicate) input).getGeneralizedPredicates()));
+        });
+
+            
+
+        JSONArray outputArray = new JSONArray();
+        List<Type> outputs = runConfig.getProgramOutputs();
+        outputs.forEach(output -> {
+            outputArray.put(toJSON(((AuxTypePredicate) output).getGeneralizedPredicates()));
+        });
+
+        JSONObject domainIO = new JSONObject();
+        domainIO.put("input",inputArray);
+        domainIO.put("output",outputArray);
+
+        return domainIO;
+    }
+    
+
+
+    /**
+	 * Returns a JSONObject for a given taxonomy predicate.
+	 * 
+	 * @return JSONObject
+	 */
+	public static JSONObject toJSON(Set<TaxonomyPredicate> parameterTypes) {
+		JSONObject json = new JSONObject();
+        for (TaxonomyPredicate predicate : parameterTypes) {
+			json.put(predicate.getRootNodeID(), predicate.getPredicateID());
+		}
+		return json;
+	}
+    
 
     /**
      * Execute the synthesis of workflows using the APE framework.

@@ -137,7 +137,7 @@ public class RestApeController {
          * @param configPath URL to the APE configuration file.
          * @return Constraint templates.
          */
-        @GetMapping("/constraints")
+        @GetMapping("/constraint_templates")
         @Operation(summary = "Retrieve constraint templates",
                 description = "Retrieve constraint templates used to specify the synthesis problem.",
                 tags = {"Domain"},
@@ -161,6 +161,74 @@ public class RestApeController {
 
                 return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
                                 .body(ApeAPI.getConstraints(configPath).toString());
+        }
+
+        /**
+         * Retrieve domain constraint specified in the provided domain configuration
+         * file.
+         * 
+         * @param configPath URL to the APE configuration file.
+         * @return Domain constraints.
+         */
+        @GetMapping("/domain_constraints")
+        @Operation(summary = "Retrieve a fixed set of domain constraints",
+                description = "Retrieve a fixed set of domain constraints specified in the domain configuration file, which should always be used when synthesizing workflows within the domain.",
+                tags = {"Domain"},
+                parameters = {
+                        @Parameter(name = "config_path", 
+                                description = "URL to the APE configuration file.",
+                                example = "https://raw.githubusercontent.com/Workflomics/tools-and-domains/refs/heads/main/domains/proteomics/config.json")
+                },
+                externalDocs = @ExternalDocumentation(description = "More information about the APE configuration file can be found here.",
+                                                        url = "https://ape-framework.readthedocs.io/en/latest/docs/specifications/setup.html#configuration-file"),
+                responses = {
+                        @ApiResponse(responseCode = "200", 
+                                        description = "Successful operation. Domain specific constraints are provided.",
+                                        content = @Content(schema = @Schema(implementation = ConstraintElem.class), 
+                                                        mediaType = MediaType.APPLICATION_JSON_VALUE)),
+                        @ApiResponse(responseCode = "400", description = "Invalid input"),
+                        @ApiResponse(responseCode = "404", description = "Not found")
+                })
+        public ResponseEntity<String> getDomainConstraints(@RequestParam("config_path") String configPath)
+                        throws JSONException, OWLOntologyCreationException, IOException {
+
+                return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
+                                .body(ApeAPI.getDomainConstraints(configPath).toString());
+        }
+
+        /**
+         * Retrieve default input and output data terms based on the provided domain configuration file.
+         * 
+         * @param configPath URL to the APE configuration file.
+         * @return Taxonomy of data terms.
+         * @throws IOException - if the URL is invalid
+         * @throws OWLOntologyCreationException - if the ontology cannot be created
+         */
+        @GetMapping("/domain_io")
+        @Operation(summary = "Retrieve default domain input and output data",
+                description = "Retrieve default input and output data terms within the domain.",
+                tags = {"Domain"},
+                parameters = {
+                        @Parameter(name = "config_path", 
+                                description = "URL to the APE configuration file.",
+                                example = "https://raw.githubusercontent.com/Workflomics/tools-and-domains/refs/heads/main/domains/proteomics/config.json")
+                },
+                externalDocs = @ExternalDocumentation(description = "More information about the APE configuration file can be found here.",
+                                                        url = "https://ape-framework.readthedocs.io/en/latest/docs/specifications/setup.html#configuration-file"),
+                responses = {
+                        @ApiResponse(responseCode = "200", 
+                                description = "Successful operation. Default domain input and output data terms are provided.",
+                                content = @Content(schema = @Schema(implementation = TaxonomyElem.class), 
+                                                mediaType = MediaType.APPLICATION_JSON_VALUE)),
+                        @ApiResponse(responseCode = "400", description = "Invalid input"),
+                        @ApiResponse(responseCode = "404", description = "Not found")
+                })
+        public ResponseEntity<String> getDomainIO(
+                        @RequestParam("config_path") String configPath)
+                        throws OWLOntologyCreationException, IOException, IllegalArgumentException {
+                RestApeUtils.validateURL(configPath);
+                return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
+                                .body(ApeAPI.getDomainIO(configPath).toString());
         }
 
         /**
