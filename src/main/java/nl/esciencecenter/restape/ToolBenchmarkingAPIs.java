@@ -21,6 +21,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import nl.esciencecenter.externalAPIs.BioToolsBenchmarkProcessor;
@@ -118,7 +119,9 @@ public class ToolBenchmarkingAPIs {
    public static JSONObject sendPostToPubmetric(byte[] cwlFileBytes) {
       // Create the HTTP client
       CloseableHttpClient httpClient = HttpClients.createDefault();
-      HttpPost uploadFile = new HttpPost("http://pubmetric:8000/score_workflow/");
+
+      String url = String.format("http://%s:%s/score_workflow/", Dotenv.load().get("PUBMETRIC_ENDPOINT"), Dotenv.load().get("PUBMETRIC_PORT"));
+      HttpPost uploadFile = new HttpPost(url);
 
       // Create a multipart entity with the CWL file
       MultipartEntityBuilder builder = MultipartEntityBuilder.create();
@@ -236,9 +239,12 @@ public class ToolBenchmarkingAPIs {
    private static List<Benchmark> computeOpenEBenchmarks(SolutionWorkflow workflow) {
       /*
        * For each tool in the workflow, get the OpenEBench annotations from OpenEBench
-       * API
+       * API.
        */
       List<JSONObject> openEBenchBiotoolsMetrics = new ArrayList<>();
+
+      /* Check if OpenEBench service is available. */
+      // OpenEBenchRestClient.checkAvailability();
 
       workflow.getModuleNodes().forEach(toolNode -> {
          String toolID = toolNode.getUsedModule().getPredicateLabel();
