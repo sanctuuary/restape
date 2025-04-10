@@ -1,6 +1,7 @@
 package nl.esciencecenter;
 
 import java.util.Collections;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,20 +16,22 @@ import io.swagger.v3.oas.annotations.servers.Server;
 /**
  * The main class for the RESTful APE API.
  * 
- * @version 0.3.0
+ * @version 0.3.1
  */
 @SpringBootApplication
 @OpenAPIDefinition(info = @Info(title = "RestApe API", version = "0.3.0", description = "RESTfull API for the APE (Automated Pipeline Explorer) library."), servers = @Server(url = "http://localhost:REST_APE_PORT", description = "Local server"))
 public class RestapeApplication {
 
 	private static final Logger log = LoggerFactory.getLogger(RestapeApplication.class);
+	private static String servicePort = Optional.ofNullable(Dotenv.load().get("REST_APE_PORT")).orElse("4444");
+
 
 	public static void main(String[] args) {
 		SpringApplication app = new SpringApplication(RestapeApplication.class);
 
 		// Port should be .env variable REST_APE_PORT
 		app.setDefaultProperties(
-				Collections.singletonMap("server.port", Dotenv.load().get("REST_APE_PORT")));
+				Collections.singletonMap("server.port", servicePort));
 
 		log.info("Starting RestApe API server...");
 		app.run(args);

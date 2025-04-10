@@ -5,8 +5,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-
-import okhttp3.OkHttpClient;
+import java.util.Optional;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -57,8 +56,11 @@ public class ToolBenchmarkingAPIs {
 
    public static final String restAPEtoolID = "restAPEtoolID";
    private static final Logger log = LoggerFactory.getLogger(ToolBenchmarkingAPIs.class);
-   private static final OkHttpClient client = new OkHttpClient();
 
+   
+	private static String pubmetricPort = Optional.ofNullable(Dotenv.load().get("PUBMETRIC_PORT")).orElse("8000");
+   private static String pubmetricHost = Optional.ofNullable(Dotenv.load().get("PUBMETRIC_HOST")).orElse("localhost");
+ 
    /**
     * Compute the benchmarks for the workflows.
     * 
@@ -120,7 +122,7 @@ public class ToolBenchmarkingAPIs {
       // Create the HTTP client
       CloseableHttpClient httpClient = HttpClients.createDefault();
 
-      String url = String.format("http://%s:%s/score_workflow/", Dotenv.load().get("PUBMETRIC_ENDPOINT"), Dotenv.load().get("PUBMETRIC_PORT"));
+      String url = String.format("http://%s:%s/score_workflow/", pubmetricHost, pubmetricPort);
       HttpPost uploadFile = new HttpPost(url);
 
       // Create a multipart entity with the CWL file
