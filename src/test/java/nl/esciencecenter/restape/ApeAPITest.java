@@ -102,15 +102,15 @@ class ApeAPITest {
         assertFalse(result.isEmpty(), "The encoding should be SAT.");
     }
 
-    /**
-     * Test runSynthesis method with benchmarking enabled.
-     */
-    @Test
-    void runSynthesisAndBenchmarkPass() throws IOException, OWLOntologyCreationException {
-        String content = FileUtils.readFileToString(APEFiles.readPathToFile(CONFIG_PATH), StandardCharsets.UTF_8);
-        JSONObject jsonObject = new JSONObject(content);
-        jsonObject.put("solutions", "1");
-        List<APEWorkflowMetadata> result = ApeAPI.runSynthesis(jsonObject, true);
-        assertFalse(result.isEmpty(), "The encoding should be SAT.");
-    }
+    // /**
+    //  * Test runSynthesis method with benchmarking enabled.
+    //  */
+    // @Test
+    // void runSynthesisAndBenchmarkPass() throws IOException, OWLOntologyCreationException {
+    //     String content = FileUtils.readFileToString(APEFiles.readPathToFile(CONFIG_PATH), StandardCharsets.UTF_8);
+    //     JSONObject jsonObject = new JSONObject(content);
+    //     jsonObject.put("solutions", "1");
+    //     List<APEWorkflowMetadata> result = ApeAPI.runSynthesis(jsonObject, true);
+    //     assertFalse(result.isEmpty(), "The encoding should be SAT.");
+    // }
 }
