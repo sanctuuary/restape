@@ -23,7 +23,16 @@ import io.swagger.v3.oas.annotations.servers.Server;
 public class RestapeApplication {
 
 	private static final Logger log = LoggerFactory.getLogger(RestapeApplication.class);
-	private static String servicePort = Optional.ofNullable(Dotenv.load().get("REST_APE_PORT")).orElse("4444");
+	private static String servicePort = "4444";
+	static {
+		// Load environment variables from .env file
+		try{
+		Dotenv dotenv = Dotenv.configure().ignoreIfMalformed().ignoreIfMissing().load();
+		servicePort = Optional.ofNullable(dotenv.get("REST_APE_PORT")).orElse("4444");
+		} catch (Exception e) {
+			log.warn("Could not load .env file, using default port 4444");
+		}
+	}
 
 
 	public static void main(String[] args) {

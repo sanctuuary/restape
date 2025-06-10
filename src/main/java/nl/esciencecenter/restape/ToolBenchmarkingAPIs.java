@@ -58,9 +58,21 @@ public class ToolBenchmarkingAPIs {
    private static final Logger log = LoggerFactory.getLogger(ToolBenchmarkingAPIs.class);
 
    
-	private static String pubmetricPort = Optional.ofNullable(Dotenv.load().get("PUBMETRIC_PORT")).orElse("8000");
-   private static String pubmetricHost = Optional.ofNullable(Dotenv.load().get("PUBMETRIC_HOST")).orElse("localhost");
+	private static String pubmetricPort = "8000";
+   private static String pubmetricHost = "localhost";
  
+	static {
+		// Load environment variables from .env file
+		try{
+		Dotenv dotenv = Dotenv.configure().ignoreIfMalformed().ignoreIfMissing().load();
+      
+      pubmetricPort = Optional.ofNullable(dotenv.get("PUBMETRIC_PORT")).orElse("8000");
+      pubmetricHost = Optional.ofNullable(dotenv.get("PUBMETRIC_HOST")).orElse("localhost");
+		} catch (Exception e) {
+			log.warn("Could not load .env file, using default port 4444");
+		}
+	}
+
    /**
     * Compute the benchmarks for the workflows.
     * 
