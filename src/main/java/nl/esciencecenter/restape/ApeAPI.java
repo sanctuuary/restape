@@ -303,7 +303,8 @@ public class ApeAPI {
      * @return - List of {@link APEWorkflowMetadata}s with the results of the synthesis, each element describes
      *         a workflow solution (name, length, runID, path to a CWL file, etc.).
      */
-    private static List<APEWorkflowMetadata> workflowMetadataToJson(SolutionsList candidateSolutions, String runID, boolean benchmark) {
+    private static List<APEWorkflowMetadata> workflowMetadataToJson(SolutionsList candidateSolutions, String runID,
+            boolean benchmark) {
         List<APEWorkflowMetadata> generatedSolutionsJson = new ArrayList<>();
 
         if (candidateSolutions.isEmpty()) {
@@ -320,5 +321,5 @@ public class ApeAPI {
             return generatedSolutionsJson;
         }
     }
-
+    
 }
