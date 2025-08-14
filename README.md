@@ -7,7 +7,7 @@
 | **Packages and Releases** |  [![Latest release](https://img.shields.io/github/release/sanctuuary/RESTAPE.svg)](https://github.com/sanctuuary/restape/releases/latest) [![Static Badge](https://img.shields.io/badge/RSD-RESTfulAPE-ape)](https://research-software-directory.org/software/restape) | 
 | **Build Status** | ![build](https://github.com/sanctuuary/RestAPE/actions/workflows/maven.yml/badge.svg) [![CodeQL](https://github.com/sanctuuary/restape/actions/workflows/codeql.yml/badge.svg)](https://github.com/sanctuuary/restape/actions/workflows/codeql.yml) |
 | **Documentation** | [![Documentation Status](https://readthedocs.org/projects/ape-framework/badge/?version=latest)](https://ape-framework.readthedocs.io/en/latest/docs/restful-ape/introduction.html) |
-| **DOI** | [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10048236.svg)](https://doi.org/10.5281/zenodo.10048236) |
+| **DOI** | [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10048235.svg)](https://doi.org/10.5281/zenodo.10048235) |
 | **License** |  [![GitHub license](https://img.shields.io/github/license/sanctuuary/RESTAPE)](https://github.com/sanctuuary/RESTAPE/blob/master/LICENSE) |
 
 The RESTful API for the APE library (RESTful APE) allows users to interact with APE's automated pipeline exploration features through HTTP requests. APE automates the exploration of computational pipelines from large collections of computational tools.
