@@ -32,6 +32,11 @@ authors:
     email: n.m.palmblad@lumc.nl
     affiliation: Leiden University Medical Center
     orcid: 'https://orcid.org/0000-0002-5865-8994'
+  - given-names: Mario
+    family-names: Frank
+    email: mario.frank@uni-potsdam.de
+    affiliation: University of Potsdam, Germany
+    orcid: 'https://orcid.org/0000-0001-8888-7475'
 identifiers:
   - type: doi
     value: 10.5281/zenodo.10048235

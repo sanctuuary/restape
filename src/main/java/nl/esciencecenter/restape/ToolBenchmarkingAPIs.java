@@ -5,8 +5,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-
-import okhttp3.OkHttpClient;
+import java.util.Optional;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -21,6 +20,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import nl.esciencecenter.externalAPIs.BioToolsBenchmarkProcessor;
@@ -56,7 +56,22 @@ public class ToolBenchmarkingAPIs {
 
    public static final String restAPEtoolID = "restAPEtoolID";
    private static final Logger log = LoggerFactory.getLogger(ToolBenchmarkingAPIs.class);
-   private static final OkHttpClient client = new OkHttpClient();
+
+   
+	private static String pubmetricPort = "8000";
+   private static String pubmetricHost = "localhost";
+ 
+	static {
+		// Load environment variables from .env file
+		try{
+		Dotenv dotenv = Dotenv.configure().ignoreIfMalformed().ignoreIfMissing().load();
+      
+      pubmetricPort = Optional.ofNullable(dotenv.get("PUBMETRIC_PORT")).orElse("8000");
+      pubmetricHost = Optional.ofNullable(dotenv.get("PUBMETRIC_HOST")).orElse("localhost");
+		} catch (Exception e) {
+			log.warn("Could not load .env file, using default port " + pubmetricPort + " and host " + pubmetricHost);
+		}
+	}
 
    /**
     * Compute the benchmarks for the workflows.
@@ -118,7 +133,9 @@ public class ToolBenchmarkingAPIs {
    public static JSONObject sendPostToPubmetric(byte[] cwlFileBytes) {
       // Create the HTTP client
       CloseableHttpClient httpClient = HttpClients.createDefault();
-      HttpPost uploadFile = new HttpPost("http://pubmetric:8000/score_workflow/");
+
+      String url = String.format("http://%s:%s/score_workflow/", pubmetricHost, pubmetricPort);
+      HttpPost uploadFile = new HttpPost(url);
 
       // Create a multipart entity with the CWL file
       MultipartEntityBuilder builder = MultipartEntityBuilder.create();
@@ -236,9 +253,12 @@ public class ToolBenchmarkingAPIs {
    private static List<Benchmark> computeOpenEBenchmarks(SolutionWorkflow workflow) {
       /*
        * For each tool in the workflow, get the OpenEBench annotations from OpenEBench
-       * API
+       * API.
        */
       List<JSONObject> openEBenchBiotoolsMetrics = new ArrayList<>();
+
+      /* Check if OpenEBench service is available. */
+      // OpenEBenchRestClient.checkAvailability();
 
       workflow.getModuleNodes().forEach(toolNode -> {
          String toolID = toolNode.getUsedModule().getPredicateLabel();
