@@ -19,7 +19,7 @@ import io.swagger.v3.oas.annotations.servers.Server;
  * @version 0.3.1
  */
 @SpringBootApplication
-@OpenAPIDefinition(info = @Info(title = "RestApe API", version = "0.3.0", description = "RESTfull API for the APE (Automated Pipeline Explorer) library."), servers = @Server(url = "http://localhost:REST_APE_PORT", description = "Local server"))
+@OpenAPIDefinition(info = @Info(title = "RestApe API", version = "1.0.0", description = "RESTful API for the APE (Automated Pipeline Explorer) library."), servers = @Server(url = "http://localhost:REST_APE_PORT", description = "Local server"))
 public class RestapeApplication {
 
 	private static final Logger log = LoggerFactory.getLogger(RestapeApplication.class);
@@ -30,7 +30,7 @@ public class RestapeApplication {
 		Dotenv dotenv = Dotenv.configure().ignoreIfMalformed().ignoreIfMissing().load();
 		servicePort = Optional.ofNullable(dotenv.get("REST_APE_PORT")).orElse("4444");
 		} catch (Exception e) {
-			log.warn("Could not load .env file, using default port 4444");
+			log.warn("Could not load .env file, using default port " + servicePort);
 		}
 	}
 

@@ -69,7 +69,7 @@ public class ToolBenchmarkingAPIs {
       pubmetricPort = Optional.ofNullable(dotenv.get("PUBMETRIC_PORT")).orElse("8000");
       pubmetricHost = Optional.ofNullable(dotenv.get("PUBMETRIC_HOST")).orElse("localhost");
 		} catch (Exception e) {
-			log.warn("Could not load .env file, using default port 4444");
+			log.warn("Could not load .env file, using default port " + pubmetricPort + " and host " + pubmetricHost);
 		}
 	}
 
